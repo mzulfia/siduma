@@ -30,7 +30,7 @@ class Schedule extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['date', 'shift_start', 'shift_end'], 'safe'],
+            [['date', 'shift_id'], 'safe'],
             [['pic_id'], 'integer'],
         ];
     }
@@ -43,18 +43,39 @@ class Schedule extends \yii\db\ActiveRecord
         return [
             'schedule_id' => 'Schedule ID',
             'date' => 'Date',
-            'shift_start' => 'Shift Start',
-            'shift_end' => 'Shift End',
-            'pic_id' => 'Pic ID',
+            'shift_id' => 'Shift ID',
         ];
     }
 
     /*
         get relation
     */
-    public function getPic()
+    public function getSupport()
     {
-        return $this->hasOne(Pic::className(), ['pic_id' => 'pic_id'])->with(['pos']);
+        return $this->hasOne(Support::className(), ['support_id' => 'support_id'])->with(['pos']);
     }
 
+    public function getSupportName($id){
+        $array  = Pic::find()->where('support_id = :support_id', [':support_id' => $id])->one();
+        if($array == null){
+            return "Kosong";
+        } else {
+            return $array->pic_name;
+        }
+    }
+
+    public function getShift()
+    {
+        return $this->hasOne(Shift::className(), ['shift_id' => 'shift_id']);
+    }
+
+    public function getListPosName(){
+        $arrays  = PicPosition::findBySql("SELECT position_name FROM pic_position")->all();      
+        $result = [];
+        foreach($arrays as $array){
+            array_push($result, $array->position_name);
+        }
+        return $result;
+    }
+    
 }

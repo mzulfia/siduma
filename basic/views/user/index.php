@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'username',
             [
                 'attribute' => 'role_id',
-                'value' => 'role.role_name  '
+                'value' => 'role.role_name'
             ],
             ['class' => 'yii\grid\ActionColumn'],
         ],

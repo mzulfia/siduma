@@ -16,7 +16,7 @@ class ScheduleSearch extends Schedule
     // public function attributes()
     // {
     //     // add related fields to searchable attributes
-    //     return array_merge(parent::attributes(), ['pic_id']);
+    //     return array_merge(parent::attributes(), ['support_id']);
     // }
     /**
      * @inheritdoc
@@ -24,7 +24,7 @@ class ScheduleSearch extends Schedule
     public function rules()
     {
         return [
-            [['date', 'pic_id', 'position_name'], 'safe'],
+            [['date', 'support_id', 'position_name'], 'safe'],
         ];
     }
 
@@ -52,12 +52,12 @@ class ScheduleSearch extends Schedule
             'query' => $query,
         ]);
 
-        // $dataProvider->sort->attributes['pic_name'] = [
-        //       'asc' => ['pic.pic_name' => SORT_ASC],
-        //       'desc' => ['pic.pic_name' => SORT_DESC],
+        // $dataProvider->sort->attributes['support_name'] = [
+        //       'asc' => ['support.support_name' => SORT_ASC],
+        //       'desc' => ['support.support_name' => SORT_DESC],
         // ];
 
-        // $dataProvider->sort->attributes['relPic.pic_position_id'] = [
+        // $dataProvider->sort->attributes['relPic.support_position_id'] = [
         //       'asc' => ['relPic.relPicPos.position_name' => SORT_ASC],
         //       'desc' => ['relPic.relPicPos.position_name' => SORT_DESC],
         // ];
@@ -71,16 +71,16 @@ class ScheduleSearch extends Schedule
             return $dataProvider; 
         }
 
-        $query->joinWith(['pic', 'pic.pos']);
+        $query->joinWith(['support', 'support.pos']);
 
-        // $query->andFilterWhere('like', 'pic.pic_name', $this->pic->pic_name);
+        // $query->andFilterWhere('like', 'support.support_name', $this->support->support_name);
 
         $query->andFilterWhere([
             'schedule_id' => $this->schedule_id,
             'date' => $this->date,
         ]);
         
-        $query->andFilterWhere(['like', 'pic_name', $this->pic_id]);
+        $query->andFilterWhere(['like', 'support_name', $this->support_id]);
         $query->andFilterWhere(['like', 'position_name', $this->position_name]);
 
         return $dataProvider;

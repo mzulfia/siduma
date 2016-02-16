@@ -1,12 +1,13 @@
-<script>
-    
-</script>
-
 <?php
 
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\bootstrap\Modal;
+use yii\helpers\ArrayHelper;
+use yii\widgets\ActiveForm;
+
+use app\models\Schedule;
+
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ScheduleSearch */
@@ -34,10 +35,30 @@ $this->params['breadcrumbs'][] = $this->title;
 
         // echo "<div id='modalContent'></div>";
 
-        // Modal::end();
+        // Modal::end(); 
     ?>
 
-   <?= \yii2fullcalendar\yii2fullcalendar::widget(array(
+    
+
+    <?php
+        // $positions = sizeof(Schedule::getListPosName());
+        // for($i = 0; $i < $positions; $i++){
+    ?>        
+       
+    
+
+      <!-- Html::a('Create Schedule', ['create'], ['class' => 'btn btn-success']);
+        }
+        // Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary'])
+        // Html::submitButton('label', ['/controller/action'], ['class'=>'btn btn-primary']);
+        // foreach(Schedule::getListPosName() as $position){
+        //     Html::a($position, ['/schedule/viewposition', ['position' => $position]], ['class'=>'btn btn-primary']);
+        // } -->
+   
+   <?= 
+
+
+   \yii2fullcalendar\yii2fullcalendar::widget(array(
         'events'=> $events, 
         ));
 
