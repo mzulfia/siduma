@@ -31,7 +31,7 @@ class Schedule extends \yii\db\ActiveRecord
     {
         return [
             [['date', 'shift_id'], 'safe'],
-            [['pic_id'], 'integer'],
+            [['shift_id'], 'integer'],
         ];
     }
 

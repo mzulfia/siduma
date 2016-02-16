@@ -62,16 +62,16 @@ class ScheduleSearch extends Schedule
         //       'desc' => ['relPic.relPicPos.position_name' => SORT_DESC],
         // ];
 
-        $dataProvider->sort->attributes['position_name'] = [
-              'asc' => ['position_name' => SORT_ASC],
-              'desc' => ['position_name' => SORT_DESC],
-        ];
+        // $dataProvider->sort->attributes['position_name'] = [
+        //       'asc' => ['position_name' => SORT_ASC],
+        //       'desc' => ['position_name' => SORT_DESC],
+        // ];
 
         if (isset($_GET['ScheduleSearch']) && !($this->load($params) && $this->validate())) {
             return $dataProvider; 
         }
 
-        $query->joinWith(['support', 'support.pos']);
+        // $query->joinWith(['support', 'support.pos']);
 
         // $query->andFilterWhere('like', 'support.support_name', $this->support->support_name);
 
@@ -80,8 +80,8 @@ class ScheduleSearch extends Schedule
             'date' => $this->date,
         ]);
         
-        $query->andFilterWhere(['like', 'support_name', $this->support_id]);
-        $query->andFilterWhere(['like', 'position_name', $this->position_name]);
+        // $query->andFilterWhere(['like', 'support_name', $this->support_id]);
+        // $query->andFilterWhere(['like', 'position_name', $this->position_name]);
 
         return $dataProvider;
     }

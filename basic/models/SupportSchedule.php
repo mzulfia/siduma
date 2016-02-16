@@ -44,4 +44,8 @@ class SupportSchedule extends \yii\db\ActiveRecord
             'is_pic' => 'Is Pic',
         ];
     }
+
+    /*
+        get the relations
+    */
 }

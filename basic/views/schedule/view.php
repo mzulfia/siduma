@@ -30,9 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'schedule_id',
             'date',
-            'shift_start',
-            'shift_end',
-            'pic_id',
+            'shift_id',
         ],
     ]) ?>
 

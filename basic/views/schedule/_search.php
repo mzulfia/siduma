@@ -19,11 +19,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'date') ?>
 
-    <?= $form->field($model, 'shift_start') ?>
-
-    <?= $form->field($model, 'shift_end') ?>
-
-    <?= $form->field($model, 'pic_id') ?>
+    <?= $form->field($model, 'shift_id') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

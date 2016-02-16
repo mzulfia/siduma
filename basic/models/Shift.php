@@ -44,5 +44,14 @@ class Shift extends \yii\db\ActiveRecord
             'shift_start' => 'Shift Start',
             'shift_end' => 'Shift End',
         ];
+    } 
+
+    public function getNameTime($id){
+        $array  = Shift::find()->where('shift_id = :shift_id', [':shift_id' => $id])->one();
+        if($array == null){
+            return "Kosong";
+        } else {
+            return $array->shift_name . " " . $array->shift_start . "-" . $array->shift_end;
+        }
     }
 }

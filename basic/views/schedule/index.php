@@ -58,25 +58,22 @@ $this->params['breadcrumbs'][] = $this->title;
    <?= 
 
 
-   \yii2fullcalendar\yii2fullcalendar::widget(array(
-        'events'=> $events, 
-        ));
+   // \yii2fullcalendar\yii2fullcalendar::widget(array(
+   //      'events'=> $events, 
+   //      ));
 
 
-    //  GridView::widget([
-    //     'dataProvider' => $dataProvider,
-    //     'filterModel' => $searchModel,
-    //     'columns' => [
-    //         ['class' => 'yii\grid\SerialColumn'],
+     GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
 
-    //         'schedule_id',
-    //         'date',
-    //         'shift_start',
-    //         'shift_end',
-    //         'pic_id',
-
-    //         ['class' => 'yii\grid\ActionColumn'],
-    //     ],
-    // ]); ?>
+            'schedule_id',
+            'date',
+            'shift_id',
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
 
 </div>
