@@ -23,84 +23,16 @@ DashboardAsset::register($this);
 
     <!-- Favicon and touch icons -->
     <link rel="shortcut icon" href="images/ico/favicon.png">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
-        
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<?php $this->beginBody() ?>
- <?php
-    // $navItems=[
-    //     ['label' => 'Home', 'url' => ['/site/index']]
-    // ];
-    //   if (Yii::$app->user->isGuest) {
-    //     array_push($navItems,['label' => 'Sign In', 'url' => ['/site/login']],['label' => 'Sign Up', 'url' => ['/user/create']]);
-    //   } elseif(Yii::$app->user->identity->role_id == User::ROLE_ADMIN){
-    //     array_push($navItems,
-    //         [
-    //             'label' => 'User', 
-    //             'url' => ['/user/index']
-    //         ],
-    //         [
-    //             'label' => 'Schedule', 
-    //             'url' => ['/schedule/index']
-    //         ],
-    //         [
-    //             'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-    //             'url' => ['/site/logout'],
-    //             'linkOptions' => ['data-method' => 'post']
-    //         ]
-    //     );
-    //   } elseif(Yii::$app->user->identity->role_id == User::ROLE_MGT){
-    //     array_push($navItems,
-    //         [
-    //             'label' => 'User', 
-    //             'url' => ['/user/index']
-    //         ],
-    //         [
-    //             'label' => 'Schedule', 
-    //             'url' => ['/schedule/index']
-    //         ],
-    //         [
-    //             'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-    //             'url' => ['/site/logout'],
-    //             'linkOptions' => ['data-method' => 'post']
-    //         ]
-    //     );
-        
-    //   } else {
-    //     array_push($navItems,
-    //         [
-    //             'label' => 'User', 
-    //             'url' => ['/user/index']
-    //         ],
-    //         [
-    //             'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-    //             'url' => ['/site/logout'],
-    //             'linkOptions' => ['data-method' => 'post']
-    //         ]
-    //     );
-    //   }
-    // echo Nav::widget([
-    //     'options' => ['class' => 'dropdown user user-menu'],
-    //     'items' => [
-    //         Yii::$app->user->isGuest ?
-    //             ['label' => 'Login', 'url' => ['/site/login']] :
-    //             [
-    //                 'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-    //                 'url' => ['/site/logout'],
-    //                 'linkOptions' => ['data-method' => 'post']
-    //             ],
-    //     ],
-    // ]);
-    ?>
-
-
 <div class="wrapper">
     <header class="main-header">
         <!-- Logo -->

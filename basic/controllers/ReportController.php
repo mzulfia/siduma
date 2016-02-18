@@ -61,9 +61,13 @@ class ReportController extends Controller
     public function actionCreate()
     {
         $model = new Report();
+        $post = Yii::$app->request->post();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->report_id]);
+        if($model->load($post)){
+            $model->createdd_at = date("Y-m-d H:i:s");            
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->report_id]);
+            }
         } else {
             return $this->render('create', [
                 'model' => $model,
