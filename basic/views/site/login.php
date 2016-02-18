@@ -10,12 +10,11 @@ use yii\bootstrap\ActiveForm;
 ?>
 
 <?php $form = ActiveForm::begin();?>
-    <?= $form->field($model, 'username')->textInput() ?>                                  
-    <?= $form->field($model, 'password')->passwordInput() ?>
-     <div class="form-group">
-        <div class="col-sm-12 controls">
-            <?= Html::submitButton('Login', ['class' => 'btn btn-success', 'name' => 'login-button']) ?>
-        </div>
+    <form role="form" action="" method="post" class="login-form">
+    <div class="form-group">
+        <?= $form->field($model, 'username')->textInput() ?> 
+        <?= $form->field($model, 'password')->passwordInput()?>
+        <?= Html::submitButton('Login', ['class' => 'btn btn-success', 'name' => 'login-button']) ?>
     </div>
 <?php ActiveForm::end(); ?>
                           

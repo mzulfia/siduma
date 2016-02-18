@@ -17,6 +17,12 @@ use kartik\time\TimePicker;
 
     <?= $form->field($model, 'shift_start')->widget(TimePicker::classname(), [
 	    'name' => 't1',
+	    'pluginOptions' => [
+		    'showSeconds' => true,
+		    'showMeridian' => false,
+		    'minuteStep' => 1,
+		    'secondStep' => 5,
+    	],
 	    'addonOptions' => [
 	        'asButton' => true,
 	        'buttonOptions' => ['class' => 'btn btn-info']
@@ -25,7 +31,14 @@ use kartik\time\TimePicker;
 
     <?= $form->field($model, 'shift_end')->widget(TimePicker::classname(), [
 	    'name' => 't2',
+	    'pluginOptions' => [
+		    'showSeconds' => true,
+		    'showMeridian' => false,
+		    'minuteStep' => 1,
+		    'secondStep' => 5,
+    	],
 	    'addonOptions' => [
+
 	        'asButton' => true,
 	        'buttonOptions' => ['class' => 'btn btn-info']
 	    ]

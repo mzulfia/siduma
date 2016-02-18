@@ -14,9 +14,9 @@ class User extends ActiveRecord implements IdentityInterface
     public $auth_key;
     public $access_token;
 
-    const ROLE_ADMIN = 1;
-    const ROLE_PIC = 2;
-    const ROLE_MGT = 3;
+    const ROLE_ADMINISTRATOR = 1;
+    const ROLE_MANAGEMENT = 2;
+    const ROLE_SUPPORT = 3;
     
     /**
      * @inheritdoc
@@ -177,9 +177,25 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(Role::className(), ['role_id' => 'role_id']);
     }
 
-    public function getRoleName() 
+    public function getRoleId($id) 
     {
-        return $this->role->role_name;
+        $command = Yii::$app->getDb()->createCommand('SELECT role_id FROM user WHERE user_id = :user_id', [':user_id' => $id])->queryAll();
+
+        return $command[0]['role_id'];
+    }
+
+    public function getRoleName($id) 
+    {
+        $command = Yii::$app->getDb()->createCommand('SELECT role_name FROM user, role WHERE user.role_id = role.role_id AND user_id = :user_id', [':user_id' => $id])->queryAll();
+
+        return $command[0]['role_name'];
+    }
+
+    public function getManagementId($id) 
+    {
+        $command = Yii::$app->getDb()->createCommand('SELECT management_id FROM user, management WHERE user.user_id = management.user_id AND management.user_id = :user_id', [':user_id' => $id])->queryAll();
+
+        return $command[0]['management_id'];
     }
 }
 ?>

@@ -5,9 +5,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Management */
 
-$this->title = 'Update Management: ' . ' ' . $model->management_id;
-$this->params['breadcrumbs'][] = ['label' => 'Managements', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->management_id, 'url' => ['view', 'id' => $model->management_id]];
+$this->title = 'Edit Profile';
+$this->params['breadcrumbs'][] = ['label' => 'Profile', 'url' => ['view', 'id' => $model->management_id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="management-update">

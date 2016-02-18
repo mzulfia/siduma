@@ -1,7 +1,7 @@
 $(function(){
 	$(document).on('click','.fc-day',function(){
 		var date = $(this).attr('data-date');
-		document.location = 'viewpic?date=' + date;
+		document.location = 'viewdm?date=' + date;
 	});
 });
 

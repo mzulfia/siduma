@@ -42,9 +42,9 @@ class Management extends \yii\db\ActiveRecord
     {
         return [
             'management_id' => 'Management ID',
-            'mgt_nip' => 'Mgt Nip',
-            'mgt_name' => 'Mgt Name',
-            'mgt_position' => 'Mgt Position',
+            'mgt_nip' => 'NIP',
+            'mgt_name' => 'Name',
+            'mgt_position' => 'Position',
             'user_id' => 'User ID',
         ];
     }

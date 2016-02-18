@@ -33,7 +33,6 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {
-
         $searchModel = new ScheduleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -41,34 +40,6 @@ class ScheduleController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
-        // $schedules = Schedule::find()->all();
-        // $searchModel = new ScheduleSearch();
-        // $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        // $tasks = [];
-
-        // foreach($schedules as $schedule){
-        //     $event = new  \yii2fullcalendar\models\Event();
-        //     $event->id = $schedule->schedule_id;
-        //     $event->title = Schedule::getPicName($schedule->pic_id);
-        //     $event->start = date('Y-m-d\Th:i:s\Z',strtotime($schedule->date.' '.$schedule->shift_start));
-        //     $event->end = date('Y-m-d\Th:i:s\Z',strtotime($schedule->date.' '.$schedule->shift_end));
-        //     $event->editable = true;
-        //     $event->allDay = false;
-        //     $event->startEditable = true;
-        //     $event->durationEditable = true;
-        //     $tasks[] = $event;
-        // }
-        // // $searchModel = new ScheduleSearch();
-        // // $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        // return $this->render('index', [
-        //     'events' => $tasks,
-        //     'searchModel' => $searchModel,
-        //     'dataProvider' => $dataProvider,
-        //     // 'searchModel' => $searchModel,
-        //     // 'dataProvider' => $dataProvider,
-        // ]);
     }
 
     /**
@@ -133,48 +104,88 @@ class ScheduleController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionViewpic($date)
+    public function actionViewdm($date)
     {
         $searchModel = new ScheduleSearch();
         $searchModel->date = $date;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('viewPIC', [
+        return $this->render('viewdm', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
-    public function actionViewposition($position)
+    public function actionViewteam($id)
     {
-        $schedules = Schedule::find()->all();
+        $searchModel = new ScheduleSearch();
+        $schedule = Schedule::findOne($id);
+        $searchModel->date = $schedule->date;
+        $searchModel->shift_id = $schedule->shift_id;
+        $dataProvider = $searchModel->searchTeam(Yii::$app->request->queryParams);
 
+        return $this->renderAjax('viewteam', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    // public function actionViewposition($position)
+    // {
+    //     $schedules = Schedule::find()->all();
+
+    //     $tasks = [];
+
+    //     foreach($schedules as $schedule){
+    //         $event = new  \yii2fullcalendar\models\Event();
+    //         $event->id = $schedule->schedule_id;
+    //         $event->title = Schedule::getPicName($schedule->pic_id);
+    //         $event->start = date('Y-m-d\Th:i:s\Z',strtotime($schedule->date.' '.$schedule->shift_start));
+    //         $event->end = date('Y-m-d\Th:i:s\Z',strtotime($schedule->date.' '.$schedule->shift_end));
+    //         $event->editable = true;
+    //         $event->allDay = false;
+    //         $event->startEditable = true;
+    //         $event->durationEditable = true;
+    //         $tasks[] = $event;
+
+    //     }
+
+    //     return $this->render('index', [
+    //         'events' => $tasks,
+    //     ]);
+    // }
+
+    public function actionViewschedule(){
+        $schedules = Schedule::find()->where('is_dm = 1')->all();
+        
         $tasks = [];
 
         foreach($schedules as $schedule){
             $event = new  \yii2fullcalendar\models\Event();
             $event->id = $schedule->schedule_id;
-            $event->title = Schedule::getPicName($schedule->pic_id);
-            $event->start = date('Y-m-d\Th:i:s\Z',strtotime($schedule->date.' '.$schedule->shift_start));
-            $event->end = date('Y-m-d\Th:i:s\Z',strtotime($schedule->date.' '.$schedule->shift_end));
-            $event->editable = true;
-            $event->allDay = false;
-            $event->startEditable = true;
-            $event->durationEditable = true;
+            $event->title = Schedule::getSupportName($schedule->support_id);
+            $event->start = date('Y-m-d\TH:i:s\Z',strtotime($schedule->date.' '.Schedule::getShiftStart($schedule->shift_id)));
+            if($schedule->shift_id == 1){
+                $event->color = '#dd4b39';
+            } elseif($schedule->shift_id == 2){
+                $event->color = '#f39c12';
+            } else{
+                $event->color = '#00a65a';
+            }
+
+            
+
+            // $event->editable = true;
+            // $event->startEditable = true;
+            // $event->allDay = true;
+            // $event->durationEditable = true;
             $tasks[] = $event;
-
         }
-        // $searchModel = new ScheduleSearch();
-        // $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
+        return $this->render('viewschedule', [
             'events' => $tasks,
-            // 'searchModel' => $searchModel,
-            // 'dataProvider' => $dataProvider,
         ]);
     }
-
-
 
     /**
      * Finds the Schedule model based on its primary key value.

@@ -6,6 +6,8 @@ use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
 
 use app\models\Shift;
+use app\models\Support;
+use app\models\Schedule;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Schedule */
@@ -29,11 +31,14 @@ use app\models\Shift;
     		]	
 		]) 
 	?>
+    <?= $form->field($model, 'support_id')->dropDownList(ArrayHelper::map(Support::find()->all(), 'support_id', 'support_name'), ['prompt'=>'-Select Support-']) ?>
 
     <?= $form->field($model, 'shift_id')->dropDownList(ArrayHelper::map(Shift::find()->all(), 'shift_id', 'shift_name'), ['prompt'=>'-Select Shift-']) ?>
 
+    <?= $form->field($model, 'is_dm')->dropDownList(['1' => 'Ya', '0' => 'Tidak'], ['prompt'=>'-Select Answer-']) ?>
+
     <p>
-        *Office Hour: 07:00-15:00, Sore: 15:00-23:00, Malam : 23:00-07:00
+        *Morning: 07:00-15:00, Sore: 15:00-23:00, Malam : 23:00-07:00
     </p>
 
     <div class="form-group">

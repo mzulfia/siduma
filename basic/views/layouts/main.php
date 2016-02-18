@@ -20,6 +20,14 @@ DashboardAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Favicon and touch icons -->
+    <link rel="shortcut icon" href="images/ico/favicon.png">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+        
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -140,31 +148,13 @@ DashboardAsset::register($this);
         <section class="sidebar">
           <!-- Sidebar user panel -->
           <div class="user-panel">
-            
+              <h4 style = 'color:white; text-align: center'><b><?php echo User::getRoleName(\Yii::$app->user->getId());?></b></h4>
           </div>
-          <!-- search form -->
-          <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-              <input type="text" name="q" class="form-control" placeholder="Search...">
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-              </span>
-            </div>
-          </form>
-          <!-- /.search form -->
           <!-- sidebar menu: : style can be found in sidebar.less -->
           <ul class="sidebar-menu">
             <li class="header">MAIN NAVIGATION</li>
-            <li class="active treeview">
-              <a href="#">
-                <i class="fa fa-dashboard"></i> <span>Dashboard</span> <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-              </ul>
-            </li>
-            <li class="treeview">
+            <?php if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){?>
+              <li class="treeview">
               <a href="#">
                 <i class="fa fa-files-o"></i>
                 <span>Layout Options</span>
@@ -287,7 +277,51 @@ DashboardAsset::register($this);
             <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
             <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
             <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
-          </ul>
+          
+
+            <?php } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT){ ?>
+              <li>
+                <a href="#">
+                  <i class="fa fa-calendar"></i> <span>Profile</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/management/update', 'id' => User::getManagementId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> Edit</a></li>
+                  <li><a href="<?php echo Url::toRoute(['/management/view', 'id' => User::getManagementId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> View</a></li></li>
+                </ul>
+              </li>
+              <li>
+                <a href="<?php echo Url::toRoute('/schedule/viewschedule');?>">
+                  <i class="fa fa-calendar"></i> <span>Schedules</span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo Url::toRoute('/report/index');?>">
+                  <i class="fa fa-book"></i> <span>Reports</span>
+                </a>
+              </li>
+            <!-- <li class="active treeview">
+              <a href="#">
+                <i class="fa fa-dashboard"></i> <span>User</span> <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+              </ul>
+            </li> -->
+            <?php } else { ?>
+                  <li>
+                    <a href="<?php echo Url::toRoute('/schedule/viewschedule');?>">
+                      <i class="fa fa-calendar"></i> <span>Schedules</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="<?php echo Url::toRoute('/report/index');?>">
+                      <i class="fa fa-book"></i> <span>Reports</span>
+                    </a>
+                  </li>
+            <?php } ?>
+            </ul>
         </section>
         <!-- /.sidebar -->
       </aside>

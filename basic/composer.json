@@ -20,7 +20,7 @@
         "yiisoft/yii2-swiftmailer": "*",
         "philippfrenzel/yii2fullcalendar":"*",
         "kartik-v/yii2-widget-timepicker": "*",
-        "fxp/composer-asset-plugin": "~1.0",
+        "fxp/composer-asset-plugin": "*",
         "kartik-v/yii2-widget-datepicker": "@dev",
         "insolita/yii2-adminlte-widgets": "*"
     },

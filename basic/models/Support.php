@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "support".
  *
  * @property integer $support_id
- * @property integer $support_nip
+ * @property integer $
  * @property string $support_name
  * @property string $company
  * @property integer $no_hp
@@ -31,7 +31,7 @@ class Support extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['support_nip', 'support_position_id', 'user_id'], 'integer'],
+            [['support_position_id', 'user_id'], 'integer'],
             [['no_hp'], 'string', 'max' => 20],
             [['support_name', 'company', 'email'], 'string', 'max' => 50],
         ];

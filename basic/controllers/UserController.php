@@ -6,6 +6,8 @@ use Yii;
 
 use app\models\User;
 use app\models\UserSearch;
+use app\models\Support;
+use app\models\Management;
 use app\components\AccessRules;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -41,7 +43,7 @@ class UserController extends Controller
                            'allow' => true,
                            // Allow users, moderators and admins to create
                            'roles' => [
-                               User::ROLE_ADMIN
+                               User::ROLE_ADMINISTRATOR
                            ],
                        ],
                        [
@@ -49,7 +51,7 @@ class UserController extends Controller
                            'allow' => true,
                            // Allow moderators and admins to update
                            'roles' => [
-                               User::ROLE_ADMIN
+                               User::ROLE_ADMINISTRATOR
                            ],
                        ],
                        [
@@ -57,7 +59,7 @@ class UserController extends Controller
                            'allow' => true,
                            // Allow admins to delete
                            'roles' => [
-                               User::ROLE_ADMIN
+                               User::ROLE_ADMINISTRATOR
                        ],
                     ],
                 ],
@@ -100,13 +102,58 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model = new User();
+        $support = new Support();
+        $management  = new Management();
+        
         $post = Yii::$app->request->post();
 
         if($model->load($post)){
             $model->salt_password = Yii::$app->security->generatePasswordHash($model->password);
+            if ($model->save()) {
+                if($model->role_id == User::ROLE_SUPPORT)
+                {
+                    $support->user_id = $model->user_id;
+                    if($support->save())
+                    {   
+                        Yii::$app->getSession()->setFlash('success', [
+                         'type' => 'success',
+                         'duration' => 5000,
+                         'icon' => 'fa fa-users',
+                         'message' => 'My Message',
+                         'title' => 'My Title',
+                         'positonY' => 'top',
+                         'positonX' => 'left'
+                        ]);
 
-             if ($model->save()) {
-                return $this->redirect(['view', 'id' => $model->user_id]);    
+                        $this->redirect(array('index'));
+                    }
+                    else
+                    {
+                        // Yii::app()->user->setFlash('error', "Gagal dibuat!");
+                    }
+                } 
+                else 
+                {
+                    $management->user_id = $model->user_id;
+                    if($management->save())
+                    {
+                        Yii::$app->getSession()->setFlash('success', [
+                         'type' => 'success',
+                         'duration' => 5000,
+                         'icon' => 'fa fa-users',
+                         'message' => 'My Message',
+                         'title' => 'My Title',
+                         'positonY' => 'top',
+                         'positonX' => 'left'
+                        ]);
+                        
+                        $this->redirect(array('index'));
+                    }
+                    else
+                    {
+                        // Yii::app()->user->setFlash('error', "Gagal dibuat!");
+                    }
+                }    
             }   
         }
         
