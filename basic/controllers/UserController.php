@@ -103,57 +103,28 @@ class UserController extends Controller
     {
         $model = new User();
         $support = new Support();
-        $management  = new Management();
         
         $post = Yii::$app->request->post();
 
         if($model->load($post)){
             $model->salt_password = Yii::$app->security->generatePasswordHash($model->password);
             if ($model->save()) {
-                if($model->role_id == User::ROLE_SUPPORT)
+                if($model->role_id == User::ROLE_SUPPORT || $model->role_id == User::ROLE_SUPERVISOR)
                 {
                     $support->user_id = $model->user_id;
-                    if($support->save())
-                    {   
-                        Yii::$app->getSession()->setFlash('success', [
-                         'type' => 'success',
-                         'duration' => 5000,
-                         'icon' => 'fa fa-users',
-                         'message' => 'My Message',
-                         'title' => 'My Title',
-                         'positonY' => 'top',
-                         'positonX' => 'left'
-                        ]);
-
-                        $this->redirect(array('index'));
-                    }
-                    else
-                    {
-                        // Yii::app()->user->setFlash('error', "Gagal dibuat!");
-                    }
-                } 
-                else 
-                {
-                    $management->user_id = $model->user_id;
-                    if($management->save())
-                    {
-                        Yii::$app->getSession()->setFlash('success', [
-                         'type' => 'success',
-                         'duration' => 5000,
-                         'icon' => 'fa fa-users',
-                         'message' => 'My Message',
-                         'title' => 'My Title',
-                         'positonY' => 'top',
-                         'positonX' => 'left'
-                        ]);
-                        
-                        $this->redirect(array('index'));
-                    }
-                    else
-                    {
-                        // Yii::app()->user->setFlash('error', "Gagal dibuat!");
-                    }
-                }    
+                    $support->save();
+                    
+                        // Yii::$app->getSession()->setFlash('success', [
+                        //  'type' => 'success',
+                        //  'duration' => 5000,
+                        //  'icon' => 'fa fa-users',
+                        //  'message' => 'My Message',
+                        //  'title' => 'My Title',
+                        //  'positonY' => 'top',
+                        //  'positonX' => 'left'
+                        // ]);
+                }
+                $this->redirect(['index']); 
             }   
         }
         

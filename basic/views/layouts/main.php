@@ -3,6 +3,8 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+
+
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
@@ -10,7 +12,10 @@ use yii\widgets\Breadcrumbs;
 use yii\bootstrap\NavBar;
 use yii\bootstrap\Nav;
 use app\assets\DashboardAsset;
+
 use app\models\User;
+use app\models\Schedule;
+use app\models\Shift;
 
 DashboardAsset::register($this);
 ?>
@@ -22,11 +27,11 @@ DashboardAsset::register($this);
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Favicon and touch icons -->
-    <link rel="shortcut icon" href="images/ico/favicon.png">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="<?php echo \Yii::$app->homeUrl;?>images/ico/favicon.png">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href= "<?php echo \Yii::$app->homeUrl;?>images/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="<?php echo \Yii::$app->homeUrl;?>images/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo \Yii::$app->homeUrl;?>images/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="<?php echo \Yii::$app->homeUrl;?>images/ico/apple-touch-icon-57-precomposed.png">
 
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
@@ -213,16 +218,6 @@ DashboardAsset::register($this);
 
             <?php } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT){ ?>
               <li>
-                <a href="#">
-                  <i class="fa fa-calendar"></i> <span>Profile</span>
-                  <i class="fa fa-angle-left pull-right"></i>
-                </a>
-                <ul class="treeview-menu">
-                  <li><a href="<?php echo Url::toRoute(['/management/update', 'id' => User::getManagementId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> Edit</a></li>
-                  <li><a href="<?php echo Url::toRoute(['/management/view', 'id' => User::getManagementId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> View</a></li></li>
-                </ul>
-              </li>
-              <li>
                 <a href="<?php echo Url::toRoute('/schedule/viewschedule');?>">
                   <i class="fa fa-calendar"></i> <span>Schedules</span>
                 </a>
@@ -242,16 +237,56 @@ DashboardAsset::register($this);
               </ul>
             </li> -->
             <?php } else { ?>
-                  <li>
-                    <a href="<?php echo Url::toRoute('/schedule/viewschedule');?>">
-                      <i class="fa fa-calendar"></i> <span>Schedules</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="<?php echo Url::toRoute('/report/index');?>">
-                      <i class="fa fa-book"></i> <span>Reports</span>
-                    </a>
-                  </li>
+                <?php 
+                date_default_timezone_set("Asia/Jakarta");
+                if(Schedule::getIsDM(date('Y-m-d'), Shift::getDMShift(date("H:i:s")), User::getSupportId(Yii::$app->user->getId()))) { ?>
+                     <li>
+                      <a href="#">
+                        <i class="fa fa-book"></i> <span>Profile</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                      </a>
+                      <ul class="treeview-menu">
+                        <li><a href="<?php echo Url::toRoute(['/support/update', 'id' => User::getSupportId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> Edit </a></li>
+                        <li><a href="<?php echo Url::toRoute(['/support/view', 'id' => User::getSupportId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> View </a></li></li>
+                      </ul>
+                    </li>
+                    <li>
+                      <a href="<?php echo Url::toRoute('/schedule/viewschedule');?>">
+                        <i class="fa fa-calendar"></i> <span>Schedules</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#">
+                        <i class="fa fa-book"></i> <span>Reports</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                      </a>
+                      <ul class="treeview-menu">
+                        <li><a href="<?php echo Url::toRoute(['/report/index']);?>"><i class="fa fa-circle-o"></i> All</a></li>
+                        <li><a href="<?php echo Url::toRoute(['/report/create']);?>"><i class="fa fa-circle-o"></i> Create</a></li></li>
+                      </ul>
+                    </li>
+              <?php } else {?>
+                      <li>
+                      <a href="#">
+                        <i class="fa fa-book"></i> <span>Profile</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                      </a>
+                      <ul class="treeview-menu">
+                        <li><a href="<?php echo Url::toRoute(['/support/update', 'id' => User::getSupportId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> Edit </a></li>
+                        <li><a href="<?php echo Url::toRoute(['/support/view', 'id' => User::getSupportId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> View </a></li></li>
+                      </ul>
+                      </li>
+                        <li>
+                        <a href="<?php echo Url::toRoute('/schedule/viewschedule');?>">
+                          <i class="fa fa-calendar"></i> <span>Schedules</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="<?php echo Url::toRoute('/report/indexunauthorized');?>">
+                          <i class="fa fa-book"></i> <span>Reports</span>
+                        </a>
+                      </li>
+                <?php } ?>
             <?php } ?>
             </ul>
         </section>
@@ -263,6 +298,27 @@ DashboardAsset::register($this);
             <?= Breadcrumbs::widget([
                 'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
             ]) ?>
+
+            <!-- Get all flash messages and loop through them -->
+            <?php foreach (\Yii::$app->session->getAllFlashes() as $message):; ?>
+              <?php
+              echo \kartik\widgets\Growl::widget([
+                  'type' => (!empty($message['type'])) ? $message['type'] : 'danger',
+                  'title' => (!empty($message['title'])) ? Html::encode($message['title']) : 'Title Not Set!',
+                  'icon' => (!empty($message['icon'])) ? $message['icon'] : 'fa fa-info',
+                  'body' => (!empty($message['message'])) ? Html::encode($message['message']) : 'Message Not Set!',
+                  'showSeparator' => true,
+                  'delay' => 1, //This delay is how long before the message shows
+                  'pluginOptions' => [
+                      'delay' => (!empty($message['duration'])) ? $message['duration'] : 3000, //This delay is how long the message shows for
+                      'placement' => [
+                          'from' => (!empty($message['positonY'])) ? $message['positonY'] : 'top',
+                          'align' => (!empty($message['positonX'])) ? $message['positonX'] : 'right',
+                      ]
+                  ]
+              ]);
+              ?>
+            <?php endforeach; ?>
             <?= $content ?>
         </section?>    
     </div>

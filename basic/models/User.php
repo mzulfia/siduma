@@ -16,7 +16,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     const ROLE_ADMINISTRATOR = 1;
     const ROLE_MANAGEMENT = 2;
-    const ROLE_SUPPORT = 3;
+    const ROLE_SUPERVISOR = 3;
+    const ROLE_SUPPORT = 4;
     
     /**
      * @inheritdoc
@@ -191,11 +192,11 @@ class User extends ActiveRecord implements IdentityInterface
         return $command[0]['role_name'];
     }
 
-    public function getManagementId($id) 
+    public function getSupportId($id) 
     {
-        $command = Yii::$app->getDb()->createCommand('SELECT management_id FROM user, management WHERE user.user_id = management.user_id AND management.user_id = :user_id', [':user_id' => $id])->queryAll();
+        $command = Yii::$app->getDb()->createCommand('SELECT support_id FROM user, support WHERE user.user_id = support.user_id AND support.user_id = :user_id', [':user_id' => $id])->queryAll();
 
-        return $command[0]['management_id'];
+        return $command[0]['support_id'];
     }
 }
 ?>

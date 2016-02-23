@@ -46,11 +46,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => 'shift.shift_end'
             ],
             [
-                'label' => 'Is Pic',
-                'attribute' => 'is_pic',
-                'filter' => Html::activeDropDownList($searchModel, 'is_pic', ['1' => 'Ya', '0' => 'Tidak'],['class'=>'form-control','prompt' => '-']),
+                'label' => 'Is Dm',
+                'attribute' => 'is_dm',
+                'filter' => Html::activeDropDownList($searchModel, 'is_dm', ['1' => 'Ya', '0' => 'Tidak'],['class'=>'form-control','prompt' => '-']),
                 'value' => function ($model) {
-                    return $model->is_pic == 1 ? 'Ya' : 'Tidak';
+                    return $model->is_dm == 1 ? 'Ya' : 'Tidak';
                 }
             ],
             ['class' => 'yii\grid\ActionColumn'],

@@ -18,8 +18,8 @@ class ReportSearch extends Report
     public function rules()
     {
         return [
-            [['report_id', 'status', 'service_family_id'], 'integer'],
-            [['information', 'created_at'], 'safe'],
+            [['report_id'], 'integer'],
+            [['information', 'created_at', 'status', 'support_id', 'service_family_id'], 'safe'],
         ];
     }
 
@@ -47,23 +47,37 @@ class ReportSearch extends Report
             'query' => $query,
         ]);
 
-        $this->load($params);
+        $dataProvider->sort->attributes['service_family_id'] = [
+              'asc' => ['service_family.service_name' => SORT_ASC],
+              'desc' => ['service_family.service_name' => SORT_DESC],
+        ];
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+        $dataProvider->sort->attributes['service_family_id'] = [
+              'asc' => ['service_family.service_name' => SORT_ASC],
+              'desc' => ['service_family.service_name' => SORT_DESC],
+        ];
+
+         $dataProvider->sort->attributes['support_id'] = [
+              'asc' => ['support.support_name' => SORT_ASC],
+              'desc' => ['support.support_name' => SORT_DESC],
+        ];
+
+        if (isset($_GET['ReportSearch']) && !($this->load($params) && $this->validate())) {
+            return $dataProvider; 
         }
 
+        $query->joinWith(['service', 'support']);
+
         $query->andFilterWhere([
-            'report_id' => $this->report_id,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'service_family_id' => $this->service_family_id,
         ]);
-
-        $query->andFilterWhere(['like', 'information', $this->information]);
-
+        
+        $query->andFilterWhere(['like', 'service.service_name', $this->service_family_id]);
+        $query->andFilterWhere(['like', 'support.support_name', $this->support_id]);
+        $query->andFilterWhere(['like', 'created_at', $this->created_at]);
+        // $query->andFilterWhere(['like', 'statu.', $this->support_id]);
+        // $query->andFilterWhere(['like', 'support_position.position_name', $this->position_name]);
+        
         return $dataProvider;
     }
 }

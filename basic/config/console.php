@@ -12,6 +12,9 @@ return [
     'controllerNamespace' => 'app\commands',
     'modules' => [
         'gii' => 'yii\gii\Module',
+        'gridview' => [
+            'class' => 'kartik\grid\Module',
+        ],
     ],
     'components' => [
         'cache' => [

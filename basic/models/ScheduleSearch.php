@@ -27,7 +27,7 @@ class ScheduleSearch extends Schedule
     public function rules()
     {
         return [
-            [['date', 'shift_id', 'is_pic', 'support_id', 'position_name'], 'safe'],
+            [['date', 'shift_id', 'is_dm', 'support_id', 'position_name'], 'safe'],
         ];
     }
 

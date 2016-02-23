@@ -29,7 +29,7 @@ class Report extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['status', 'service_family_id'], 'integer'],
+            [['status', 'support_id', 'service_family_id'], 'integer'],
             [['information'], 'string'],
             [['created_at'], 'safe']
         ];
@@ -45,7 +45,20 @@ class Report extends \yii\db\ActiveRecord
             'status' => 'Status',
             'information' => 'Information',
             'created_at' => 'Created At',
+            'support_id' => 'Support ID',
             'service_family_id' => 'Service Family ID',
         ];
+    }
+
+    /*
+        get the relations
+    */
+
+    public function getService(){
+        return $this->hasOne(ServiceFamily::className(), ['service_family_id' => 'service_family_id']);
+    }
+
+    public function getSupport(){
+        return $this->hasOne(Support::className(), ['support_id' => 'support_id']);
     }
 }

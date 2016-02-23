@@ -9,7 +9,8 @@ use app\models\Pic;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\web\UploadedFile;
+use app\models\Support;
 /**
  * ScheduleController implements the CRUD actions for Schedule model.
  */
@@ -63,9 +64,95 @@ class ScheduleController extends Controller
     {
         $model = new Schedule();
         
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->schedule_id]);
-        } else {
+        if(isset($_POST['automatic-button']))
+        {
+            $model->load(Yii::$app->request->post());
+            $model->file = UploadedFile::getInstance($model, 'file');
+            $model->file->saveAs('uploads/' . $model->file->baseName . '.' . $model->file->extension);
+            $inputFile = 'uploads/' . $model->file->baseName . '.' . $model->file->extension;
+
+            try{
+                $inputFileType = \PHPExcel_IOFactory::identify($inputFile);
+                $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+                $objPHPExcel = $objReader->load($inputFile);
+            } 
+            catch(Exception $e)
+            {
+                die('Error');
+            }
+
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow();
+            $highestColumn = $sheet->getHighestColumn();
+
+            $date = [];
+            for($row = 2; $row <= $highestRow; $row++)
+            {
+                $rowData = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,NULL,TRUE,FALSE);
+                if($row == 2)
+                {   
+                    for($col = 1; $col <= 31; $col++)
+                    {
+                        if($rowData[0][$col] != '-')
+                        {
+                            array_push($date, $rowData[0][$col]);
+                        }
+                        else
+                        {
+                            $col = 31;
+                        }
+                    }
+                } 
+                else
+                {
+                    // var_dump(Support::find()->where('support_name LIKE :support_name', [':support_name' => $rowData[0][0]])->one());
+
+                    for($col = 0; $col < sizeof($date); $col++)
+                    {   
+                        $model= new Schedule();
+                        $support = Support::find()->where('support_name LIKE :support_name', [':support_name' => $rowData[0][0]])->one();
+                        $model->support_id = $support['support_id'];
+                        if($col < sizeof($date)  && ($rowData[0][$col+1] != '-' && $rowData[0][$col+1] != 0))
+                        {
+                            $model->file_path = $inputFile;
+                            $model->date = $date[$col];
+                            $model->shift_id = $rowData[0][$col+1];
+                            $model->save(false);
+                        }
+                    }
+                }        
+            }
+            // var_dump($date);
+            Yii::$app->getSession()->setFlash('success', [
+                 'type' => 'success',
+                 'duration' => 5000,
+                 'icon' => 'fa fa-users',
+                 'message' => 'Upload Success',
+                 'title' => 'Success',
+                 'positonY' => 'top',
+                 'positonX' => 'right'
+             ]);
+             return $this->redirect(['create']);
+        }  
+        elseif(isset($_POST['manual-button']))
+        {
+            $model->load(Yii::$app->request->post());
+            $model->save();
+            return $this->redirect(['index']);
+        }
+        else if(isset($_POST['setdm-button']))
+        {
+            $model = new Schedule();
+
+            $model->load(Yii::$app->request->post());
+            $date = explode(" - ", $model->date[1]);
+            $start = $date[0];
+            $end = $date[1];
+            Schedule::setDM($start, $end, $model->shift_id);
+            return $this->redirect(['index']);
+        }
+        else 
+        {
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -108,6 +195,7 @@ class ScheduleController extends Controller
     {
         $searchModel = new ScheduleSearch();
         $searchModel->date = $date;
+        $searchModel->is_dm = 1;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('viewdm', [
@@ -130,31 +218,6 @@ class ScheduleController extends Controller
         ]);
     }
 
-    // public function actionViewposition($position)
-    // {
-    //     $schedules = Schedule::find()->all();
-
-    //     $tasks = [];
-
-    //     foreach($schedules as $schedule){
-    //         $event = new  \yii2fullcalendar\models\Event();
-    //         $event->id = $schedule->schedule_id;
-    //         $event->title = Schedule::getPicName($schedule->pic_id);
-    //         $event->start = date('Y-m-d\Th:i:s\Z',strtotime($schedule->date.' '.$schedule->shift_start));
-    //         $event->end = date('Y-m-d\Th:i:s\Z',strtotime($schedule->date.' '.$schedule->shift_end));
-    //         $event->editable = true;
-    //         $event->allDay = false;
-    //         $event->startEditable = true;
-    //         $event->durationEditable = true;
-    //         $tasks[] = $event;
-
-    //     }
-
-    //     return $this->render('index', [
-    //         'events' => $tasks,
-    //     ]);
-    // }
-
     public function actionViewschedule(){
         $schedules = Schedule::find()->where('is_dm = 1')->all();
         
@@ -165,16 +228,14 @@ class ScheduleController extends Controller
             $event->id = $schedule->schedule_id;
             $event->title = Schedule::getSupportName($schedule->support_id);
             $event->start = date('Y-m-d\TH:i:s\Z',strtotime($schedule->date.' '.Schedule::getShiftStart($schedule->shift_id)));
+            $event->end = date('Y-m-d\TH:i:s\Z',strtotime($schedule->date.' '.Schedule::getShiftEnd($schedule->shift_id)));
             if($schedule->shift_id == 1){
-                $event->color = '#dd4b39';
+                $event->color = '#3c8dbc';
             } elseif($schedule->shift_id == 2){
-                $event->color = '#f39c12';
+                $event->color = '#bc6b3c';
             } else{
-                $event->color = '#00a65a';
+                $event->color = '#a6004c';
             }
-
-            
-
             // $event->editable = true;
             // $event->startEditable = true;
             // $event->allDay = true;

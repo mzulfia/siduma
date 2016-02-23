@@ -23,7 +23,7 @@ class SupportSearch extends Support
     public function rules()
     {
         return [
-            [['support_id', 'support_nip', 'no_hp', 'support_position_id', 'user_id'], 'integer'],
+            [['support_id', 'no_hp', 'support_position_id', 'user_id'], 'integer'],
             [['support_name', 'company'], 'safe'],
         ];
     }
@@ -62,7 +62,6 @@ class SupportSearch extends Support
 
         $query->andFilterWhere([
             'support_id' => $this->support_id,
-            'support_nip' => $this->support_nip,
             'no_hp' => $this->no_hp,
             'support_position_id' => $this->support_position_id,
             'user_id' => $this->user_id,

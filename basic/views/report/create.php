@@ -14,8 +14,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+    <?=  $this->render('_form',[
+            'erp'=>$erp,
+            'email'=>$email,
+            'ap2t'=>$ap2t,
+            'p2apst'=>$p2apst,
+            'bbo'=>$bbo,
+            'apkt'=>$apkt,
+            'itsm'=>$itsm,
+        ]) 
+    ?>
 
 </div>

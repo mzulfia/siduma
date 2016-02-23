@@ -2,8 +2,8 @@
 
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 
+use kartik\form\ActiveForm;
 use app\models\ServiceFamily;
 
 /* @var $this yii\web\View */
@@ -13,18 +13,64 @@ use app\models\ServiceFamily;
 
 <div class="report-form">
 
-    <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
+    <?php 
 
-    <?= $form->field($model, 'information')->textarea(['rows' => 6]) ?>
+        $form = ActiveForm::begin([
+                'id' => 'login-form-inline-1',
+                'type' => ActiveForm::TYPE_HORIZONTAL,
+        ]);
+    ?>
+        
+        <h3>ERP</h3>
+        
+        <?= $form->field($erp, '[1]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
 
-    <?= $form->field($model, 'service_family_id')->dropDownList(ArrayHelper::map(ServiceFamily::find()->all(), 'service_family_id', 'service_name'), ['prompt'=>'-Select Service-']) ?>
+        <?= $form->field($erp, '[1]information')->textArea() ?>
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
 
-    <?php ActiveForm::end(); ?>
+        <h3>Email dan Jaringan Data</h3>
+        
+        <?= $form->field($email, '[2]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($email, '[2]information')->textArea() ?>
+
+        <h3>AP2T</h3>
+        
+        <?= $form->field($ap2t, '[3]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($ap2t, '[3]information')->textArea() ?>
+
+        <h3>P2APST</h3>
+        
+        <?= $form->field($p2apst, '[4]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($p2apst, '[4]information')->textArea() ?>
+
+         <h3>BBO</h3>
+        
+        <?= $form->field($bbo, '[5]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($bbo, '[5]information')->textArea() ?>
+
+        <h3>APKT</h3>
+        
+        <?= $form->field($apkt, '[6]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($apkt, '[6]information')->textArea() ?>
+
+        <h3>ITSM</h3>
+        
+        <?= $form->field($itsm, '[7]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($itsm, '[7]information')->textArea() ?>
+
+        <div class="form-group">
+             <div class="col-sm-offset-2 col-sm-9">
+                <?= Html::submitButton(($erp->isNewRecord && $email->isNewRecord && $ap2t->isNewRecord && $p2apst->isNewRecord && $bbo->isNewRecord && $apkt->isNewRecord && $itsm->isNewRecord)? 'Create' : 'Update', ['class' => 'btn btn-success']) ?>
+            </div>
+        </div>
+
+    <?php ActiveForm::end(); ?>   
 
 </div>

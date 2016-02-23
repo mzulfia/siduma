@@ -23,9 +23,9 @@ $this->params['breadcrumbs'][] = $this->title;
     .legend li { float: left; margin-right: 10px; }
     .legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 4px; }
     /* your colors */
-    .legend .shiftpagi { background-color: #dd4b39; }
-    .legend .shiftsore { background-color: #f39c12; }
-    .legend .shiftmalam { background-color: #00a65a; }
+    .legend .shiftpagi { background-color: #3c8dbc; }
+    .legend .shiftsore { background-color: #bc6b3c; }
+    .legend .shiftmalam { background-color: #a6004c; }
 </style>
 
 

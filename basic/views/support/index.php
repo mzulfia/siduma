@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\PicSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Supportss';
+$this->title = 'Supports';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="support-index">
@@ -24,7 +24,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'support_id',
             'support_name',
             'company',
