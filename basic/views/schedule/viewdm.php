@@ -54,36 +54,29 @@ $this->registerJs("$(function() {
 <div class="pic-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
                 'label' => 'Name',
-                'attribute' => 'support_id',
                 'value' => 'support.support_name'
             ],
             [
                 'label' => 'Position',
-                'attribute' => 'position_name',
                 'value' => 'support.pos.position_name'
             ],
             [
                 'label' => 'Email',
-                'attribute' => 'support_id',
                 'value' => 'support.email'
             ],
             [
                 'label' => 'No Hp',
-                'attribute' => 'support_id',
                 'value' => 'support.no_hp'
             ],
             [
                 'label' => 'Company',
-                'attribute' => 'support_id',
                 'value' => 'support.company'
             ],
             [

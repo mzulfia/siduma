@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ServiceFamilySearch */
@@ -22,28 +22,35 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'layout' => "{items}",
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'class' => 'yii\grid\SerialColumn',
+            ],
             'date',
             [
                 'label' => 'Support Name',
                 'attribute' => 'support_id',
-                'value' => 'support.support_name'
+                'value' => 'support.support_name',
+                
             ],
             [
                 'label' => 'Shift Name',
                 'attribute' => 'shift_id',
-                'value' => 'shift.shift_name'
+                'value' => 'shift.shift_name',
+                'contentOptions' => ['style' => 'width:100px;']
             ],
             [
                 'label' => 'Shift Start',
                 'attribute' => 'shift_id',
-                'value' => 'shift.shift_start'
+                'value' => 'shift.shift_start',
+                'contentOptions' => ['style' => 'width:100px;']
             ],
             [
                 'label' => 'Shift End',
                 'attribute' => 'shift_id',
-                'value' => 'shift.shift_end'
+                'value' => 'shift.shift_end',
+                'contentOptions' => ['style' => 'width:100px;']
             ],
             [
                 'label' => 'Is Dm',
@@ -51,10 +58,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => Html::activeDropDownList($searchModel, 'is_dm', ['1' => 'Ya', '0' => 'Tidak'],['class'=>'form-control','prompt' => '-']),
                 'value' => function ($model) {
                     return $model->is_dm == 1 ? 'Ya' : 'Tidak';
-                }
+                },
+                 'contentOptions' => ['style' => 'width:100px;']
             ],
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header'=>'Actions',
+            ],
         ],
+        'pager' => [
+            'firstPageLabel' => 'First',
+            'lastPageLabel' => 'Last',
+        ],
+        'responsive'=>true,
+        'hover'=>true,
+        'condensed'=>true,
+        'floatHeader'=>true,
+        'bordered'=>true,
     ]); ?>
 
 </div>

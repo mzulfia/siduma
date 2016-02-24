@@ -19,12 +19,15 @@ use app\models\ServiceFamily;
         $form = ActiveForm::begin([
                 'id' => 'login-form-inline-1',
                 'type' => ActiveForm::TYPE_HORIZONTAL,
+                'options' => ['enctype' => 'multipart/form-data']
         ]);
     ?>
         
         <h3>ERP</h3>
         
         <?= $form->field($erp, '[1]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($erp, '[1]file')->fileInput() ?>
 
         <?= $form->field($erp, '[1]information')->textArea() ?>
 
@@ -33,11 +36,15 @@ use app\models\ServiceFamily;
         
         <?= $form->field($email, '[2]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
 
+        <?= $form->field($email, '[2]file')->fileInput() ?>
+
         <?= $form->field($email, '[2]information')->textArea() ?>
 
         <h3>AP2T</h3>
         
         <?= $form->field($ap2t, '[3]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($ap2t, '[3]file')->fileInput() ?>
 
         <?= $form->field($ap2t, '[3]information')->textArea() ?>
 
@@ -45,11 +52,15 @@ use app\models\ServiceFamily;
         
         <?= $form->field($p2apst, '[4]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
 
+        <?= $form->field($p2apst, '[4]file')->fileInput() ?>
+
         <?= $form->field($p2apst, '[4]information')->textArea() ?>
 
          <h3>BBO</h3>
         
         <?= $form->field($bbo, '[5]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($bbo, '[5]file')->fileInput() ?>
 
         <?= $form->field($bbo, '[5]information')->textArea() ?>
 
@@ -57,11 +68,15 @@ use app\models\ServiceFamily;
         
         <?= $form->field($apkt, '[6]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
 
+        <?= $form->field($apkt, '[6]file')->fileInput() ?>
+
         <?= $form->field($apkt, '[6]information')->textArea() ?>
 
         <h3>ITSM</h3>
         
         <?= $form->field($itsm, '[7]status')->radioList(['1' => 'Ok', '0' => 'Tidak']) ?>
+
+        <?= $form->field($itsm, '[7]file')->fileInput() ?>
 
         <?= $form->field($itsm, '[7]information')->textArea() ?>
 

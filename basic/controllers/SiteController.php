@@ -62,6 +62,17 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+
+            Yii::$app->getSession()->setFlash('success', [
+                     'type' => 'success',
+                     'duration' => 3000,
+                     'icon' => 'fa fa-sign-in',
+                     'message' => 'Login Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                    ]);
+
             return $this->actionIndex();
         }
         return $this->render('login', [
@@ -72,6 +83,16 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
+
+        Yii::$app->getSession()->setFlash('success', [
+         'type' => 'success',
+         'duration' => 3000,
+         'icon' => 'fa fa-sign-out',
+         'message' => 'Logout Success',
+         'title' => 'Notification',
+         'positonY' => 'top',
+         'positonX' => 'right'
+        ]);
 
         return $this->goHome();
     }

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6bc005ccbec1379df985d7489e129eac",
-    "content-hash": "ecf4c5e7cb2f0d605e6f03ecb12cd15f",
+    "hash": "6de5ce83599339069c25515ed6c4d8d2",
+    "content-hash": "e2a9b391e9ad4b55a049d246045610bc",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -2299,6 +2299,51 @@
             "time": "2015-12-05 10:37:16"
         },
         {
+            "name": "miloschuman/yii2-highcharts-widget",
+            "version": "v4.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/miloschuman/yii2-highcharts.git",
+                "reference": "f7af817c44c209fb38236721e580b67e0e51e364"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/miloschuman/yii2-highcharts/zipball/f7af817c44c209fb38236721e580b67e0e51e364",
+                "reference": "f7af817c44c209fb38236721e580b67e0e51e364",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "miloschuman\\highcharts\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Milo Schuman",
+                    "email": "miloschuman@gmail.com"
+                }
+            ],
+            "description": "Highcharts widget for Yii 2 Framework.",
+            "homepage": "https://github.com/miloschuman/yii2-highcharts",
+            "keywords": [
+                "extension",
+                "highcharts",
+                "highmaps",
+                "highstock",
+                "widget",
+                "yii2"
+            ],
+            "time": "2016-02-11 18:21:07"
+        },
+        {
             "name": "mootensai/yii2-enhanced-gii",
             "version": "dev-master",
             "source": {
@@ -2308,7 +2353,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mootensai/yii2-enhanced-gii/zipball/022c9b64150eaaaaff7ff1e264ba914a80351211",
+                "url": "https://api.github.com/repos/mootensai/yii2-enhanced-gii/zipball/4515c0a66f970ed570e1de708f45e86f4d453836",
                 "reference": "022c9b64150eaaaaff7ff1e264ba914a80351211",
                 "shasum": ""
             },
@@ -3314,7 +3359,8 @@
         "kartik-v/yii2-editable": 20,
         "kartik-v/yii2-krajee-base": 20,
         "mootensai/yii2-enhanced-gii": 20,
-        "kartik-v/yii2-grid": 20
+        "kartik-v/yii2-grid": 20,
+        "kartik-v/yii2-widget-fileinput": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

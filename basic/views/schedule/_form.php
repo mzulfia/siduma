@@ -5,9 +5,9 @@ use yii\helpers\ArrayHelper;
 use app\models\Shift;
 use app\models\Support;
 use app\models\Schedule;
-use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\form\ActiveForm;
+
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Schedule */
@@ -79,19 +79,17 @@ use kartik\form\ActiveForm;
             'id' => 'input-manual', 
         ]); ?>
 
-        <?= $form->field($model, 'date')->widget(DatePicker::classname(), [
-                    'name' => 'c1',
-                    'options' => 
-                    [
-                        'placeholder' => 'Select issue date ...',
-                    ],
-                    'pluginOptions' => [
-                        'format' => 'yyyy-mm-dd',
-                        'todayHighlight' => true,
-                        'autoclose' => true,
-                    ]   
-                ]) 
-            ?>
+         <?= $form->field($model, 'date', [
+                'addon'=>['prepend'=>['content'=>'<i class="glyphicon glyphicon-calendar"></i>']],
+                'options'=>['class'=>'drp-container form-group']
+            ])->widget(DateRangePicker::classname(), [
+            'useWithAddon'=>true,
+            'pluginOptions'=>[
+                'singleDatePicker'=>true,
+                'showDropdowns'=>true,
+            ]
+        ]);
+    ?>
 
         <?= $form->field($model, 'support_id')->dropDownList(ArrayHelper::map(Support::find()->all(), 'support_id', 'support_name'), ['prompt'=>'-Select Support-']) ?>
 

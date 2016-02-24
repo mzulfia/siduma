@@ -36,7 +36,7 @@ class SupportPosition extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'support_position_id' => 'Support Position ID',
+            'support_position_id' => 'Position',
             'position_name' => 'Position Name',
         ];
     } 

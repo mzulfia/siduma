@@ -70,13 +70,12 @@ class ReportSearch extends Report
 
         $query->andFilterWhere([
             'status' => $this->status,
+            'information' => $this->information
         ]);
         
-        $query->andFilterWhere(['like', 'service.service_name', $this->service_family_id]);
+        $query->andFilterWhere(['like', 'service_family.service_family_id', $this->service_family_id]);
         $query->andFilterWhere(['like', 'support.support_name', $this->support_id]);
-        $query->andFilterWhere(['like', 'created_at', $this->created_at]);
-        // $query->andFilterWhere(['like', 'statu.', $this->support_id]);
-        // $query->andFilterWhere(['like', 'support_position.position_name', $this->position_name]);
+        $query->andFilterWhere(['between', 'created_at', explode(" - ", $this->created_at)[0], explode(" - ", $this->created_at)[1]]);
         
         return $dataProvider;
     }

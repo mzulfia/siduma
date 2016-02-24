@@ -114,15 +114,16 @@ class UserController extends Controller
                     $support->user_id = $model->user_id;
                     $support->save();
                     
-                        // Yii::$app->getSession()->setFlash('success', [
-                        //  'type' => 'success',
-                        //  'duration' => 5000,
-                        //  'icon' => 'fa fa-users',
-                        //  'message' => 'My Message',
-                        //  'title' => 'My Title',
-                        //  'positonY' => 'top',
-                        //  'positonX' => 'left'
-                        // ]);
+                    Yii::$app->getSession()->setFlash('success', [
+                       'type' => 'success',
+                       'duration' => 3000,
+                       'icon' => 'fa fa-user',
+                       'message' => 'Create Success',
+                       'title' => 'Notification',
+                       'positonY' => 'top',
+                       'positonX' => 'right'
+                    ]);
+
                 }
                 $this->redirect(['index']); 
             }   

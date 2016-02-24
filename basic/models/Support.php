@@ -48,7 +48,7 @@ class Support extends \yii\db\ActiveRecord
             'company' => 'Company',
             'no_hp' => 'No Hp',
             'email' => 'Email',
-            'support_position_id' => 'Support Position ID',
+            'support_position_id' => 'Position',
             'user_id' => 'User ID',
         ];
     }

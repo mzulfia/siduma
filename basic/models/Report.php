@@ -15,6 +15,8 @@ use Yii;
  */
 class Report extends \yii\db\ActiveRecord
 {
+    public $file;
+    
     /**
      * @inheritdoc
      */
@@ -29,9 +31,11 @@ class Report extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['created_at'], 'safe'],
             [['status', 'support_id', 'service_family_id'], 'integer'],
             [['information'], 'string'],
-            [['created_at'], 'safe']
+            [['file_path'], 'string', 'max' => 200],
+            [['file'], 'file', 'skipOnEmpty' => true]
         ];
     }
 
@@ -47,6 +51,7 @@ class Report extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'support_id' => 'Support ID',
             'service_family_id' => 'Service Family ID',
+            'file' => 'File'
         ];
     }
 

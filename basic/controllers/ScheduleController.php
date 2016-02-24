@@ -68,8 +68,8 @@ class ScheduleController extends Controller
         {
             $model->load(Yii::$app->request->post());
             $model->file = UploadedFile::getInstance($model, 'file');
-            $model->file->saveAs('uploads/' . $model->file->baseName . '.' . $model->file->extension);
-            $inputFile = 'uploads/' . $model->file->baseName . '.' . $model->file->extension;
+            $model->file->saveAs('uploads/schedules/' . $model->file->baseName . '.' . $model->file->extension);
+            $inputFile = 'uploads/schedules/' . $model->file->baseName . '.' . $model->file->extension;
 
             try{
                 $inputFileType = \PHPExcel_IOFactory::identify($inputFile);
@@ -125,10 +125,10 @@ class ScheduleController extends Controller
             // var_dump($date);
             Yii::$app->getSession()->setFlash('success', [
                  'type' => 'success',
-                 'duration' => 5000,
-                 'icon' => 'fa fa-users',
+                 'duration' => 3000,
+                 'icon' => 'fa fa-upload',
                  'message' => 'Upload Success',
-                 'title' => 'Success',
+                 'title' => 'Notification',
                  'positonY' => 'top',
                  'positonX' => 'right'
              ]);
@@ -138,6 +138,15 @@ class ScheduleController extends Controller
         {
             $model->load(Yii::$app->request->post());
             $model->save();
+            Yii::$app->getSession()->setFlash('success', [
+                 'type' => 'success',
+                 'duration' => 3000,
+                 'icon' => 'fa fa-calendar',
+                 'message' => 'Create Success',
+                 'title' => 'Notification',
+                 'positonY' => 'top',
+                 'positonX' => 'right'
+             ]);
             return $this->redirect(['index']);
         }
         else if(isset($_POST['setdm-button']))
@@ -149,6 +158,17 @@ class ScheduleController extends Controller
             $start = $date[0];
             $end = $date[1];
             Schedule::setDM($start, $end, $model->shift_id);
+
+            Yii::$app->getSession()->setFlash('success', [
+                 'type' => 'success',
+                 'duration' => 3000,
+                 'icon' => 'fa fa-user',
+                 'message' => 'Generate DM Success',
+                 'title' => 'Notification',
+                 'positonY' => 'top',
+                 'positonX' => 'right'
+             ]);
+            return $this->redirect(['index']);
             return $this->redirect(['index']);
         }
         else 
@@ -196,7 +216,7 @@ class ScheduleController extends Controller
         $searchModel = new ScheduleSearch();
         $searchModel->date = $date;
         $searchModel->is_dm = 1;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchDM(Yii::$app->request->queryParams);
 
         return $this->render('viewdm', [
             'searchModel' => $searchModel,

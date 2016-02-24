@@ -55,21 +55,6 @@ class ScheduleSearch extends Schedule
             'query' => $query,
         ]);
 
-        // $dataProvider->sort->attributes['support_name'] = [
-        //       'asc' => ['support.support_name' => SORT_ASC],
-        //       'desc' => ['support.support_name' => SORT_DESC],
-        // ];
-
-        // $dataProvider->sort->attributes['relPic.support_position_id'] = [
-        //       'asc' => ['relPic.relPicPos.position_name' => SORT_ASC],
-        //       'desc' => ['relPic.relPicPos.position_name' => SORT_DESC],
-        // ];
-
-        // $dataProvider->sort->attributes['position_name'] = [
-        //       'asc' => ['position_name' => SORT_ASC],
-        //       'desc' => ['position_name' => SORT_DESC],
-        // ];
-
         $dataProvider->sort->attributes['shift_id'] = [
               'asc' => ['shift.shift_name' => SORT_ASC],
               'desc' => ['shift.shift_name' => SORT_DESC],
@@ -131,28 +116,69 @@ class ScheduleSearch extends Schedule
         return $dataProvider;
     }
 
+    public function searchDM($params)
+    {
+        $query = Schedule::find();
+
+        $dataProvider = new ActiveDataProvider([    
+            'query' => $query,
+            'sort'=> ['defaultOrder' => ['shift_id'=>SORT_ASC]]
+        ]);
+
+         $dataProvider->sort->attributes['position_name'] = [
+              'asc' => ['support_position.position_name' => SORT_ASC],
+              'desc' => ['support_position.position_name' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['support_id'] = [
+              'asc' => ['support.support_name' => SORT_ASC],
+              'desc' => ['support.support_name' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['support_id'] = [
+              'asc' => ['support.email' => SORT_ASC],
+              'desc' => ['support.email' => SORT_DESC],
+        ];
+
+         $dataProvider->sort->attributes['support_id'] = [
+              'asc' => ['support.no_hp' => SORT_ASC],
+              'desc' => ['support.no_hp' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['support_id'] = [
+              'asc' => ['support.company' => SORT_ASC],
+              'desc' => ['support.company' => SORT_DESC],
+        ];
+
+
+        if (isset($_GET['ScheduleSearch']) && !($this->load($params) && $this->validate())) {
+            return $dataProvider; 
+        }
+
+        $query->joinWith(['shift', 'support', 'support.pos']);
+
+        $query->andFilterWhere([
+            'schedule_id' => $this->schedule_id,
+            // 'shift.shift_id' => $this->shift_id,
+            'date' => $this->date,
+            'is_dm' => $this->is_dm,
+        ]);
+        
+        $query->andFilterWhere(['like', 'shift.shift_name', $this->shift_id]);
+        $query->andFilterWhere(['like', 'support.support_name', $this->support_id]);
+        $query->andFilterWhere(['like', 'support_position.position_name', $this->position_name]);
+        
+        return $dataProvider;
+    }
+
     public function searchTeam($params)
     {
         $query = Schedule::find();
 
         $dataProvider = new ActiveDataProvider([    
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['is_dm'=>SORT_DESC]]
         ]);
-
-        // $dataProvider->sort->attributes['support_name'] = [
-        //       'asc' => ['support.support_name' => SORT_ASC],
-        //       'desc' => ['support.support_name' => SORT_DESC],
-        // ];
-
-        // $dataProvider->sort->attributes['relPic.support_position_id'] = [
-        //       'asc' => ['relPic.relPicPos.position_name' => SORT_ASC],
-        //       'desc' => ['relPic.relPicPos.position_name' => SORT_DESC],
-        // ];
-
-        // $dataProvider->sort->attributes['position_name'] = [
-        //       'asc' => ['position_name' => SORT_ASC],
-        //       'desc' => ['position_name' => SORT_DESC],
-        // ];
 
         $dataProvider->sort->attributes['shift_id'] = [
               'asc' => ['shift.shift_name' => SORT_ASC],

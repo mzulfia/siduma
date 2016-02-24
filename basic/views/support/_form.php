@@ -2,7 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
 
+use app\models\SupportPosition;
 /* @var $this yii\web\View */
 /* @var $model app\models\Pic */
 /* @var $form yii\widgets\ActiveForm */
@@ -20,9 +22,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput() ?>
 
-    <?= $form->field($model, 'support_position_id')->textInput() ?>
-
-    <?= $form->field($model, 'user_id')->textInput() ?>
+    <?= $form->field($model, 'support_position_id')->dropDownList(ArrayHelper::map(SupportPosition::find()->all(), 'support_position_id', 'position_name'), ['prompt'=>'-Select Position-']) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

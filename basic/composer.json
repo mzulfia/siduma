@@ -33,7 +33,9 @@
         "mootensai/yii2-enhanced-gii": "@dev",
         "kartik-v/yii2-export": "*",
         "kartik-v/yii2-mpdf": "*",
-        "kartik-v/yii2-grid": "@dev"
+        "kartik-v/yii2-grid": "@dev",
+        "miloschuman/yii2-highcharts-widget": "*",
+        "kartik-v/yii2-widget-fileinput": "@dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

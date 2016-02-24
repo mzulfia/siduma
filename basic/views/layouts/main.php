@@ -91,7 +91,38 @@ DashboardAsset::register($this);
           <ul class="sidebar-menu">
             <li class="header">MAIN NAVIGATION</li>
             <?php if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){?>
-              <li class="treeview">
+              <li>
+                <a href="#">
+                  <i class="fa fa-users"></i> <span>Users</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/user/index']);?>"><i class="fa fa-circle-o"></i> All </a></li>
+                  <li><a href="<?php echo Url::toRoute(['/user/create']);?>"><i class="fa fa-circle-o"></i> Create </a></li></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">
+                  <i class="fa fa-calendar"></i> <span>Schedules</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/schedule/index']);?>"><i class="fa fa-circle-o"></i> All </a></li>
+                  <li><a href="<?php echo Url::toRoute(['/schedule/create']);?>"><i class="fa fa-circle-o"></i> Create </a></li></li>
+                  <li><a href="<?php echo Url::toRoute(['/schedule/viewschedule']);?>"><i class="fa fa-circle-o"></i> View </a></li></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">
+                  <i class="fa fa-book"></i> <span>Reports</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/report/index']);?>"><i class="fa fa-circle-o"></i> All</a></li>
+                  <li><a href="<?php echo Url::toRoute(['/report/create']);?>"><i class="fa fa-circle-o"></i> Create</a></li></li>
+                </ul>
+              </li>
+              <!-- <li class="treeview">
               <a href="#">
                 <i class="fa fa-files-o"></i>
                 <span>Layout Options</span>
@@ -214,7 +245,7 @@ DashboardAsset::register($this);
             <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
             <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
             <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
-          
+           -->
 
             <?php } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT){ ?>
               <li>
@@ -236,7 +267,39 @@ DashboardAsset::register($this);
                 <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
               </ul>
             </li> -->
+             <?php } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPERVISOR){ ?>
+              <li>
+                <a href="#">
+                  <i class="fa fa-calendar"></i> <span>Schedules</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/schedule/index']);?>"><i class="fa fa-circle-o"></i> All </a></li>
+                  <li><a href="<?php echo Url::toRoute(['/schedule/create']);?>"><i class="fa fa-circle-o"></i> Create </a></li></li>
+                  <li><a href="<?php echo Url::toRoute(['/schedule/viewschedule']);?>"><i class="fa fa-circle-o"></i> View </a></li></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">
+                  <i class="fa fa-book"></i> <span>Reports</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/report/index']);?>"><i class="fa fa-circle-o"></i> All</a></li>
+                  <li><a href="<?php echo Url::toRoute(['/report/create']);?>"><i class="fa fa-circle-o"></i> Create</a></li></li>
+                </ul>
+              </li>
+            <!-- <li class="active treeview">
+              <a href="#">
+                <i class="fa fa-dashboard"></i> <span>User</span> <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+              </ul>
+            </li> -->
             <?php } else { ?>
+
                 <?php 
                 date_default_timezone_set("Asia/Jakarta");
                 if(Schedule::getIsDM(date('Y-m-d'), Shift::getDMShift(date("H:i:s")), User::getSupportId(Yii::$app->user->getId()))) { ?>
