@@ -1,9 +1,11 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
+use kartik\grid\GridView;
 
 use app\models\User;
+use app\models\Role;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\UserSearch */
@@ -29,10 +31,24 @@ $this->params['breadcrumbs'][] = $this->title;
             'username',
             [
                 'attribute' => 'role_id',
-                'value' => 'role.role_name'
+                'value' => 'role.role_name',
+                'filter' => Html::activeDropDownList($searchModel, 'role_id', ArrayHelper::map(Role::find()->all(), 'role_id', 'role_name'),['class'=>'form-control','prompt' => '-']),
             ],
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'header' => 'Action',
+                'class' => 'yii\grid\ActionColumn',
+                'contentOptions' => ['style' => 'width:100px;']
+            ],
         ],
+        'pager' => [
+            'firstPageLabel' => 'First',
+            'lastPageLabel' => 'Last',
+        ],
+        'responsive'=>true,
+        'hover'=>true,
+        'condensed'=>true,
+        'floatHeader'=>true,
+        'bordered'=>true,
     ]); ?>
 
 </div>

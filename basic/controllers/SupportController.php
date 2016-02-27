@@ -8,6 +8,7 @@ use app\models\SupportSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * SupportController implements the CRUD actions for Support model.
@@ -81,7 +82,17 @@ class SupportController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            if(!is_null($model->file)){
+                $ext =  end((explode(".", $model->file->name)));
+                $filename = Yii::$app->security->generateRandomString();
+                $model->image_path =  '/uploads/profile_pictures/' . $filename.".{$ext}";
+                if($model->update())
+                    $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");    
+            }  
+            
+            
             return $this->redirect(['view', 'id' => $model->support_id]);
         } else {
             return $this->render('update', [
@@ -101,6 +112,18 @@ class SupportController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionDeleteimage($id) {
+        $model = Support::findOne($id);
+        if ($model->deleteImage()) {
+            Yii::$app->session->setFlash('success', 
+           'Your image was removed successfully. Upload another by clicking Browse below');
+        } else {
+            Yii::$app->session->setFlash('error', 
+           'Error removing image. Please try again later or contact the system admin.');
+        }
+        return $this->render('update', ['model'=>$model]);
     }
 
     /**

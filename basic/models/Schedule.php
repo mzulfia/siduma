@@ -103,6 +103,20 @@ class Schedule extends \yii\db\ActiveRecord
         return $result;
     }
 
+    public function getNextSchedule($support_id){
+        $datetime = new \DateTime('tomorrow');
+        $model = Schedule::find()->where('date = :date AND support_id = :support_id', [':date' => $datetime->format('Y-m-d'), ':support_id' => $support_id])->one();
+        if(isset($model))
+            return $model;
+        else
+            return 0;
+    }
+
+    public function getDmNow(){
+        date_default_timezone_set("Asia/Jakarta");
+        $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 1', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))])->one();
+        return $model;
+    }
 
     /*
         setter
@@ -113,46 +127,20 @@ class Schedule extends \yii\db\ActiveRecord
         $list_date = Yii::$app->getDb()->createCommand('SELECT DISTINCT date FROM schedule WHERE date BETWEEN :start AND :end AND shift_id = :shift_id', [':start' => $start, ':end' => $end, ':shift_id' => $shift_id])->queryAll();
 
 
-        // $sup = [];
-        // $support = 0;
         for($i = 0; $i < sizeof($list_date); $i++){
             $list_support = Yii::$app->getDb()->createCommand('SELECT support_id FROM schedule WHERE date = :dt AND shift_id = :shift_id', [':dt' => $list_date[$i]['date'], ':shift_id' => $shift_id])->queryAll();
             $temp_sup = [];
             for($j = 0; $j < sizeof($list_support); $j++){
                 array_push($temp_sup, $list_support[$j]['support_id']);
             }
-            // $sup = $temp_sup;
-            // $i = sizeof($list_date);
 
             $fix_support_id = $temp_sup[rand(0, sizeof($temp_sup)-1)];
             $model  = Schedule::find()->where('date = :dt AND shift_id = :shift_id AND support_id = :support_id', [':dt' => $list_date[$i]['date'], ':shift_id' => $shift_id, ':support_id' => $fix_support_id])->one();
             $model->is_dm = 1;
             $model->save(false);
         }
-        // $dummy = [];
-        // foreach($list_date[0]['date'] as $date){
-        //     $list_id = Yii::$app->getDb()->createCommand('SELECT support_id FROM schedule WHERE date = :dt AND shift_id = :shift_id', [':dt' => $date, ':shift_id' => $shift_id])->queryAll();
-        //     $dummy = $list_id;
-        // }
-
-
-
-        // $support = Yii::$app->getDb()->createCommand('SELECT support_id FROM schedule WHERE date BETWEEN :start AND :end AND shift_id = :shift_id', [':start' => $start, ':end' => $end, ':shift_id' => $shift_id])->queryAll();
-        
-        // return $command[0]['support_id'];
-
-
-        // SupportPosition::findBySql("SELECT position_name FROM support_position")->all();                  
-        // $arrays  = Schedule::find()->where('(date BETWEEN :start AND :end) AND shift_id = :shift_id', [':start' => $start, ':end' => $end, ':shift_id' => $shift_id])->all();
-        // foreach($arrays as $array){
-
-
-        // }
-
-        // return $list_date[1]['date'];
-        // return $fix_support_id;
+       
         return true;
-        // return true;
     }
 
     public function getIsDM($date, $shift_id, $support_id){
@@ -163,7 +151,7 @@ class Schedule extends \yii\db\ActiveRecord
         }
         else
         {
-            return 0;
+            return false;
         } 
     }   
 }

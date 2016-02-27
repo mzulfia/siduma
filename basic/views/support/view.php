@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 use app\models\User;
+use app\models\Support;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Pic */
@@ -28,6 +29,10 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         <?php endif; ?>
     </p>
+
+    <div class="profile-picture">
+        <img src="<?php echo Yii::$app->homeUrl . Support::getProfilePicture(User::getSupportId(Yii::$app->user->getId()))?>"/>
+    </div>
 
     <?= DetailView::widget([
         'model' => $model,

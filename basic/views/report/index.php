@@ -35,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'yii\grid\SerialColumn',
             ],
             [
+                'label' => 'Created At',
                 'attribute' => 'created_at',
                 'value' => 'created_at', 
                 'filter' => DateRangePicker::widget([
@@ -54,12 +55,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute'=> 'service_family_id',
                 'filter' => Html::activeDropDownList($searchModel, 'service_family_id', ArrayHelper::map(ServiceFamily::find()->all(), 'service_family_id', 'service_name'),['class'=>'form-control','prompt' => '-']),
                 'value' => 'service.service_name',
-                'contentOptions' => ['style' => 'width:200px;']
+                'contentOptions' => ['style' => 'width:175px;']
             ],
             [
                 'label' => 'Status',
                 'attribute'=> 'status',
-                'filter' => Html::activeDropDownList($searchModel, 'status', ['1' => 'OK', '0' => 'Tidak'],['class'=>'form-control','prompt' => '-']),
+                'filter' => Html::activeDropDownList($searchModel, 'status', ['1' => 'Baik', '0' => 'Tidak'],['class'=>'form-control','prompt' => '-']),
                 'value' => function ($model) {
                     return $model->status == 1 ? 'Ok' : 'Tidak';
                 },
@@ -78,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
                            'data-method' => 'post',
                         ]);
                 },
-                'contentOptions' => ['style' => 'width:150px;']
+                'contentOptions' => ['style' => 'width:200px;']
             ],
             'information:ntext',
             [
@@ -87,7 +88,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => 'support.support_name',
                 'contentOptions' => ['style' => 'width:150px;']
             ],
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'header' => 'Action',
+                'class' => 'yii\grid\ActionColumn'
+            ],
         ];
 
 

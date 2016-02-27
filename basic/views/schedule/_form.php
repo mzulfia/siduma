@@ -7,6 +7,7 @@ use app\models\Support;
 use app\models\Schedule;
 use kartik\daterange\DateRangePicker;
 use kartik\form\ActiveForm;
+use kartik\widgets\FileInput;
 
 
 /* @var $this yii\web\View */
@@ -58,12 +59,10 @@ use kartik\form\ActiveForm;
             ]]
         ); ?>
 
-        <?= $form->field($model, 'file')->fileInput() ?>
+        <?= $form->field($model, 'file')->widget(FileInput::classname(), [
+            'options' => ['accept' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'],
+        ]); ?>
         <p>Accepted File: xlsx, xls</p>
-
-        <p>
-            *Pagi: 07:00-15:00, Sore: 15:00-23:00, Malam : 23:00-07:00
-        </p>
 
         <div class="form-group">
             <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['name' => 'automatic-button', 'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

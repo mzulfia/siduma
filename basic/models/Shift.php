@@ -55,7 +55,7 @@ class Shift extends \yii\db\ActiveRecord
         }
     }
 
-    public function getDMShift($time){
+    public function getShift($time){
         $model  = Shift::find()->where(':time BETWEEN shift_start AND shift_end', [':time' => $time])->one();
         return $model->shift_id;
     }

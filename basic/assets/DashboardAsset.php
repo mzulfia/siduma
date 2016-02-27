@@ -36,6 +36,7 @@ class DashboardAsset extends AssetBundle
         'js/app.min.js',
         // 'js/dashboard.js',
         'js/main.js',
+        'js/dark-unica.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',
