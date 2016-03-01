@@ -109,12 +109,19 @@ class Schedule extends \yii\db\ActiveRecord
         if(isset($model))
             return $model;
         else
-            return 0;
+            return null;
     }
 
     public function getDmNow(){
         date_default_timezone_set("Asia/Jakarta");
-        $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 1', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))])->one();
+        $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 1', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id])->one();
+        return $model;
+    }
+
+    public function getTeamNow($service_family_id){
+        date_default_timezone_set("Asia/Jakarta");
+        $model = Yii::$app->getDb()->createCommand('SELECT * FROM support LEFT JOIN schedule ON support.support_id = schedule.support_id LEFT JOIN support_area ON support.support_id = support_area.support_id WHERE `date` = :dt AND shift_id = :shift_id AND service_family_id = :id AND is_dm = 0 ORDER BY service_family_id', [':dt' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id, ':id' => $service_family_id])->queryAll();
+
         return $model;
     }
 

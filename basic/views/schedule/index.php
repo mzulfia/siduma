@@ -24,7 +24,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'layout' => "{items}",
         'columns' => [
             [
                 'class' => 'yii\grid\SerialColumn',
@@ -45,21 +44,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]),
                 'contentOptions' => ['style' => 'width:150px;']
             ],
-            // [
-            //     'label' => 'File',
-            //     'format' => 'raw',
-            //     'attribute' => 'file_path',
-            //     'value' => function($model){
-            //         return $model->file_path == NULL ? NULL : Html::a(Html::encode(explode("/", $model->file_path)[2]), 
-            //             Url::toRoute(['report/download', 'file_path' => $model->file_path]), 
-            //             [
-            //                // 'title'=>'Clave',
-            //                // 'data-confirm' => Yii::t('yii', 'Are you sure you want to change this password?'),
-            //                'data-method' => 'post',
-            //             ]);
-            //     },
-            //     'contentOptions' => ['style' => 'width:200px;']
-            // ],
             [
                 'label' => 'Support Name',
                 'attribute' => 'support_id',

@@ -39,7 +39,7 @@ class Support extends \yii\db\ActiveRecord
             [['no_hp'], 'string', 'max' => 20],
             [['support_name', 'company', 'email'], 'string', 'max' => 50],
             [['image_path'], 'string', 'max' => 255],
-            [['file'], 'file', 'maxSize'=>'100000'],
+            [['file'], 'file', 'maxSize'=>'200000'],
             [['file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg, png']
         ];
     }
@@ -51,7 +51,7 @@ class Support extends \yii\db\ActiveRecord
     {
         return [
             'support_id' => 'Support ID',
-            'support_name' => 'Support Name',
+            'support_name' => 'Name',
             'company' => 'Company',
             'no_hp' => 'No Hp',
             'email' => 'Email',
@@ -85,32 +85,23 @@ class Support extends \yii\db\ActiveRecord
         }
     }
 
-    // public function getDisplayImage() {
-    //     if (empty($model->image_path)) {
-    //         // if you do not want a placeholder
-    //         $image = null;
-     
-    //         // else if you want to display a placeholder
-    //         $image = Html::img(self::IMAGE_PLACEHOLDER, [
-    //             'alt'=>Yii::t('app', 'No avatar yet'),
-    //             'title'=>Yii::t('app', 'Upload your avatar by selecting browse below'),
-    //             'class'=>'file-preview-image'
-    //             // add a CSS class to make your image styling consistent
-    //         ]);
-    //     }
-    //     else {
-    //         $image = Html::img(Yii::$app->urlManager->baseUrl . '/' . $model->image_path, [
-    //             'alt'=>Yii::t('app', 'Avatar for ') . $model->username,
-    //             'title'=>Yii::t('app', 'Click remove button below to remove this image'),
-    //             'class'=>'file-preview-image'
-    //             // add a CSS class to make your image styling consistent
-    //         ]);
-    //     }
-     
-    //     // enclose in a container if you wish with appropriate styles
-    //     return ($image == null) ? null : 
-    //         Html::tag('div', $image, ['class' => 'file-preview-frame']); 
-    // }
+    public function getServiceInCharge($id){
+        $model = SupportArea::find()->where('support_id = :id', [':id' => $id])->all();
+        if(sizeof($model) == 1){
+            return ServiceFamily::getServiceName($model[0]['service_family_id']);
+        } else if(sizeof($model) > 1){
+            $service_name = '';
+            for($i=0; $i < sizeof($model); $i++){
+                if($i == sizeof($model)-1)
+                    $service_name .= ServiceFamily::getServiceName($model[$i]['service_family_id']);
+                else
+                    $service_name .= ServiceFamily::getServiceName($model[$i]['service_family_id']) . "<br>";
+            }
+            return $service_name;
+        } else {
+            return null;
+        }
+    }
 
     public function deleteImage() {
         $image = getcwd() . "/" . $this->image_path;
@@ -121,4 +112,9 @@ class Support extends \yii\db\ActiveRecord
         }
         return false;
     }
+
+    /*
+        setter
+    */
+
 }

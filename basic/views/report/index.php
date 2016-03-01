@@ -6,7 +6,7 @@ use kartik\grid\GridView;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use kartik\export\ExportMenu;
-// use kartik\date\DatePicker;
+
 use kartik\daterange\DateRangePicker;
 use yii\data\ArrayDataProvider;
 
@@ -60,9 +60,9 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Status',
                 'attribute'=> 'status',
-                'filter' => Html::activeDropDownList($searchModel, 'status', ['1' => 'Baik', '0' => 'Tidak'],['class'=>'form-control','prompt' => '-']),
+                'filter' => Html::activeDropDownList($searchModel, 'status', ['2' => 'Normal', '1' => 'Sufficient', '0' => 'Bad'],['class'=>'form-control','prompt' => '-']),
                 'value' => function ($model) {
-                    return $model->status == 1 ? 'Ok' : 'Tidak';
+                    return $model->status == 2 ? 'Normal' : $model->status == 1 ? 'Sufficient' : 'Bad';
                 },
                 'contentOptions' => ['style' => 'width:75px;']
             ],
@@ -123,13 +123,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'rowOptions' => function($model){
-                    if($model->status == 1){
+                    if($model->status == 2){
                         return ['class' => 'success'];
+                    } elseif($model->status == 1){
+                        return ['class' => 'warning'];
                     } else {
                         return ['class' => 'danger'];
                     }
                 },
             'columns' => $gridColumns,
+            'pager' => [
+                'firstPageLabel' => 'First',
+                'lastPageLabel' => 'Last',
+            ],
             'responsive'=>true,
             'hover'=>true,
             'condensed'=>true,

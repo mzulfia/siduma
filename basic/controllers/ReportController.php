@@ -81,8 +81,8 @@ class ReportController extends Controller
             $file_erp = UploadedFile::getInstance($erp, '[1]file');
             if(!empty($file_erp)){
                 $erp->file = $file_erp;
-                $erp->file->saveAs('/uploads/reports/' . $erp->file->baseName . '.' . $erp->file->extension);    
-                $erp->file_path = '/uploads/reports/' . $erp->file->baseName . '.' . $erp->file->extension;
+                $erp->file->saveAs('uploads/reports/' . $erp->file->baseName . '.' . $erp->file->extension);    
+                $erp->file_path = 'uploads/reports/' . $erp->file->baseName . '.' . $erp->file->extension;
             }
             
             $email->attributes=$_POST['Report'][2];
@@ -92,8 +92,8 @@ class ReportController extends Controller
             $file_email = UploadedFile::getInstance($email, '[2]file');
             if(!empty($file_email)){
                 $email->file = $file_email;
-                $email->file->saveAs('/uploads/reports/' . $email->file->baseName . '.' . $email->file->extension);
-                $email->file_path = '/uploads/reports/' . $email->file->baseName . '.' . $email->file->extension;
+                $email->file->saveAs('uploads/reports/' . $email->file->baseName . '.' . $email->file->extension);
+                $email->file_path = 'uploads/reports/' . $email->file->baseName . '.' . $email->file->extension;
             }    
 
             $ap2t->attributes=$_POST['Report'][3];
@@ -103,8 +103,8 @@ class ReportController extends Controller
             $file_ap2t = UploadedFile::getInstance($ap2t, '[3]file');
             if(!empty($file_ap2t)){
                 $ap2t->file = $file_ap2t;
-                $ap2t->file->saveAs('/uploads/reports/' . $ap2t->file->baseName . '.' . $ap2t->file->extension);
-                $ap2t->file_path = '/uploads/reports/' . $ap2t->file->baseName . '.' . $ap2t->file->extension;
+                $ap2t->file->saveAs('uploads/reports/' . $ap2t->file->baseName . '.' . $ap2t->file->extension);
+                $ap2t->file_path = 'uploads/reports/' . $ap2t->file->baseName . '.' . $ap2t->file->extension;
             }    
 
             $p2apst->attributes=$_POST['Report'][4];
@@ -114,8 +114,8 @@ class ReportController extends Controller
             $file_p2apst = UploadedFile::getInstance($p2apst, '[4]file');
             if(!empty($file_p2apst)){
                 $p2apst->file = $file_p2apst;
-                $p2apst->file->saveAs('/uploads/reports/' . $p2apst->file->baseName . '.' . $p2apst->file->extension);
-                $p2apst->file_path = '/uploads/reports/' . $p2apst->file->baseName . '.' . $p2apst->file->extension;
+                $p2apst->file->saveAs('uploads/reports/' . $p2apst->file->baseName . '.' . $p2apst->file->extension);
+                $p2apst->file_path = 'uploads/reports/' . $p2apst->file->baseName . '.' . $p2apst->file->extension;
             }    
 
             $bbo->attributes=$_POST['Report'][5];
@@ -125,8 +125,8 @@ class ReportController extends Controller
             $file_bbo = UploadedFile::getInstance($bbo, '[5]file');
             if(!empty($file_bbo)){
                 $bbo->file = $file_bbo;
-                $bbo->file->saveAs('/uploads/reports/' . $bbo->file->baseName . '.' . $bbo->file->extension);
-                $bbo->file_path = '/uploads/reports/' . $bbo->file->baseName . '.' . $bbo->file->extension;
+                $bbo->file->saveAs('uploads/reports/' . $bbo->file->baseName . '.' . $bbo->file->extension);
+                $bbo->file_path = 'uploads/reports/' . $bbo->file->baseName . '.' . $bbo->file->extension;
             }    
 
             $apkt->attributes=$_POST['Report'][6];
@@ -136,8 +136,8 @@ class ReportController extends Controller
             $file_apkt = UploadedFile::getInstance($apkt, '[6]file');
             if(!empty($file_apkt)){
                 $apkt->file = $file_apkt;
-                $apkt->file->saveAs('/uploads/reports/' . $apkt->file->baseName . '.' . $apkt->file->extension);
-                $apkt->file_path = '/uploads/reports/' . $apkt->file->baseName . '.' . $apkt->file->extension;
+                $apkt->file->saveAs('uploads/reports/' . $apkt->file->baseName . '.' . $apkt->file->extension);
+                $apkt->file_path = 'uploads/reports/' . $apkt->file->baseName . '.' . $apkt->file->extension;
             }    
 
             $itsm->attributes=$_POST['Report'][7];
@@ -147,8 +147,8 @@ class ReportController extends Controller
             $file_itsm = UploadedFile::getInstance($itsm, '[7]file');
             if(!empty($file_itsm)){
                 $itsm->file = $file_itsm;
-                $itsm->file->saveAs('/uploads/reports/' . $itsm->file->baseName . '.' . $itsm->file->extension);
-                $itsm->file_path = '/uploads/reports/' . $itsm->file->baseName . '.' . $itsm->file->extension;
+                $itsm->file->saveAs('uploads/reports/' . $itsm->file->baseName . '.' . $itsm->file->extension);
+                $itsm->file_path = 'uploads/reports/' . $itsm->file->baseName . '.' . $itsm->file->extension;
             }    
 
              // Validate all models
@@ -242,7 +242,7 @@ class ReportController extends Controller
     {
         $model = $this->findModel($id);
         if($model->file_path != NULL && file_exists($model->file_path)){
-            unlink(getcwd() . $model->file_path); 
+            unlink(getcwd() . '/' . $model->file_path); 
         }
         $model->delete();
         return $this->redirect(['index']);
@@ -262,26 +262,26 @@ class ReportController extends Controller
     public function actionDownload($file_path) {
         if (file_exists($file_path)) {
             Yii::$app->response->sendFile($file_path)->send();
-             // Yii::$app->getSession()->setFlash('success', [
-            //        'type' => 'success',
-            //        'duration' => 3000,
-            //        'icon' => 'fa fa-download',
-            //        'message' => 'Download Success',
-            //        'title' => 'Notification',
-            //        'positonY' => 'top',
-            //        'positonX' => 'right'
-            //     ]);
+             Yii::$app->getSession()->setFlash('success', [
+                   'type' => 'success',
+                   'duration' => 3000,
+                   'icon' => 'fa fa-download',
+                   'message' => 'Download Success',
+                   'title' => 'Notification',
+                   'positonY' => 'top',
+                   'positonX' => 'right'
+                ]);
         } else {
 
-            // Yii::$app->getSession()->setFlash('danger', [
-            //        'type' => 'danger',
-            //        'duration' => 3000,
-            //        'icon' => 'fa fa-download',
-            //        'message' => 'Download Failed',
-            //        'title' => 'Notification',
-            //        'positonY' => 'top',
-            //        'positonX' => 'right'
-            //     ]);
+            Yii::$app->getSession()->setFlash('danger', [
+                   'type' => 'danger',
+                   'duration' => 3000,
+                   'icon' => 'fa fa-download',
+                   'message' => 'Download Failed',
+                   'title' => 'Notification',
+                   'positonY' => 'top',
+                   'positonX' => 'right'
+                ]);
        }
 
         return $this->redirect(['index']);

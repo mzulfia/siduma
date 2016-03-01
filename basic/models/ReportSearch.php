@@ -77,7 +77,7 @@ class ReportSearch extends Report
         $query->andFilterWhere(['like', 'support.support_name', $this->support_id]);
 
         if(sizeof(explode(" - ", $this->created_at)) > 1)
-          $query->andFilterWhere(['between', 'created_at', explode(" - ", $this->created_at)[0], explode(" - ", $this->created_at)[1]]);
+          $query->andFilterWhere(['between', 'created_at', explode(" - ", $this->created_at)[0], date('Y-m-d', strtotime(explode(" - ", $this->created_at)[1] . ' +1 day'))]);
         
         return $dataProvider;
     }

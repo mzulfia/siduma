@@ -40,4 +40,13 @@ class ServiceFamily extends \yii\db\ActiveRecord
             'service_name' => 'Service Name',
         ];
     }
+
+    public function getServiceName($id){
+        $array  = ServiceFamily::find()->where('service_family_id = :service_family_id', [':service_family_id' => $id])->one();
+        if($array == null){
+            return null;
+        } else {
+            return $array->service_name;
+        }
+    }
 }

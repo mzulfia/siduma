@@ -7,7 +7,11 @@ use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
 use yii\helpers\Security;
 use yii\web\IdentityInterface;
+use kartik\password\StrengthValidator;
+
 use app\models\Role;
+
+
 
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -35,6 +39,7 @@ class User extends ActiveRecord implements IdentityInterface
       
         return [
             [['username', 'password', 'salt_password'], 'required'],
+            [['password'], StrengthValidator::className(), 'preset'=>'normal', 'userAttribute'=>'username'],
             [['username'], 'unique'],
             [['role_id'], 'integer'],
             [['username'], 'string', 'max' => 20],

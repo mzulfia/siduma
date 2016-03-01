@@ -28,10 +28,7 @@ DashboardAsset::register($this);
 
     <!-- Favicon and touch icons -->
     <link rel="shortcut icon" href="<?php echo \Yii::$app->homeUrl;?>images/ico/favicon.png">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href= "<?php echo \Yii::$app->homeUrl;?>images/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="<?php echo \Yii::$app->homeUrl;?>images/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo \Yii::$app->homeUrl;?>images/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="<?php echo \Yii::$app->homeUrl;?>images/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="icon-32" sizes="32x32" href= "<?php echo \Yii::$app->homeUrl;?>images/ico/favicon-32.png">
 
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
@@ -270,6 +267,16 @@ DashboardAsset::register($this);
              <?php } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPERVISOR){ ?>
               <li>
                 <a href="#">
+                  <i class="fa fa-calendar"></i> <span>Profile</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/support/update', 'id' => User::getSupportId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> Edit </a></li>
+                  <li><a href="<?php echo Url::toRoute(['/support/view', 'id' => User::getSupportId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> View </a></li></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">
                   <i class="fa fa-calendar"></i> <span>Schedules</span>
                   <i class="fa fa-angle-left pull-right"></i>
                 </a>
@@ -299,11 +306,20 @@ DashboardAsset::register($this);
               </ul>
             </li> -->
             <?php } else { ?>
-
                 <?php 
                 date_default_timezone_set("Asia/Jakarta");
-                if(Schedule::getIsDM(date('Y-m-d'), Shift::getDMShift(date("H:i:s")), User::getSupportId(Yii::$app->user->getId()))) { ?>
-                     <li>
+                if(Schedule::getIsDM(date('Y-m-d'), Shift::getShift(date("H:i:s")), User::getSupportId(Yii::$app->user->getId()))) { ?>
+                    <li>
+                      <a href="#">
+                        <i class="fa fa-calendar"></i> <span>Profile</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                      </a>
+                      <ul class="treeview-menu">
+                        <li><a href="<?php echo Url::toRoute(['/support/update', 'id' => User::getSupportId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> Edit </a></li>
+                        <li><a href="<?php echo Url::toRoute(['/support/view', 'id' => User::getSupportId(Yii::$app->user->getId())]);?>"><i class="fa fa-circle-o"></i> View </a></li></li>
+                      </ul>
+                    </li> 
+                    <li>
                       <a href="#">
                         <i class="fa fa-book"></i> <span>Profile</span>
                         <i class="fa fa-angle-left pull-right"></i>

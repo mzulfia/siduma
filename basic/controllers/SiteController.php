@@ -57,95 +57,133 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $this->layout = 'main';
-        // return $this->render('index', ['time' => date('H:i:s')]);
-        
-        $model = new Schedule();
-        $service_name = '';
-        $ok_erp = 0.0;
-        $bad_erp = 0.0;
-        $ok_email = 0.0;
-        $bad_email = 0.0;
-        $ok_ap2t = 0.0;
-        $bad_ap2t = 0.0;
-        $ok_p2apst = 0.0;
-        $bad_p2apst = 0.0;
-        $ok_bbo = 0.0;
-        $bad_bbo = 0.0;
-        $ok_apkt = 0.0;
-        $bad_apkt = 0.0;
-        $ok_itsm = 0.0;
-        $bad_itsm = 0.0;
-        
-        $date = '';
-        if(isset($_POST['dashboard-button']) && $_POST['Schedule']['date'] != ''){
-            $date = $_POST['Schedule']['date'];
-            $ok_erp = (float) number_format((float)Report::getOkCondition($date, 1), 2, '.', '');
-            $bad_erp = (float) number_format((float)Report::getBadCondition($date, 1), 2, '.', '');
-            $ok_email = (float) number_format((float)Report::getOkCondition($date, 2), 2, '.', '');
-            $bad_email = (float) number_format((float)Report::getBadCondition($date, 2), 2, '.', '');
-            $ok_ap2t = (float) number_format((float)Report::getOkCondition($date, 3), 2, '.', '');
-            $bad_ap2t = (float) number_format((float)Report::getBadCondition($date, 3), 2, '.', '');
-            $ok_p2apst = (float) number_format((float)Report::getOkCondition($date, 4), 2, '.', '');
-            $bad_p2apst = (float) number_format((float)Report::getBadCondition($date, 4), 2, '.', '');
-            $ok_bbo = (float) number_format((float)Report::getOkCondition($date, 5), 2, '.', '');
-            $bad_bbo = (float) number_format((float)Report::getBadCondition($date, 5), 2, '.', '');
-            $ok_apkt = (float) number_format((float)Report::getOkCondition($date, 6), 2, '.', '');
-            $bad_apkt = (float) number_format((float)Report::getBadCondition($date, 6), 2, '.', '');
-            $ok_itsm = (float) number_format((float)Report::getOkCondition($date, 7), 2, '.', '');
-            $bad_itsm = (float) number_format((float)Report::getBadCondition($date, 7), 2, '.', '');
-        }        
 
-        // if(!Yii::$app->request->post()){
-            return $this->render('index', [
-                'model' => $model,
-                'date' => $date,
-                'ok_erp' => $ok_erp,
-                'bad_erp' => $bad_erp,
-                'ok_email' => $ok_email,
-                'bad_email' => $bad_email,
-                'ok_ap2t' => $ok_ap2t,
-                'bad_ap2t' => $bad_ap2t,
-                'ok_p2apst' => $ok_p2apst,
-                'bad_p2apst' => $bad_p2apst,
-                'ok_bbo' => $ok_bbo,
-                'bad_bbo' => $bad_bbo,
-                'ok_apkt' => $ok_apkt,
-                'bad_apkt' => $bad_apkt,
-                'ok_itsm' => $ok_itsm,
-                'bad_itsm' => $bad_itsm,
-            ]);    
+        
+        $schedule = new Schedule();
+        $report = new Report();
+
+        return $this->render('index', [
+            'schedule' => $schedule,
+            'report' => $report,
+        ]);
+        
+        // if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR || User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT) {
+        //     $schedule = new Schedule();
+        //     $report = new Report();
         // }
-        // else
-        // {
-        //      var_dump($_POST['Schedule']['date']);
-        // }
+
+        // $model = new Schedule();
+        // $service_name = '';
+        // $ok_erp = 0.0;
+        // $bad_erp = 0.0;
+        // $ok_email = 0.0;
+        // $bad_email = 0.0;
+        // $ok_ap2t = 0.0;
+        // $bad_ap2t = 0.0;
+        // $ok_p2apst = 0.0;
+        // $bad_p2apst = 0.0;
+        // $ok_bbo = 0.0;
+        // $bad_bbo = 0.0;
+        // $ok_apkt = 0.0;
+        // $bad_apkt = 0.0;
+        // $ok_itsm = 0.0;
+        // $bad_itsm = 0.0;
+        
+
+        // $date = date('Y-m-d');
+        // $ok_erp = (float) number_format((float)Report::getOkCondition($date, 1), 2, '.', '');
+        // $bad_erp = (float) number_format((float)Report::getBadCondition($date, 1), 2, '.', '');
+        // $ok_email = (float) number_format((float)Report::getOkCondition($date, 2), 2, '.', '');
+        // $bad_email = (float) number_format((float)Report::getBadCondition($date, 2), 2, '.', '');
+        // $ok_ap2t = (float) number_format((float)Report::getOkCondition($date, 3), 2, '.', '');
+        // $bad_ap2t = (float) number_format((float)Report::getBadCondition($date, 3), 2, '.', '');
+        // $ok_p2apst = (float) number_format((float)Report::getOkCondition($date, 4), 2, '.', '');
+        // $bad_p2apst = (float) number_format((float)Report::getBadCondition($date, 4), 2, '.', '');
+        // $ok_bbo = (float) number_format((float)Report::getOkCondition($date, 5), 2, '.', '');
+        // $bad_bbo = (float) number_format((float)Report::getBadCondition($date, 5), 2, '.', '');
+        // $ok_apkt = (float) number_format((float)Report::getOkCondition($date, 6), 2, '.', '');
+        // $bad_apkt = (float) number_format((float)Report::getBadCondition($date, 6), 2, '.', '');
+        // $ok_itsm = (float) number_format((float)Report::getOkCondition($date, 7), 2, '.', '');
+        // $bad_itsm = (float) number_format((float)Report::getBadCondition($date, 7), 2, '.', '');
+
+        // $date = '';
+        // if(isset($_POST['dashboard-button']) && $_POST['Schedule']['date'] != ''){
+        //     $date = $_POST['Schedule']['date'];
+        //     $ok_erp = (float) number_format((float)Report::getOkCondition($date, 1), 2, '.', '');
+        //     $bad_erp = (float) number_format((float)Report::getBadCondition($date, 1), 2, '.', '');
+        //     $ok_email = (float) number_format((float)Report::getOkCondition($date, 2), 2, '.', '');
+        //     $bad_email = (float) number_format((float)Report::getBadCondition($date, 2), 2, '.', '');
+        //     $ok_ap2t = (float) number_format((float)Report::getOkCondition($date, 3), 2, '.', '');
+        //     $bad_ap2t = (float) number_format((float)Report::getBadCondition($date, 3), 2, '.', '');
+        //     $ok_p2apst = (float) number_format((float)Report::getOkCondition($date, 4), 2, '.', '');
+        //     $bad_p2apst = (float) number_format((float)Report::getBadCondition($date, 4), 2, '.', '');
+        //     $ok_bbo = (float) number_format((float)Report::getOkCondition($date, 5), 2, '.', '');
+        //     $bad_bbo = (float) number_format((float)Report::getBadCondition($date, 5), 2, '.', '');
+        //     $ok_apkt = (float) number_format((float)Report::getOkCondition($date, 6), 2, '.', '');
+        //     $bad_apkt = (float) number_format((float)Report::getBadCondition($date, 6), 2, '.', '');
+        //     $ok_itsm = (float) number_format((float)Report::getOkCondition($date, 7), 2, '.', '');
+        //     $bad_itsm = (float) number_format((float)Report::getBadCondition($date, 7), 2, '.', '');
+        // }        
+
+        // return $this->render('index', [
+        //     'model' => $model,
+        //     'date' => $date,
+        //     'ok_erp' => $ok_erp,
+        //     'bad_erp' => $bad_erp,
+        //     'ok_email' => $ok_email,
+        //     'bad_email' => $bad_email,
+        //     'ok_ap2t' => $ok_ap2t,
+        //     'bad_ap2t' => $bad_ap2t,
+        //     'ok_p2apst' => $ok_p2apst,
+        //     'bad_p2apst' => $bad_p2apst,
+        //     'ok_bbo' => $ok_bbo,
+        //     'bad_bbo' => $bad_bbo,
+        //     'ok_apkt' => $ok_apkt,
+        //     'bad_apkt' => $bad_apkt,
+        //     'ok_itsm' => $ok_itsm,
+        //     'bad_itsm' => $bad_itsm,
+        // ]);    
     }
+
+     public function actionIndexSupport()
+    {
+        $searchModel = new ScheduleSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+
 
     public function actionLogin()
     {
         $this->layout = 'signin';
-        if (!\Yii::$app->user->isGuest) {
+        if (!Yii::$app->user->isGuest) {
             return $this->actionIndex();
+        } else {
+            $model = new LoginForm();
+            if ($model->load(Yii::$app->request->post()) && $model->login()) {
+
+                Yii::$app->getSession()->setFlash('success', [
+                         'type' => 'success',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-sign-in',
+                         'message' => 'Login Success',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                        ]);
+
+                return $this->actionIndex();
+            } else {
+                return $this->render('login', [
+                    'model' => $model,
+                ]);    
+            }
         }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-
-            Yii::$app->getSession()->setFlash('success', [
-                     'type' => 'success',
-                     'duration' => 3000,
-                     'icon' => 'fa fa-sign-in',
-                     'message' => 'Login Success',
-                     'title' => 'Notification',
-                     'positonY' => 'top',
-                     'positonX' => 'right'
-                    ]);
-
-            return $this->actionIndex();
-        }
-        return $this->render('login', [
-            'model' => $model,
-        ]);
     }
 
     public function actionLogout()
@@ -158,10 +196,17 @@ class SiteController extends Controller
         if(User::getRoleId($user) == User::ROLE_SUPERVISOR || User::getRoleId($user) == User::ROLE_SUPPORT){
             $schedule = Schedule::getNextSchedule(User::getSupportId($user));
             $is_dm = 'Tidak';
-            if($schedule->is_dm == 1)
-                $is_dm = 'Ya';
+            $note = '';
+            if(isset($schedule)){
+                if($schedule->is_dm == 1)
+                    $is_dm = 'Ya';    
+                
+                $note = 'Shift: ' . $schedule->shift->shift_name . ', Waktu: ' . $schedule->shift->shift_start . ' s.d. ' . $schedule->shift->shift_end . ', Duty Manager: ' .  $is_dm ;
+            } else {
+                $note = 'Besok Anda Libur';
+            }
             
-            $note = 'Shift: ' . $schedule->shift->shift_name . ', Time: ' . $schedule->shift->shift_start . ' s.d. ' . $schedule->shift->shift_end . ', Duty Manager: ' .  $is_dm ;
+            
         
             Yii::$app->getSession()->setFlash('warning', [
                  'type' => 'warning',
@@ -185,6 +230,82 @@ class SiteController extends Controller
         }
 
         return $this->goHome();
+        // return $this->redirect(['login']);
+    }
+
+    public function actionHistoryReport(){
+        $model = new Schedule();
+        $service_name = '';
+        $ok_erp = 0.0;
+        $bad_erp = 0.0;
+        $ok_email = 0.0;
+        $bad_email = 0.0;
+        $ok_ap2t = 0.0;
+        $bad_ap2t = 0.0;
+        $ok_p2apst = 0.0;
+        $bad_p2apst = 0.0;
+        $ok_bbo = 0.0;
+        $bad_bbo = 0.0;
+        $ok_apkt = 0.0;
+        $bad_apkt = 0.0;
+        $ok_itsm = 0.0;
+        $bad_itsm = 0.0;
+        
+
+        $date = date('Y-m-d');
+        $ok_erp = (float) number_format((float)Report::getOkCondition($date, 1), 2, '.', '');
+        $bad_erp = (float) number_format((float)Report::getBadCondition($date, 1), 2, '.', '');
+        $ok_email = (float) number_format((float)Report::getOkCondition($date, 2), 2, '.', '');
+        $bad_email = (float) number_format((float)Report::getBadCondition($date, 2), 2, '.', '');
+        $ok_ap2t = (float) number_format((float)Report::getOkCondition($date, 3), 2, '.', '');
+        $bad_ap2t = (float) number_format((float)Report::getBadCondition($date, 3), 2, '.', '');
+        $ok_p2apst = (float) number_format((float)Report::getOkCondition($date, 4), 2, '.', '');
+        $bad_p2apst = (float) number_format((float)Report::getBadCondition($date, 4), 2, '.', '');
+        $ok_bbo = (float) number_format((float)Report::getOkCondition($date, 5), 2, '.', '');
+        $bad_bbo = (float) number_format((float)Report::getBadCondition($date, 5), 2, '.', '');
+        $ok_apkt = (float) number_format((float)Report::getOkCondition($date, 6), 2, '.', '');
+        $bad_apkt = (float) number_format((float)Report::getBadCondition($date, 6), 2, '.', '');
+        $ok_itsm = (float) number_format((float)Report::getOkCondition($date, 7), 2, '.', '');
+        $bad_itsm = (float) number_format((float)Report::getBadCondition($date, 7), 2, '.', '');
+
+        $date = '';
+        if(isset($_POST['dashboard-button']) && $_POST['Schedule']['date'] != ''){
+            $date = $_POST['Schedule']['date'];
+            $ok_erp = (float) number_format((float)Report::getOkCondition($date, 1), 2, '.', '');
+            $bad_erp = (float) number_format((float)Report::getBadCondition($date, 1), 2, '.', '');
+            $ok_email = (float) number_format((float)Report::getOkCondition($date, 2), 2, '.', '');
+            $bad_email = (float) number_format((float)Report::getBadCondition($date, 2), 2, '.', '');
+            $ok_ap2t = (float) number_format((float)Report::getOkCondition($date, 3), 2, '.', '');
+            $bad_ap2t = (float) number_format((float)Report::getBadCondition($date, 3), 2, '.', '');
+            $ok_p2apst = (float) number_format((float)Report::getOkCondition($date, 4), 2, '.', '');
+            $bad_p2apst = (float) number_format((float)Report::getBadCondition($date, 4), 2, '.', '');
+            $ok_bbo = (float) number_format((float)Report::getOkCondition($date, 5), 2, '.', '');
+            $bad_bbo = (float) number_format((float)Report::getBadCondition($date, 5), 2, '.', '');
+            $ok_apkt = (float) number_format((float)Report::getOkCondition($date, 6), 2, '.', '');
+            $bad_apkt = (float) number_format((float)Report::getBadCondition($date, 6), 2, '.', '');
+            $ok_itsm = (float) number_format((float)Report::getOkCondition($date, 7), 2, '.', '');
+            $bad_itsm = (float) number_format((float)Report::getBadCondition($date, 7), 2, '.', '');
+        }        
+
+        return $this->render('index', [
+            'model' => $model,
+            'date' => $date,
+            'ok_erp' => $ok_erp,
+            'bad_erp' => $bad_erp,
+            'ok_email' => $ok_email,
+            'bad_email' => $bad_email,
+            'ok_ap2t' => $ok_ap2t,
+            'bad_ap2t' => $bad_ap2t,
+            'ok_p2apst' => $ok_p2apst,
+            'bad_p2apst' => $bad_p2apst,
+            'ok_bbo' => $ok_bbo,
+            'bad_bbo' => $bad_bbo,
+            'ok_apkt' => $ok_apkt,
+            'bad_apkt' => $bad_apkt,
+            'ok_itsm' => $ok_itsm,
+            'bad_itsm' => $bad_itsm,
+        ]);   
+
     }
 
     public function actionContact()

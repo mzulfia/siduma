@@ -33,7 +33,7 @@ use app\models\SupportPosition;
                  'options' => ['accept' => 'image/*'],
              ]);
         ?>
-    <p>Accepted File: jpg, png</p>
+    <p>Accepted File: jpg, png; Max Size: 200KB; Pixel Size: 200x200px</p>
     
 
     <?= $form->field($model, 'support_name')->textInput(['maxlength' => true]) ?>

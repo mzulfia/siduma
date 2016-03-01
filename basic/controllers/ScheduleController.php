@@ -34,6 +34,7 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {
+
         $searchModel = new ScheduleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

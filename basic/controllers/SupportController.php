@@ -10,6 +10,15 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
+
+use yii\imagine\Image;
+use Imagine\Gd;
+use Imagine\Image\Box;
+use Imagine\Image\BoxInterface;
+use app\models\User;
+ 
+
+
 /**
  * SupportController implements the CRUD actions for Support model.
  */
@@ -49,9 +58,15 @@ class SupportController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        if(Yii::$app->request->isAjax){
+            return $this->renderAjax('viewUnauthorized', [
+                'model' => $this->findModel($id),
+            ]);
+        } else {
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+            ]);
+        }
     }
 
     /**
@@ -63,8 +78,24 @@ class SupportController extends Controller
     {
         $model = new Support();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->support_id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            $ext =  end((explode(".", $model->file->name)));
+            $filename = Yii::$app->security->generateRandomString();
+            $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
+            if($model->save()){
+                $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
+                Image::getImagine()->open(Support::getProfilePicture(User::getSupportId(Yii::$app->user->getId())))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
+
+                return $this->redirect(['view', 'id' => $model->support_id]);
+            }
+            else{
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
+            
+            
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -87,11 +118,24 @@ class SupportController extends Controller
             if(!is_null($model->file)){
                 $ext =  end((explode(".", $model->file->name)));
                 $filename = Yii::$app->security->generateRandomString();
-                $model->image_path =  '/uploads/profile_pictures/' . $filename.".{$ext}";
-                if($model->update())
-                    $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");    
+                if(isset($model->image_path)){
+                    $support = Support::findOne($id);
+                    $support->deleteImage();
+                    $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
+                    if($model->update()){
+                        $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
+                        Image::getImagine()->open(Support::getProfilePicture(User::getSupportId(Yii::$app->user->getId())))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
+                    }
+                }
+                else
+                {
+                    $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
+                    if($model->update()){
+                        $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
+                        Image::getImagine()->open(Support::getProfilePicture(User::getSupportId(Yii::$app->user->getId())))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
+                    }   
+                }
             }  
-            
             
             return $this->redirect(['view', 'id' => $model->support_id]);
         } else {
@@ -109,6 +153,7 @@ class SupportController extends Controller
      */
     public function actionDelete($id)
     {
+        $this->findModel($id)->deleteImage();
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -117,13 +162,28 @@ class SupportController extends Controller
     public function actionDeleteimage($id) {
         $model = Support::findOne($id);
         if ($model->deleteImage()) {
-            Yii::$app->session->setFlash('success', 
-           'Your image was removed successfully. Upload another by clicking Browse below');
+          Yii::$app->getSession()->setFlash('success', [
+             'type' => 'success',
+             'duration' => 3000,
+             'icon' => 'fa fa-file-photo-o',
+             'message' => 'Delete Success',
+             'title' => 'Notification',
+             'positonY' => 'top',
+             'positonX' => 'right'
+            ]);
         } else {
-            Yii::$app->session->setFlash('error', 
-           'Error removing image. Please try again later or contact the system admin.');
+            Yii::$app->getSession()->setFlash('danger', [
+                 'type' => 'warning',
+                 'duration' => 3000,
+                 'icon' => 'fa fa-file-photo-o',
+                 'message' => 'Delete Failed',
+                 'title' => 'Notification',
+                 'positonY' => 'top',
+                 'positonX' => 'center'
+            ]);
         }
-        return $this->render('update', ['model'=>$model]);
+        // return $this->render('update', ['model'=>$model]);
+        return $this->redirect(['update', 'id' => $id]);
     }
 
     /**

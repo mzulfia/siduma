@@ -133,3 +133,18 @@ a.desc:after {
     /*border: 5px solid #eee;*/
     /*box-shadow: 0 3px 2px rgba(0, 0, 0, 0.3);*/
 }
+.img-circle{
+    width: 200px;
+    height: 200px;
+}
+
+.img-circle-team{
+    border-radius: 50%;
+    width: 128px; 
+    height: 128px !important; 
+}
+
+.users-list>li>a:hover, 
+.users-list>li>a:hover .users-list-name {
+    color: #72afd2;
+}
