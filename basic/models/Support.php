@@ -20,6 +20,7 @@ class Support extends \yii\db\ActiveRecord
     const IMAGE_PLACEHOLDER = '/uploads/profile_pictures/default_user.png';
 
     public $file;
+    public $support_area; 
 
     /**
      * @inheritdoc
@@ -36,11 +37,11 @@ class Support extends \yii\db\ActiveRecord
     {
         return [
             [['support_position_id', 'user_id'], 'integer'],
-            [['no_hp'], 'string', 'max' => 20],
-            [['support_name', 'company', 'email'], 'string', 'max' => 50],
+            [['support_name', 'company', 'email', 'no_hp'], 'string', 'max' => 50],
             [['image_path'], 'string', 'max' => 255],
             [['file'], 'file', 'maxSize'=>'200000'],
-            [['file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg, png']
+            [['file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg, png'],
+            [['support_area'], 'safe']
         ];
     }
 
@@ -73,11 +74,16 @@ class Support extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Schedule::className(), ['support_id' => 'support_id']);
     }
+    
+    public function getService()
+    {
+        return $this->hasMany(SupportArea::className(), ['support_id' => 'support_id']);
+    }
 
     public function getProfilePicture($support_id){
         $model = Support::find()->where('support_id = :support_id', [':support_id' => $support_id])->one();
         if(is_null($model->image_path)){
-            return '/uploads/profile_pictures/default_user.png';
+            return SUPPORT::IMAGE_PLACEHOLDER;
         }
         else
         {
@@ -95,7 +101,7 @@ class Support extends \yii\db\ActiveRecord
                 if($i == sizeof($model)-1)
                     $service_name .= ServiceFamily::getServiceName($model[$i]['service_family_id']);
                 else
-                    $service_name .= ServiceFamily::getServiceName($model[$i]['service_family_id']) . "<br>";
+                    $service_name .= ServiceFamily::getServiceName($model[$i]['service_family_id']) . "/";
             }
             return $service_name;
         } else {
@@ -116,5 +122,15 @@ class Support extends \yii\db\ActiveRecord
     /*
         setter
     */
+
+     public function afterSave($insert, $changedAttributes){
+        \Yii::$app->db->createCommand()->delete('support_area', 'support_id = '.(int) $this->support_id)->execute(); //Delete existing value
+        foreach ($this->support_area  as $id) { //Write new values
+            $sa = new SupportArea();
+            $sa->support_id = $this->support_id;
+            $sa->service_family_id = $id;
+            $sa->save();
+        }
+    }
 
 }

@@ -1,7 +1,14 @@
 $(function(){
 	$(document).on('click','.fc-day',function(){
 		var date = $(this).attr('data-date');
-		document.location = 'viewdm?date=' + date;
+		document.location = 'viewactive?date=' + date;
+	});
+});
+
+$(function(){
+	$(document).on('click','.fc-day-number',function(){
+		var date = $(this).attr('data-date');
+		document.location = 'viewactive?date=' + date;
 	});
 });
 

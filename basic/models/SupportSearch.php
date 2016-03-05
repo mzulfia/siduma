@@ -52,14 +52,9 @@ class SupportSearch extends Support
             'query' => $query,
         ]);
 
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+        if (isset($_GET['ReportSearch']) && !($this->load($params) && $this->validate())) {
+            return $dataProvider; 
         }
-
         $query->andFilterWhere([
             'support_id' => $this->support_id,
             'no_hp' => $this->no_hp,

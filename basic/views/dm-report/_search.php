@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'report_id') ?>
+    <?= $form->field($model, 'dm_report_id') ?>
 
     <?= $form->field($model, 'status') ?>
 

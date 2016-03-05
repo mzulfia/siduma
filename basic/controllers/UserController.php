@@ -109,7 +109,7 @@ class UserController extends Controller
         if($model->load($post)){
             $model->salt_password = Yii::$app->security->generatePasswordHash($model->password);
             if ($model->save()) {
-                if($model->role_id == User::ROLE_SUPPORT || $model->role_id == User::ROLE_SUPERVISOR)
+                if($model->role_id == User::ROLE_SUPPORT)
                 {
                     $support->user_id = $model->user_id;
                     $support->save();
@@ -144,9 +144,28 @@ class UserController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->user_id]);
-        } else {
+        $post = Yii::$app->request->post();
+
+        if($model->load($post)){
+            $model->salt_password = Yii::$app->security->generatePasswordHash($model->password);
+            if ($model->save()) {
+                Yii::$app->getSession()->setFlash('success', [
+                   'type' => 'success',
+                   'duration' => 3000,
+                   'icon' => 'fa fa-user',
+                   'message' => 'Update Success',
+                   'title' => 'Notification',
+                   'positonY' => 'top',
+                   'positonX' => 'right'
+              ]); 
+                $this->redirect(['index']); 
+            } else {
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
+        }
+        else {
             return $this->render('update', [
                 'model' => $model,
             ]);

@@ -8,14 +8,14 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="pic-position-search">
+<div class="support-position-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'pic_position_id') ?>
+    <?= $form->field($model, 'support_position_id') ?>
 
     <?= $form->field($model, 'position_name') ?>
 

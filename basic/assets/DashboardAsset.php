@@ -20,7 +20,7 @@ class DashboardAsset extends AssetBundle
     public $css = [
         'css/bootstrap.min.css',
         '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css',
-        // '//code.ionicframework.com/ionicons/2.0.1/css/ionicons.mins.css',
+        '//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css',
         'css/AdminLTE.min.css',
         'css/skins/_all-skins.min.css',
         'plugins/iCheck/flat/blue.css',
@@ -36,6 +36,7 @@ class DashboardAsset extends AssetBundle
         'js/app.min.js',
         // 'js/dashboard.js',
         'js/main.js',
+        'js/sand-signika.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

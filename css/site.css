@@ -15,10 +15,13 @@ body {
 }
 
 .footer {
-    height: 60px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 1rem;
     background-color: #f5f5f5;
     border-top: 1px solid #ddd;
-    padding-top: 20px;
 }
 
 .jumbotron {
@@ -133,6 +136,11 @@ a.desc:after {
     /*border: 5px solid #eee;*/
     /*box-shadow: 0 3px 2px rgba(0, 0, 0, 0.3);*/
 }
+
+.img-box{
+    width: 50px; 
+    height: 50px; 
+}
 .img-circle{
     width: 200px;
     height: 200px;
@@ -140,11 +148,33 @@ a.desc:after {
 
 .img-circle-team{
     border-radius: 50%;
-    width: 128px; 
-    height: 128px !important; 
+    width: 50px; 
+    height: auto; 
 }
 
 .users-list>li>a:hover, 
 .users-list>li>a:hover .users-list-name {
     color: #72afd2;
+}
+
+.small-box .icon {
+    -webkit-transition: all .3s linear;
+    -o-transition: all .3s linear;
+    transition: all .3s linear;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 0;
+    font-size: 45px;
+    color: rgba(0,0,0,0.15);
+}
+
+.small-box:hover .icon {
+    font-size: 55px;
+}
+
+#columnChart {
+    /*display: table-cell;*/
+    position: relative;
+    width:100%;
 }

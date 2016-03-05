@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use kartik\grid\GridView;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SupportPositionSearch */
@@ -30,15 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
-        'pager' => [
-            'firstPageLabel' => 'First',
-            'lastPageLabel' => 'Last',
-        ],
-        'responsive'=>true,
-        'hover'=>true,
-        'condensed'=>true,
-        'floatHeader'=>true,
-        'bordered'=>true,
     ]); ?>
 
 </div>

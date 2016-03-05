@@ -104,7 +104,6 @@ class ScheduleSearch extends Schedule
 
         $query->andFilterWhere([
             'schedule_id' => $this->schedule_id,
-            
             'is_dm' => $this->is_dm,
         ]);
         
@@ -112,8 +111,11 @@ class ScheduleSearch extends Schedule
         $query->andFilterWhere(['like', 'support.support_name', $this->support_id]);
         $query->andFilterWhere(['like', 'support_position.position_name', $this->position_name]);
 
-       if(sizeof(explode(" - ", $this->date)) > 1)
-          $query->andFilterWhere(['between', 'date', explode(" - ", $this->date)[0], date('Y-m-d', strtotime(explode(" - ", $this->date)[1] . ' +1 day'))]);
+       // if(sizeof(explode(" - ", $this->date)) > 1)
+       //    $query->andFilterWhere(['between', 'date', explode(" - ", $this->date)[0], date('Y-m-d', strtotime(explode(" - ", $this->date)[1] . ' +1 day'))]);
+
+        if(sizeof(explode(" - ", $this->date)) > 1)
+          $query->andFilterWhere(['between', 'date', explode(" - ", $this->date)[0], explode(" - ", $this->date)[1]]);
         
         return $dataProvider;
     }
@@ -161,7 +163,6 @@ class ScheduleSearch extends Schedule
 
         $query->andFilterWhere([
             'schedule_id' => $this->schedule_id,
-            // 'shift.shift_id' => $this->shift_id,
             'date' => $this->date,
             'is_dm' => $this->is_dm,
         ]);

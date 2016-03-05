@@ -106,7 +106,7 @@ class Schedule extends \yii\db\ActiveRecord
     public function getNextSchedule($support_id){
         $datetime = new \DateTime('tomorrow');
         $model = Schedule::find()->where('date = :date AND support_id = :support_id', [':date' => $datetime->format('Y-m-d'), ':support_id' => $support_id])->one();
-        if(isset($model))
+        if(!empty($model))
             return $model;
         else
             return null;
@@ -118,11 +118,15 @@ class Schedule extends \yii\db\ActiveRecord
         return $model;
     }
 
-    public function getTeamNow($service_family_id){
+    public function getTeamNow(){
         date_default_timezone_set("Asia/Jakarta");
-        $model = Yii::$app->getDb()->createCommand('SELECT * FROM support LEFT JOIN schedule ON support.support_id = schedule.support_id LEFT JOIN support_area ON support.support_id = support_area.support_id WHERE `date` = :dt AND shift_id = :shift_id AND service_family_id = :id AND is_dm = 0 ORDER BY service_family_id', [':dt' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id, ':id' => $service_family_id])->queryAll();
-
-        return $model;
+        $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 0', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id])->all();
+        // $model = Yii::$app->getDb()->createCommand('SELECT * FROM support LEFT JOIN schedule ON support.support_id = schedule.support_id LEFT JOIN support_area ON support.support_id = support_area.support_id WHERE `date` = :dt AND shift_id = :shift_id AND service_family_id = :id AND is_dm = 0 ORDER BY service_family_id', [':dt' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id, ':id' => $service_family_id])->queryAll();
+        if(!empty($model)){
+            return $model;
+        } else{
+            return null;
+        }
     }
 
     /*
@@ -152,7 +156,7 @@ class Schedule extends \yii\db\ActiveRecord
 
     public function getIsDM($date, $shift_id, $support_id){
         $model  = Schedule::find()->where('date = :date AND support_id = :support_id AND shift_id = :shift_id', [':date' => $date, ':support_id' => $support_id, ':shift_id' => $shift_id])->one();
-        if(isset($model))
+        if(!empty($model))
         {
             return ($model->is_dm == 1);
         }

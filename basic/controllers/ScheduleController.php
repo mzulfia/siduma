@@ -34,7 +34,6 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {
-
         $searchModel = new ScheduleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -86,44 +85,74 @@ class ScheduleController extends Controller
             $highestRow = $sheet->getHighestRow();
             $highestColumn = $sheet->getHighestColumn();
 
+            $content =$highestRow-7;
+            
             $date = [];
-            for($row = 2; $row <= $highestRow; $row++)
+            
+            for($row = 5; $row <= $content; $row++)
             {
+                $is_dm = [];
+                $shift = [];    
+
                 $rowData = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,NULL,TRUE,FALSE);
-                if($row == 2)
+                if($row == 5)
                 {   
-                    for($col = 1; $col <= 31; $col++)
-                    {
-                        if($rowData[0][$col] != '-')
-                        {
-                            array_push($date, $rowData[0][$col]);
+                    $col = 2;
+                    while($col <= 63){
+                        if(!empty($rowData[0][$col])){
+                            array_push($date, $rowData[0][$col]); 
+                        } else{
+                            $col = 63;
                         }
-                        else
-                        {
-                            $col = 31;
-                        }
+
+                        $col = $col + 2;
                     }
                 } 
                 else
                 {
-                    // var_dump(Support::find()->where('support_name LIKE :support_name', [':support_name' => $rowData[0][0]])->one());
+                    // var_dump(Support::find()->where('support_name LIKE :support_name', [':support_name' => $rowData[0][1]])->one());
+                    // insert is_dm
+                    $col = 3;
+                    $max = (sizeof($date)*2)+1;
+                    while($col <= $max){
+                        if($rowData[0][$col] == 'v'){
+                            array_push($is_dm, 1);
+                        } else {
+                            array_push($is_dm, 0);
+                        }
+                        $col = $col + 2;
+                    }
+
+                    // insert shift
+                    $col = 2;
+                    while($col <= $max){
+                        if($rowData[0][$col] == 'L' || $rowData[0][$col] == ' ' ){
+                            array_push($shift, NULL);
+                        } else {
+                            array_push($shift, (int) $rowData[0][$col]);
+                        }
+                        $col = $col + 2;
+                    }
+                    // var_dump($is_dm);
+                    // var_dump($shift);
 
                     for($col = 0; $col < sizeof($date); $col++)
                     {   
-                        $model= new Schedule();
-                        $support = Support::find()->where('support_name LIKE :support_name', [':support_name' => $rowData[0][0]])->one();
-                        $model->support_id = $support['support_id'];
-                        if($col < sizeof($date)  && ($rowData[0][$col+1] != '-' && $rowData[0][$col+1] != 0))
-                        {
+                        if(!empty($shift[$col])){
+                            $model= new Schedule();
+                            $support = Support::find()->where('upper(support_name) LIKE upper(:support_name)', [':support_name' => trim($rowData[0][1])])->one();
+                            $model->support_id = $support['support_id'];
                             $model->file_path = $inputFile;
                             $model->date = $date[$col];
-                            $model->shift_id = $rowData[0][$col+1];
-                            $model->save(false);
+                            $model->shift_id = $shift[$col];
+                            $model->is_dm = $is_dm[$col];
+                            $model->save(false);    
                         }
                     }
                 }        
             }
-            // var_dump($date);
+           
+
             Yii::$app->getSession()->setFlash('success', [
                  'type' => 'success',
                  'duration' => 3000,
@@ -133,6 +162,7 @@ class ScheduleController extends Controller
                  'positonY' => 'top',
                  'positonX' => 'right'
              ]);
+
              return $this->redirect(['create']);
         }  
         elseif(isset($_POST['manual-button']))
@@ -148,28 +178,6 @@ class ScheduleController extends Controller
                  'positonY' => 'top',
                  'positonX' => 'right'
              ]);
-            return $this->redirect(['index']);
-        }
-        else if(isset($_POST['setdm-button']))
-        {
-            $model = new Schedule();
-
-            $model->load(Yii::$app->request->post());
-            $date = explode(" - ", $model->date[1]);
-            $start = $date[0];
-            $end = $date[1];
-            Schedule::setDM($start, $end, $model->shift_id);
-
-            Yii::$app->getSession()->setFlash('success', [
-                 'type' => 'success',
-                 'duration' => 3000,
-                 'icon' => 'fa fa-user',
-                 'message' => 'Generate DM Success',
-                 'title' => 'Notification',
-                 'positonY' => 'top',
-                 'positonX' => 'right'
-             ]);
-            return $this->redirect(['index']);
             return $this->redirect(['index']);
         }
         else 
@@ -212,16 +220,22 @@ class ScheduleController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionViewdm($date)
+    public function actionViewactive($date)
     {
-        $searchModel = new ScheduleSearch();
-        $searchModel->date = $date;
-        $searchModel->is_dm = 1;
-        $dataProvider = $searchModel->searchDM(Yii::$app->request->queryParams);
-
-        return $this->render('viewdm', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        $morning_dm = Schedule::find()->where('date = :date AND shift_id = 1 AND is_dm = 1',[':date' => $date])->all();
+        $morning_team = Schedule::find()->where('date = :date AND shift_id = 1 AND is_dm = 0',[':date' => $date])->all();
+        $afternoon_dm = Schedule::find()->where('date = :date AND shift_id = 2 AND is_dm = 1', [':date' => $date])->all();
+        $afternoon_team = Schedule::find()->where('date = :date AND shift_id = 2 AND is_dm = 0', [':date' => $date])->all();
+        $evening_dm = Schedule::find()->where('date = :date AND shift_id = 3 AND is_dm = 1', [':date' => $date])->all();
+        $evening_team = Schedule::find()->where('date = :date AND shift_id = 3 AND is_dm = 0', [':date' => $date])->all();
+        return $this->render('viewactive', [
+            'morning_dm' => $morning_dm,
+            'morning_team' => $morning_team,
+            'afternoon_dm' => $afternoon_dm,
+            'afternoon_team' => $afternoon_team,
+            'evening_dm' => $evening_dm,
+            'evening_team' => $evening_team,
+            'date' => $date
         ]);
     }
 

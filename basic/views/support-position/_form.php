@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\PicPosition */
+/* @var $model app\models\SupportPosition */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="pic-position-form">
+<div class="support-position-form">
 
     <?php $form = ActiveForm::begin(); ?>
 

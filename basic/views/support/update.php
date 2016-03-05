@@ -1,18 +1,21 @@
 <?php
 
 use yii\helpers\Html;
-
+use app\models\User;
 /* @var $this yii\web\View */
 /* @var $model app\models\Pic */
 
-$this->title = 'Edit Profile';
-$this->params['breadcrumbs'][] = 'Edit Profile';
+if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+	$this->params['breadcrumbs'][] = ['label' => 'Supports', 'url' => ['index']];
+	$this->params['breadcrumbs'][] = 'Update Profile';
+} else{
+	$this->params['breadcrumbs'][] = ['label' => 'Profile', 'url' => ['view', 'id' => $model->support_id]];
+	$this->params['breadcrumbs'][] = 'Update Profile';
+}
+
 ?>
 <div class="support-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
+	<?= $this->render('_formUpdate', [
         'model' => $model,
     ]) ?>
 

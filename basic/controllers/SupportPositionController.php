@@ -3,16 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\PicPosition;
-use app\models\PicPositionSearch;
+use app\models\SupportPosition;
+use app\models\SupportPositionSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * PicPositionController implements the CRUD actions for PicPosition model.
+ * SupportPositionController implements the CRUD actions for SupportPosition model.
  */
-class PicPositionController extends Controller
+class SupportPositionController extends Controller
 {
     public function behaviors()
     {
@@ -27,12 +27,12 @@ class PicPositionController extends Controller
     }
 
     /**
-     * Lists all PicPosition models.
+     * Lists all SupportPosition models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new PicPositionSearch();
+        $searchModel = new SupportPositionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -42,7 +42,7 @@ class PicPositionController extends Controller
     }
 
     /**
-     * Displays a single PicPosition model.
+     * Displays a single SupportPosition model.
      * @param integer $id
      * @return mixed
      */
@@ -54,16 +54,16 @@ class PicPositionController extends Controller
     }
 
     /**
-     * Creates a new PicPosition model.
+     * Creates a new SupportPosition model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new PicPosition();
+        $model = new SupportPosition();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->pic_position_id]);
+            return $this->redirect(['view', 'id' => $model->support_position_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -72,7 +72,7 @@ class PicPositionController extends Controller
     }
 
     /**
-     * Updates an existing PicPosition model.
+     * Updates an existing SupportPosition model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -82,7 +82,7 @@ class PicPositionController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->pic_position_id]);
+            return $this->redirect(['view', 'id' => $model->support_position_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -91,7 +91,7 @@ class PicPositionController extends Controller
     }
 
     /**
-     * Deletes an existing PicPosition model.
+     * Deletes an existing SupportPosition model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -104,15 +104,15 @@ class PicPositionController extends Controller
     }
 
     /**
-     * Finds the PicPosition model based on its primary key value.
+     * Finds the SupportPosition model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return PicPosition the loaded model
+     * @return SupportPosition the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = PicPosition::findOne($id)) !== null) {
+        if (($model = SupportPosition::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

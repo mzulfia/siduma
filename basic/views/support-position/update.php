@@ -3,9 +3,9 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\PicPosition */
+/* @var $model app\models\SupportPosition */
 
-$this->title = 'Update Pic Position: ' . ' ' . $model->support_position_id;
+$this->title = 'Update Support Position: ' . ' ' . $model->support_position_id;
 $this->params['breadcrumbs'][] = ['label' => 'Support Positions', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->support_position_id, 'url' => ['view', 'id' => $model->support_position_id]];
 $this->params['breadcrumbs'][] = 'Update';

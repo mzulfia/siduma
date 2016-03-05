@@ -47,6 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'label' => 'Service Family',
+                'format' => 'raw',
                 'value' => SupportArea::getServiceInCharge($model->support_id)
             ]
         ],

@@ -16,6 +16,7 @@ use Imagine\Gd;
 use Imagine\Image\Box;
 use Imagine\Image\BoxInterface;
 use app\models\User;
+use app\models\SupportArea;
  
 
 
@@ -77,12 +78,16 @@ class SupportController extends Controller
     public function actionCreate()
     {
         $model = new Support();
-
+        // $model2 = new SupportArea();
+        // $model2->load(Yii::$app->request->post()
         if ($model->load(Yii::$app->request->post())) {
             $model->file = UploadedFile::getInstance($model, 'file');
             $ext =  end((explode(".", $model->file->name)));
-            $filename = Yii::$app->security->generateRandomString();
+            $filename = $model->file->baseName;
             $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
+            // $model2->support_id = $model->support_id;
+            // $model2->service_family_id = $model2->service_family_id;
+
             if($model->save()){
                 $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                 Image::getImagine()->open(Support::getProfilePicture(User::getSupportId(Yii::$app->user->getId())))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
@@ -92,6 +97,7 @@ class SupportController extends Controller
             else{
                 return $this->render('create', [
                     'model' => $model,
+                    //'model2' => $model2,
                 ]);
             }
             
@@ -99,6 +105,7 @@ class SupportController extends Controller
         } else {
             return $this->render('create', [
                 'model' => $model,
+                //'model2' => $model2,
             ]);
         }
     }
@@ -112,19 +119,26 @@ class SupportController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->support_area = \yii\helpers\ArrayHelper::getColumn(
+            $model->getService()->asArray()->all(), 'service_family_id'
+        );
 
         if ($model->load(Yii::$app->request->post())) {
             $model->file = UploadedFile::getInstance($model, 'file');
             if(!is_null($model->file)){
                 $ext =  end((explode(".", $model->file->name)));
-                $filename = Yii::$app->security->generateRandomString();
-                if(isset($model->image_path)){
+                $filename = $model->file->baseName;
+                if(!empty($model->image_path)){
                     $support = Support::findOne($id);
                     $support->deleteImage();
                     $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
                     if($model->update()){
                         $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                         Image::getImagine()->open(Support::getProfilePicture(User::getSupportId(Yii::$app->user->getId())))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
+                    } else {
+                        return $this->render('create', [
+                            'model' => $model,
+                        ]);
                     }
                 }
                 else
@@ -135,7 +149,9 @@ class SupportController extends Controller
                         Image::getImagine()->open(Support::getProfilePicture(User::getSupportId(Yii::$app->user->getId())))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
                     }   
                 }
-            }  
+            } else{
+                $model->update();
+            }
             
             return $this->redirect(['view', 'id' => $model->support_id]);
         } else {

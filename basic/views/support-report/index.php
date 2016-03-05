@@ -2,25 +2,23 @@
 
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use kartik\grid\GridView;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
-use kartik\export\ExportMenu;
-
-use kartik\daterange\DateRangePicker;
 use yii\data\ArrayDataProvider;
-
-
+use kartik\grid\GridView;
+use kartik\export\ExportMenu;
+use kartik\daterange\DateRangePicker;
 use app\models\ServiceFamily;
 
+
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\ReportSearch */
+/* @var $searchModel app\models\ReportSupportSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Reports';
+$this->title = 'Support Reports';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="report-index">
+<div class="support-report-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -31,9 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
         $gridColumns = [
-            [
-                'class' => 'yii\grid\SerialColumn',
-            ],
+            ['class' => 'yii\grid\SerialColumn'],
             [
                 'label' => 'Created At',
                 'attribute' => 'created_at',
@@ -57,25 +53,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => 'service.service_name',
                 'contentOptions' => ['style' => 'width:175px;']
             ],
-            [
-                'label' => 'Status',
-                'attribute'=> 'status',
-                'filter' => Html::activeDropDownList($searchModel, 'status', ['2' => 'Normal', '1' => 'Sufficient', '0' => 'Bad'],['class'=>'form-control','prompt' => '-']),
-                'value' => function ($model) {
-                    return $model->status == 2 ? 'Normal' : $model->status == 1 ? 'Sufficient' : 'Bad';
-                },
-                'contentOptions' => ['style' => 'width:75px;']
-            ],
-            [
+           [
                 'label' => 'File',
                 'format' => 'raw',
                 'attribute' => 'file_path',
                 'value' => function($model){
-                    return $model->file_path == NULL ? NULL : Html::a(Html::encode(explode("/", $model->file_path)[2]), 
-                        Url::toRoute(['report/download', 'file_path' => $model->file_path]), 
+                    return $model->file_path == NULL ? NULL : Html::a(Html::encode(explode("/", $model->file_path)[3]), 
+                        Url::toRoute(['support-report/download', 'file_path' => $model->file_path]), 
                         [
-                           // 'title'=>'Clave',
-                           // 'data-confirm' => Yii::t('yii', 'Are you sure you want to change this password?'),
                            'data-method' => 'post',
                         ]);
                 },
@@ -90,7 +75,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'header' => 'Action',
-                'class' => 'yii\grid\ActionColumn'
+                'class' => 'yii\grid\ActionColumn',
+                'contentOptions' => ['style' => 'width:100px;']
             ],
         ];
 
@@ -113,37 +99,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 //    ],
                 // ],
             ],
-            'filename' => 'exported-data_' . date('Y-m-d'),
+            'filename' => 'Support Report_' . date('Y-m-d'),
         ]) . '</ul>';
     ?>
 
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' =>  $gridColumns,
+        'pager' => [
+            'firstPageLabel' => 'First',
+            'lastPageLabel' => 'Last',
+        ],
+        'responsive'=>true,
+        'hover'=>true,
+        'condensed'=>true,
+        'floatHeader'=>true,
+        'bordered'=>true,
+    ]); ?>
 
-    <?= 
-        GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'rowOptions' => function($model){
-                    if($model->status == 2){
-                        return ['class' => 'success'];
-                    } elseif($model->status == 1){
-                        return ['class' => 'warning'];
-                    } else {
-                        return ['class' => 'danger'];
-                    }
-                },
-            'columns' => $gridColumns,
-            'pager' => [
-                'firstPageLabel' => 'First',
-                'lastPageLabel' => 'Last',
-            ],
-            'responsive'=>true,
-            'hover'=>true,
-            'condensed'=>true,
-            'floatHeader'=>true,
-            'bordered'=>true,
-        ]); 
-
-    ?>
-   
- 
 </div>
