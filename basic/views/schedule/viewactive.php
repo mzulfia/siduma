@@ -126,7 +126,7 @@ $this->registerJs("$(function() {
          echo
          '<div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><b>Duty Manager Pagi</b></h3>
+                    <h3 class="box-title"><b>Duty Manager Sore</b></h3>
                 </div>
                 <div class="box-body table-responsive no-padding">
                 <table class="table table-hover">

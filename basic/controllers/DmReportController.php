@@ -13,6 +13,7 @@ use yii\web\UploadedFile;
 use app\models\User;
 use app\models\Shift;
 use app\models\Schedule;
+use app\models\ServiceFamily;
 
 /**
  * DmReportController implements the CRUD actions for DmReport model.
@@ -83,112 +84,40 @@ class DmReportController extends Controller
      * @return mixed
      */
     public function actionCreate()
-    {       
-        $erp = new DmReport();
-        $email = new DmReport();
-        $ap2t = new DmReport();
-        $p2apst = new DmReport();
-        $bbo = new DmReport();
-        $apkt = new DmReport();
-        $itsm = new DmReport();
-        date_default_timezone_set("Asia/Jakarta");
+    {     
+        $service_family = [];
+        for($i=0; $i < sizeof(ServiceFamily::find()->all()); $i++){
+            $service_family[$i] = new DmReport();
+        }
 
         if(!empty($_POST)){
-            $erp->attributes=$_POST['DmReport'][1];
-            $erp->service_family_id = 1;
-            $erp->support_id = User::getSupportId(Yii::$app->user->getId());  
-            $erp->created_at = date("Y-m-d H:i:s"); 
-            $file_erp = UploadedFile::getInstance($erp, '[1]file');
-            if(!empty($file_erp)){
-                $erp->file = $file_erp;
-                $erp->file->saveAs('uploads/reports/dutymanager/' . $erp->file->baseName . '.' . $erp->file->extension);    
-                $erp->file_path = 'uploads/reports/dutymanager/' . $erp->file->baseName . '.' . $erp->file->extension;
+            for($i=0; $i < sizeof($service_family); $i++){
+                $service_family[$i]->attributes=$_POST['DmReport'][$i];
+                $service_family[$i]->service_family_id = $i+1;
+                $service_family[$i]->support_id = User::getSupportId(Yii::$app->user->getId());  
+                $service_family[$i]->created_at = date("Y-m-d H:i:s"); 
+                $file_attribute = '['.$i.']file';
+                $file = UploadedFile::getInstance($service_family[$i], $file_attribute);
+                if(!empty($file)){
+                    $erp->file = $file_erp;
+                    $erp->file->saveAs('uploads/reports/dutymanager/' . $service_family[$i]->file->baseName . '.' . $service_family[$i]->file->extension);    
+                    $erp->file_path = 'uploads/reports/dutymanager/' . $service_family[$i]->file->baseName . '.' . $service_family[$i]->file->extension;
+                } 
+            }   
+            for($i=0; $i < sizeof($service_family); $i++){
+                if($i == 0){
+                    $valid=$service_family[$i]->validate();    
+                } else {
+                    $valid=$service_family[$i]->validate() && $valid;    
+                }
             }
-            
-            $email->attributes=$_POST['DmReport'][2];
-            $email->service_family_id = 2;
-            $email->support_id = User::getSupportId(Yii::$app->user->getId());
-            $email->created_at = date("Y-m-d H:i:s");  
-            $file_email = UploadedFile::getInstance($email, '[2]file');
-            if(!empty($file_email)){
-                $email->file = $file_email;
-                $email->file->saveAs('uploads/reports/dutymanager/' . $email->file->baseName . '.' . $email->file->extension);
-                $email->file_path = 'uploads/reports/dutymanager/' . $email->file->baseName . '.' . $email->file->extension;
-            }    
 
-            $ap2t->attributes=$_POST['DmReport'][3];
-            $ap2t->service_family_id = 3;
-            $ap2t->support_id = User::getSupportId(Yii::$app->user->getId()); 
-            $ap2t->created_at = date("Y-m-d H:i:s"); 
-            $file_ap2t = UploadedFile::getInstance($ap2t, '[3]file');
-            if(!empty($file_ap2t)){
-                $ap2t->file = $file_ap2t;
-                $ap2t->file->saveAs('uploads/reports/dutymanager/' . $ap2t->file->baseName . '.' . $ap2t->file->extension);
-                $ap2t->file_path = 'uploads/reports/dutymanager/' . $ap2t->file->baseName . '.' . $ap2t->file->extension;
-            }    
-
-            $p2apst->attributes=$_POST['DmReport'][4];
-            $p2apst->service_family_id = 4;
-            $p2apst->support_id = User::getSupportId(Yii::$app->user->getId());  
-            $p2apst->created_at = date("Y-m-d H:i:s"); 
-            $file_p2apst = UploadedFile::getInstance($p2apst, '[4]file');
-            if(!empty($file_p2apst)){
-                $p2apst->file = $file_p2apst;
-                $p2apst->file->saveAs('uploads/reports/dutymanager/' . $p2apst->file->baseName . '.' . $p2apst->file->extension);
-                $p2apst->file_path = 'uploads/reports/dutymanager/' . $p2apst->file->baseName . '.' . $p2apst->file->extension;
-            }    
-
-            $bbo->attributes=$_POST['DmReport'][5];
-            $bbo->service_family_id = 5;
-            $bbo->support_id = User::getSupportId(Yii::$app->user->getId());  
-            $bbo->created_at = date("Y-m-d H:i:s"); 
-            $file_bbo = UploadedFile::getInstance($bbo, '[5]file');
-            if(!empty($file_bbo)){
-                $bbo->file = $file_bbo;
-                $bbo->file->saveAs('uploads/reports/dutymanager/' . $bbo->file->baseName . '.' . $bbo->file->extension);
-                $bbo->file_path = 'uploads/reports/dutymanager/' . $bbo->file->baseName . '.' . $bbo->file->extension;
-            }    
-
-            $apkt->attributes=$_POST['DmReport'][6];
-            $apkt->service_family_id = 6;
-            $apkt->support_id = User::getSupportId(Yii::$app->user->getId());  
-            $apkt->created_at = date("Y-m-d H:i:s");
-            $file_apkt = UploadedFile::getInstance($apkt, '[6]file');
-            if(!empty($file_apkt)){
-                $apkt->file = $file_apkt;
-                $apkt->file->saveAs('uploads/reports/dutymanager/' . $apkt->file->baseName . '.' . $apkt->file->extension);
-                $apkt->file_path = 'uploads/reports/dutymanager/' . $apkt->file->baseName . '.' . $apkt->file->extension;
-            }    
-
-            $itsm->attributes=$_POST['DmReport'][7];
-            $itsm->service_family_id = 7;
-            $itsm->support_id = User::getSupportId(Yii::$app->user->getId());  
-            $itsm->created_at = date("Y-m-d H:i:s"); 
-            $file_itsm = UploadedFile::getInstance($itsm, '[7]file');
-            if(!empty($file_itsm)){
-                $itsm->file = $file_itsm;
-                $itsm->file->saveAs('uploads/reports/dutymanager/' . $itsm->file->baseName . '.' . $itsm->file->extension);
-                $itsm->file_path = 'uploads/reports/dutymanager/' . $itsm->file->baseName . '.' . $itsm->file->extension;
-            }    
-
-             // Validate all models
-            $valid=$erp->validate();
-            $valid=$email->validate() && $valid;
-            $valid=$ap2t->validate() && $valid;
-            $valid=$p2apst->validate() && $valid;
-            $valid=$bbo->validate() && $valid;
-            $valid=$apkt->validate() && $valid;
-            $valid=$itsm->validate() && $valid;
 
             if($valid)
             { 
-                $erp->save();
-                $email->save();
-                $ap2t->save();
-                $p2apst->save();
-                $bbo->save();
-                $apkt->save();
-                $itsm->save();
+                for($i=0; $i < sizeof($service_family); $i++){
+                    $service_family[$i]->save();
+                }
 
                 Yii::$app->getSession()->setFlash('success', [
                    'type' => 'success',
@@ -204,18 +133,11 @@ class DmReportController extends Controller
             }
         }
 
-        return $this->render('create',[
-            'erp'=>$erp,
-            'email'=>$email,
-            'ap2t'=>$ap2t,
-            'p2apst'=>$p2apst,
-            'bbo'=>$bbo,
-            'apkt'=>$apkt,
-            'itsm'=>$itsm,
-        ]);
-
+        return $this->render('create', [
+                'service_family' => $service_family,
+            ]);
     }
-
+    
     /**
      * Updates an existing DmReport model.
      * If update is successful, the browser will be redirected to the 'view' page.

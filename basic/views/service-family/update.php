@@ -1,21 +1,27 @@
 <?php
 
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\ServiceFamily */
-
-$this->title = 'Update Service Family: ' . ' ' . $model->service_family_id;
+$this->title = 'Service Families | Update Service Family';
 $this->params['breadcrumbs'][] = ['label' => 'Service Families', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->service_family_id, 'url' => ['view', 'id' => $model->service_family_id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Update Service Family';
 ?>
 <div class="service-family-update">
+	<div class="box box-info">
+	  <div class="box-header with-border">
+	    <h3 class="box-title">Update Service Family</h3>
+	  </div><!-- /.box-header -->
+  	  <div class="box-body">
+	    <?php $form = ActiveForm::begin(); ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+	    <?= $form->field($model, 'service_name')->textInput(['maxlength' => true]) ?>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+	    <div class="form-group">
+	        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+	    </div>
 
+	    <?php ActiveForm::end(); ?>
+	  </div>
+	</div>    
 </div>

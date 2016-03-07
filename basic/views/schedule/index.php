@@ -9,11 +9,12 @@ use kartik\daterange\DateRangePicker;
 /* @var $searchModel app\models\ServiceFamilySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Schedules';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Schedules | All';
+$this->params['breadcrumbs'][] = 'Schedules';
 ?>
 <div class="service-family-index">
 
+    <h1>Schedules</h1>
     <p>
         <?= Html::a('Create Schedule', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -53,19 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => 'shift.shift_name',
                 'contentOptions' => ['style' => 'width:100px;']
             ],
-            [
-                'label' => 'Shift Start',
-                'attribute' => 'shift_id',
-                'value' => 'shift.shift_start',
-                'contentOptions' => ['style' => 'width:100px;']
-            ],
-            [
-                'label' => 'Shift End',
-                'attribute' => 'shift_id',
-                'value' => 'shift.shift_end',
-                'contentOptions' => ['style' => 'width:100px;']
-            ],
-            [
+           [
                 'label' => 'Is Dm',
                 'attribute' => 'is_dm',
                 'filter' => Html::activeDropDownList($searchModel, 'is_dm', ['1' => 'Ya', '0' => 'Tidak'],['class'=>'form-control','prompt' => '-']),

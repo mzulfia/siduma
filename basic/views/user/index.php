@@ -11,12 +11,12 @@ use app\models\Role;
 /* @var $searchModel app\models\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Users';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Users | All';
+$this->params['breadcrumbs'][] = 'Users';
 ?>
 <div class="user-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>Users</h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>

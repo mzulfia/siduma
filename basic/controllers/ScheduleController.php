@@ -129,7 +129,7 @@ class ScheduleController extends Controller
                         if($rowData[0][$col] == 'L' || $rowData[0][$col] == ' ' ){
                             array_push($shift, NULL);
                         } else {
-                            array_push($shift, (int) $rowData[0][$col]);
+                            array_push($shift, $rowData[0][$col]);
                         }
                         $col = $col + 2;
                     }
@@ -139,14 +139,31 @@ class ScheduleController extends Controller
                     for($col = 0; $col < sizeof($date); $col++)
                     {   
                         if(!empty($shift[$col])){
-                            $model= new Schedule();
-                            $support = Support::find()->where('upper(support_name) LIKE upper(:support_name)', [':support_name' => trim($rowData[0][1])])->one();
-                            $model->support_id = $support['support_id'];
-                            $model->file_path = $inputFile;
-                            $model->date = $date[$col];
-                            $model->shift_id = $shift[$col];
-                            $model->is_dm = $is_dm[$col];
-                            $model->save(false);    
+                            if(strlen($shift[$col]) > 1)
+                            {
+                                $content = explode('&', $shift[$col]);
+                                for($i = 0; $i < sizeof($content); $i++){
+                                    $model= new Schedule();
+                                    $support = Support::find()->where('upper(support_name) LIKE upper(:support_name)', [':support_name' => trim($rowData[0][1])])->one();
+                                    $model->support_id = $support['support_id'];
+                                    $model->file_path = $inputFile;
+                                    $model->date = $date[$col];
+                                    $model->shift_id = (int) $content[$i];
+                                    $model->is_dm = $is_dm[$col];
+                                    $model->save(false);    
+                                }
+                            }
+                            else
+                            {
+                                $model= new Schedule();
+                                $support = Support::find()->where('upper(support_name) LIKE upper(:support_name)', [':support_name' => trim($rowData[0][1])])->one();
+                                $model->support_id = $support['support_id'];
+                                $model->file_path = $inputFile;
+                                $model->date = $date[$col];
+                                $model->shift_id = (int) $shift[$col];
+                                $model->is_dm = $is_dm[$col];
+                                $model->save(false);    
+                            }
                         }
                     }
                 }        
@@ -253,7 +270,7 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function actionViewschedule(){
+    public function actionViewcalendar(){
         $schedules = Schedule::find()->where('is_dm = 1')->all();
         
         $tasks = [];

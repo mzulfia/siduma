@@ -15,8 +15,8 @@ use app\models\Schedule;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 
-$this->title = 'Schedules';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Schedules | View Calendar';
+$this->params['breadcrumbs'][] = 'Schedules';
 ?>
 <style>
     .legend { list-style: none; }
@@ -28,21 +28,27 @@ $this->params['breadcrumbs'][] = $this->title;
     .legend .shiftmalam { background-color: #a6004c; }
 </style>
 
-
-<h1><?= Html::encode($this->title) ?></h1>
-
-<div class="schedule-index">
-   <?= 
+<div class="box box-info">
+  <div class="box-header with-border">
+    <h3 class="box-title">Schedules</h3>
+    <div class="box-tools pull-right">
+      <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+    </div>
+  </div><!-- /.box-header -->
+  <div class="box-body">
+    <?= 
         \yii2fullcalendar\yii2fullcalendar::widget(array(
         'events'=> $events, 
         ));
-
-        ?>
+    ?>
+    <br>
+    <ul class="legend">
+        <li><span class="shiftpagi"></span> Shift Pagi</li>
+        <li><span class="shiftsore"></span> Shift Sore</li>
+        <li><span class="shiftmalam"></span> Shift Malam</li>
+    </ul>
+  </div>
 </div>
+  
 
-<br>
-<ul class="legend">
-    <li><span class="shiftpagi"></span> Shift Pagi</li>
-    <li><span class="shiftsore"></span> Shift Sore</li>
-    <li><span class="shiftmalam"></span> Shift Malam</li>
-</ul>
+

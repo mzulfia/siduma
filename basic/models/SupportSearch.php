@@ -23,8 +23,8 @@ class SupportSearch extends Support
     public function rules()
     {
         return [
-            [['support_id', 'no_hp', 'support_position_id', 'user_id'], 'integer'],
-            [['support_name', 'company'], 'safe'],
+            [['support_id', 'support_position_id', 'user_id'], 'integer'],
+            [['support_name', 'no_hp', 'company', 'email'], 'safe'],
         ];
     }
 
@@ -57,13 +57,14 @@ class SupportSearch extends Support
         }
         $query->andFilterWhere([
             'support_id' => $this->support_id,
-            'no_hp' => $this->no_hp,
             'support_position_id' => $this->support_position_id,
             'user_id' => $this->user_id,
         ]);
 
         $query->andFilterWhere(['like', 'support_name', $this->support_name])
-            ->andFilterWhere(['like', 'company', $this->company]);
+            ->andFilterWhere(['like', 'company', $this->company])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'no_hp', $this->no_hp]);
 
         return $dataProvider;
     }

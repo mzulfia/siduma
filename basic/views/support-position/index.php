@@ -1,20 +1,19 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SupportPositionSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Support Positions';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Support Positions | All';
+$this->params['breadcrumbs'][] = 'Support Positions';
 ?>
 <div class="support-position-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+    <h1>Support Positions</h1>
+    
     <p>
         <?= Html::a('Create Support Position', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -24,12 +23,21 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'support_position_id',
             'position_name',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'header' => 'Action',
+                'class' => 'yii\grid\ActionColumn',
+                'contentOptions' => ['style' => 'width: 100px']
+            ],
         ],
+        'pager' => [
+            'firstPageLabel' => 'First',
+            'lastPageLabel' => 'Last',
+        ],
+        'responsive'=>true,
+        'hover'=>true,
+        'condensed'=>true,
+        'floatHeader'=>true,
+        'bordered'=>true,
     ]); ?>
-
 </div>

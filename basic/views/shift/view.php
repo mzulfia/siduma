@@ -6,13 +6,13 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Shift */
 
-$this->title = $model->shift_id;
+$this->title = 'Shifts | View Shift';
 $this->params['breadcrumbs'][] = ['label' => 'Shifts', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'View Shift';
 ?>
 <div class="shift-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>View Shift</h1>
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->shift_id], ['class' => 'btn btn-primary']) ?>
@@ -28,7 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'shift_id',
             'shift_name',
             'shift_start',
             'shift_end',

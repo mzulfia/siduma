@@ -1,21 +1,30 @@
 <?php
 
 use yii\helpers\Html;
-
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Role */
 
-$this->title = 'Create Role';
+$this->title = 'Roles | Create Role';
 $this->params['breadcrumbs'][] = ['label' => 'Roles', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'Create Role';
 ?>
 <div class="role-create">
+	<div class="box box-info">
+	 	<div class="box-header with-border">
+	    	<h3 class="box-title">Create Role</h3>
+		</div><!-- /.box-header -->
+		<div class="box-body">
+		    <?php $form = ActiveForm::begin(); ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+		    <?= $form->field($model, 'role_name')->textInput(['maxlength' => true]) ?>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+		    <div class="form-group">
+		        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+		    </div>
 
-</div>
+		    <?php ActiveForm::end(); ?>
+		</div>
+	</div>
+</div>		

@@ -18,8 +18,8 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'SIDUMA';
-$this->params['breadcrumbs'][] = 'Dashboard';
+$this->title = 'SIDUMA | Dashboard';
+// $this->params['breadcrumbs'][] = 'Dashboard';
 
 $this->registerJs("$(function() {
    $('.popupModal').click(function(e) {
@@ -39,7 +39,21 @@ $this->registerJs("$(function() {
    });
 });");
 
+$this->registerJs("$(function() {
+      $('#modal-profile').on('hidden.bs.modal', function (e) {
+           $(this).find('#modalContent').val('').end();
+      });
+  });");
+
+$this->registerJs("$(function() {
+      $('#modal-report').on('hidden.bs.modal', function (e) {
+           $(this).find('#modalContent').val('').end();
+      });
+  });");
+
 ?>
+
+
 
 <?php
         Modal::begin([
@@ -130,150 +144,153 @@ $this->registerJs("$(function() {
             ?>
         </div>
         <div class="row">     
-            <div class="col-lg-6">
-              <div class="box box-info">
-                <div class="box-header">
-                    <h3 class="box-title"><b>Duty Manager Now</b></h3>
-                </div>
-              </div> 
               <div class="col-lg-6">
-                  <div class="profile-picture">
-                    <?php $dm = Schedule::getDmNow();?>
-                    <?php if(isset($dm)){ ?>
-                        <?= Html::img(Yii::$app->homeUrl . Support::getProfilePicture($dm->support_id), ['class' => 'img-circle', 'alt' => 'Support Image']);?>
-                    <?php } ?>   
+                <div class="box box-info">
+                  <div class="box-header">
+                      <h3 class="box-title"><b>Duty Manager Now</b></h3>
                   </div>
-              </div>
-              <div class="col-lg-6">
-                  <div class="box box-info">
-                    <div class="box-header with-border">
-                      <h3 class="box-title"><b>Profile</b></h3>
-                      <div class="box-tools pull-right">
-                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                      </div>
+                </div> 
+                <div class="col-lg-5">
+                    <div class="profile-picture">
+                      <?php $dm = Schedule::getDmNow();?>
+                      <?php if(isset($dm)){ ?>
+                          <?= Html::img(Yii::$app->homeUrl . Support::getProfilePicture($dm->support_id), ['class' => 'img-circle', 'alt' => 'Support Image']);?>
+                      <?php } ?>   
                     </div>
-                    <div class="box-body table-responsive no-padding">
-                      <table class="table table-hover">
-                        <tbody>
-                            <?php
-                                if(isset($dm)){
-                                    $service_family = Support::getServiceInCharge($dm->support_id);
-                                    date_default_timezone_set("Asia/Jakarta");
-                                    $shift = Shift::getShift(date('H:i:s'))->shift_name;
-                                    $name = $dm->support->support_name;
-                                    $email = $dm->support->email;
-                                    $no_hp = $dm->support->no_hp;
-                                    echo '
-                                        <tr>
-                                            <td>Nama</td>
-                                            <td><a class="popupModal users-list-name" href="'. Url::to(['support/view/', 'id'=>$dm->support_id]) . '">' . $name . '</a></td>
-                                        </tr>
-                                        <tr>    
-                                            <td>Email</td>
-                                            <td>' . $email . '</td>
-                                        </tr>
-                                        <tr>    
-                                            <td>No HP</td>
-                                            <td>' . $no_hp . '</td>
-                                        </tr>
-                                        <tr>    
-                                            <td>Shift</td>
-                                            <td>' . $shift . '</td>
-                                        </tr>
-                                        <tr>    
-                                            <td>Service Family</td>
-                                            <td>' . $service_family . '</td>
-                                        </tr>';
-                                }    
-                            ?>
-                            </tbody>
-                        </table>
-                    </div><!-- /.box-body -->
-                </div><!-- /.box -->
-              </div>
-            </div>
-
-            <div class="col-md-6">
-                  <!-- USERS LIST -->
-                  <div class="box box-info">
-                    <div class="box-header with-border">
-                      <h3 class="box-title"><b><?php echo ServiceFamily::getServiceIcon(); ?></b></h3>
-                      <div class="box-tools pull-right">
-                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                </div>
+                <div class="col-lg-7">
+                    <div class="box box-info">
+                      <div class="box-header with-border">
+                        <h3 class="box-title"><b>Profile</b></h3>
+                        <div class="box-tools pull-right">
+                          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                        </div>
                       </div>
-                    </div><!-- /.box-header -->
-                    <div class="box-body no-padding">
-                      <ul class="users-list clearfix">
-                        <?php
-                            $arrays_team = SupportArea::getTeamIconNow();
-                            // var_dump($arrays_team);
-                            if(isset($arrays_team)){
-                               foreach($arrays_team as $array_team){
-                                  echo'
-                                  <li>
-                                    <img src="' . Yii::$app->homeUrl . Support::getProfilePicture($array_team['support_id']) . '" class="img-circle-team" alt="User Image">
-                                    <a class="popupModal users-list-name" href="'. Url::to(['support/view/', 'id'=>$array_team['support_id']]) . '">' . $array_team['support_name'] . '</a>
-                                    <span class="users-list-date">' . $array_team['no_hp'] . '</span>
-                                  </li>';
-                              }
-                            }  
-                        ?>
-                      </ul><!-- /.users-list -->
-                    </div><!-- /.box-body -->
-                  </div><!--/.box -->
+                      <div class="box-body table-responsive no-padding">
+                        <table class="table table-hover">
+                          <tbody>
+                              <?php
+                                  if(isset($dm)){
+                                      $service_family = Support::getServiceInCharge($dm->support_id);
+                                      date_default_timezone_set("Asia/Jakarta");
+                                      $shift = Shift::getShift(date('H:i:s'))->shift_name;
+                                      $name = $dm->support->support_name;
+                                      $email = $dm->support->email;
+                                      $no_hp = $dm->support->no_hp;
+                                      echo '
+                                          <tr>
+                                              <td>Nama</td>
+                                              <td><a class="popupModal users-list-name" href="'. Url::to(['support/view/', 'id'=>$dm->support_id]) . '">' . $name . '</a></td>
+                                          </tr>
+                                          <tr>    
+                                              <td>Email</td>
+                                              <td>' . $email . '</td>
+                                          </tr>
+                                          <tr>    
+                                              <td>No HP</td>
+                                              <td>' . $no_hp . '</td>
+                                          </tr>
+                                          <tr>    
+                                              <td>Shift</td>
+                                              <td>' . $shift . '</td>
+                                          </tr>
+                                          <tr>    
+                                              <td>Service Family</td>
+                                              <td>' . $service_family . '</td>
+                                          </tr>';
+                                  }    
+                              ?>
+                              </tbody>
+                          </table>
+                      </div><!-- /.box-body -->
+                  </div><!-- /.box -->
+                </div>
+              </div>
 
-                  <div class="box box-info">
-                        <div class="box-header with-border">
-                          <h3 class="box-title"><b><?php echo ServiceFamily::getServiceOthers(); ?></b></h3>
-                          <div class="box-tools pull-right">
-                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                          </div>
-                        </div><!-- /.box-header -->
-                        <div class="box-body no-padding">
-                          <ul class="users-list clearfix">
+              <div class="col-md-6">
+                    <!-- USERS LIST -->
+                    <div class="box box-info">
+                      <div class="box-header with-border">
+                        <h3 class="box-title"><b><?php echo ServiceFamily::getServiceIcon(); ?></b></h3>
+                        <div class="box-tools pull-right">
+                          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                        </div>
+                      </div><!-- /.box-header -->
+                      <div class="box-body no-padding">
+                        <ul class="users-list clearfix">
+                          <?php
+                              $arrays_team = SupportArea::getTeamIconNow();
+                              // var_dump($arrays_team);
+                              if(isset($arrays_team)){
+                                 foreach($arrays_team as $array_team){
+                                    echo'
+                                    <li>
+                                      <img src="' . Yii::$app->homeUrl . Support::getProfilePicture($array_team['support_id']) . '" class="img-circle-team" alt="User Image">
+                                      <a class="popupModal users-list-name" href="'. Url::to(['support/view/', 'id'=>$array_team['support_id']]) . '">' . $array_team['support_name'] . '</a>
+                                      <span class="users-list-date">' . $array_team['no_hp'] . '</span>
+                                    </li>';
+                                }
+                              }  
+                          ?>
+                        </ul><!-- /.users-list -->
+                      </div><!-- /.box-body -->
+                    </div><!--/.box -->
+                    <div class="box box-info">
+                          <div class="box-header with-border">
+                            <h3 class="box-title"><b><?php echo ServiceFamily::getServiceOthers(); ?></b></h3>
+                            <div class="box-tools pull-right">
+                              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                            </div>
+                          </div><!-- /.box-header -->
+                          <div class="box-body no-padding" style="overflow-y: scroll;">
+                            <ul class="users-list clearfix">
 
-                  <?php
-                      $arrays_team = SupportArea::getTeamOthersNow();
-                      // var_dump($arrays_team);
-                      if(!empty($arrays_team)){
-                        foreach ($arrays_team as $array_team) {
-                          echo'
-                            <li>
-                              <img src="' . Yii::$app->homeUrl . Support::getProfilePicture($array_team['support_id']) . '" class="img-circle-team" alt="User Image">
-                              <a class="popupModal users-list-name" href="'. Url::to(['support/view/', 'id'=>$array_team['support_id']]) . '">' . $array_team['support_name'] . '</a>
-                              <span class="users-list-date">' . $array_team['no_hp'] . '</span>
-                              <span class="users-list-date">' . SupportArea::getServiceInCharge($array_team['support_id']) . '</span>
-                            </li>';
+                    <?php
+                        $arrays_team = SupportArea::getTeamOthersNow();
+                        // var_dump($arrays_team);
+                        if(!empty($arrays_team)){
+                          foreach ($arrays_team as $array_team) {
+                            echo'
+                              <li>
+                                <img src="' . Yii::$app->homeUrl . Support::getProfilePicture($array_team['support_id']) . '" class="img-circle-team" alt="User Image">
+                                <a class="popupModal users-list-name" href="'. Url::to(['support/view/', 'id'=>$array_team['support_id']]) . '">' . $array_team['support_name'] . '</a>
+                                <span class="users-list-date">' . $array_team['no_hp'] . '</span>
+                                <span class="users-list-date">' . SupportArea::getServiceInCharge($array_team['support_id']) . '</span>
+                              </li>';
+                          }
                         }
-                      }
-                  ?>
-                  </ul><!-- /.users-list -->
-                </div><!-- /.box-body -->
-              </div><!--/.box -->
-    </div>
-    <div class="col-lg-12">
-      <?php 
-          $services = ServiceFamily::find()->all();
-          $text = '';
-          foreach ($services as $service) {
-              $text .= $service->service_name . ': ';
-              $array = SupportReport::getServiceSupportReport($service->service_family_id);
-              if(!empty($array)){
-                $text .= $array->information . " | ";
-              } else {
-                $text .= "Aman | ";
-              }
-          }
-          echo '
-          <div style="position: fixed;bottom:8%;left:0;right:0;width:100%;">
-            <span style="font-family: Source Sans Pro; font-size: 20px; font-weight:bold; color: white;" padding:10px;>
-                <marquee direction="left" scrollamount="5" width="100%" bgcolor="#3c8dbc" >
-                  '. $text .'
-                </marquee>
-            </span>
-          </div>';
-      ?>
+                    ?>
+                    </ul><!-- /.users-list -->
+                  </div><!-- /.box-body -->
+                </div><!--/.box -->
+        </div>
+      </div>
   </div>
 </div>
+
+<div class="col-lg-12">
+    <?php 
+        $services = ServiceFamily::find()->all();
+        $text = '';
+        foreach ($services as $service) {
+            $text .= $service->service_name . ': ';
+            $array = SupportReport::getServiceSupportReport($service->service_family_id);
+            if(!empty($array)){
+              $text .= $array->information . " | ";
+            } else {
+              $text .= "Aman | ";
+            }
+        }
+        echo '
+        <div style="position: fixed;bottom:0;left:0;right:0;width:100%;height:90px;">
+          <span style="font-family: Source Sans Pro; font-size: 20px; font-weight:bold; color: white; padding:10px;" >
+              <marquee direction="left" scrollamount="5" width="100%" bgcolor="#3c8dbc" >
+                '. $text .'
+              </marquee>
+          </span>
+        </div>';
+    ?>
+</div>
+
 
 

@@ -83,13 +83,43 @@ DashboardAsset::register($this);
               </li>
               <li>
                 <a href="#">
+                  <i class="fa fa-group"></i> <span>Supports</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/support/index']);?>"><i class="fa fa-circle-o"></i> All </a></li>
+                  <li><a href="<?php echo Url::toRoute(['/support/create']);?>"><i class="fa fa-circle-o"></i> Create </a></li></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">
                   <i class="fa fa-calendar"></i> <span>Schedules</span>
                   <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                   <li><a href="<?php echo Url::toRoute(['/schedule/index']);?>"><i class="fa fa-circle-o"></i> All </a></li>
                   <li><a href="<?php echo Url::toRoute(['/schedule/create']);?>"><i class="fa fa-circle-o"></i> Create </a></li></li>
-                  <li><a href="<?php echo Url::toRoute(['/schedule/viewschedule']);?>"><i class="fa fa-circle-o"></i> View </a></li></li>
+                  <li><a href="<?php echo Url::toRoute(['/schedule/viewcalendar']);?>"><i class="fa fa-circle-o"></i> View </a></li></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">
+                  <i class="fa fa-clock-o"></i> <span>Shifts</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/shift/index']);?>"><i class="fa fa-circle-o"></i> All </a></li>
+                  <li><a href="<?php echo Url::toRoute(['/shift/create']);?>"><i class="fa fa-circle-o"></i> Create </a></li></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">
+                  <i class="fa fa-desktop"></i> <span>Service Family</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/service-family/index']);?>"><i class="fa fa-circle-o"></i> All </a></li>
+                  <li><a href="<?php echo Url::toRoute(['/service-family/create']);?>"><i class="fa fa-circle-o"></i> Create </a></li></li>
                 </ul>
               </li>
               <li>
@@ -116,19 +146,38 @@ DashboardAsset::register($this);
                     <a href="<?php echo Url::toRoute('/dm-report/reporthistory');?>">
                         <i class="fa fa-calendar"></i><span>Report History</span>
                     </a>
-                     
                 </li>
             <?php } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT){ ?>
               <li>
-                <a href="<?php echo Url::toRoute('/schedule/viewschedule');?>">
+                <a href="<?php echo Url::toRoute('/schedule/viewcalendar');?>">
                   <i class="fa fa-calendar"></i> <span>Schedules</span>
                 </a>
               </li>
               <li>
-                <a href="<?php echo Url::toRoute('/report/index');?>">
-                  <i class="fa fa-book"></i> <span>Reports</span>
+                <a href="#">
+                  <i class="fa fa-book"></i> <span>Duty Manager Report</span>
+                  <i class="fa fa-angle-left pull-right"></i>
                 </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/dm-report/index']);?>"><i class="fa fa-circle-o"></i> All</a></li>
+                  <li><a href="<?php echo Url::toRoute(['/dm-report/create']);?>"><i class="fa fa-circle-o"></i> Create</a></li></li>
+                </ul>
               </li>
+              <li>
+                <a href="#">
+                  <i class="fa fa-book"></i> <span>Support Report</span>
+                  <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                  <li><a href="<?php echo Url::toRoute(['/support-report/index']);?>"><i class="fa fa-circle-o"></i> All </a></li>
+                  <li><a href="<?php echo Url::toRoute(['/support-report/create']);?>"><i class="fa fa-circle-o"></i> Create </a></li></li>
+                </ul>
+              </li>
+              <li>
+                    <a href="<?php echo Url::toRoute('/dm-report/reporthistory');?>">
+                        <i class="fa fa-calendar"></i><span>Report History</span>
+                    </a>
+                </li>
             <?php } else { ?>
                   <?php 
                       date_default_timezone_set("Asia/Jakarta");
@@ -145,7 +194,7 @@ DashboardAsset::register($this);
                         </ul>
                       </li>
                       <li>
-                        <a href="<?php echo Url::toRoute('/schedule/viewschedule');?>">
+                        <a href="<?php echo Url::toRoute('/schedule/viewcalendar');?>">
                           <i class="fa fa-calendar"></i> <span>Schedules</span>
                         </a>
                       </li>
@@ -181,7 +230,7 @@ DashboardAsset::register($this);
                         </ul>
                         </li>
                           <li>
-                          <a href="<?php echo Url::toRoute('/schedule/viewschedule');?>">
+                          <a href="<?php echo Url::toRoute('/schedule/viewcalendar');?>">
                             <i class="fa fa-calendar"></i> <span>Schedules</span>
                           </a>
                           </li>
@@ -197,7 +246,12 @@ DashboardAsset::register($this);
                         </li>
                   <?php } ?>
             <?php } ?>
-            </ul>
+            <li>
+                <a href="<?php echo Url::toRoute(['/user/changepassword']);?>">
+                  <i class="fa fa-lock"></i> <span>Change Password</span>
+                </a>
+            </li>  
+          </ul>
         </section>
         <!-- /.sidebar -->
       </aside>

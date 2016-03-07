@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'email',
             [
                 'label' => 'Position',
-                'value' => $model->pos->position_name
+                'value' => !empty($model->support_position_id) ? $model->pos->position_name : null
             ],
             [
                 'label' => 'Service Family',

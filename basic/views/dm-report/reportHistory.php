@@ -12,7 +12,7 @@
 
 
 /* @var $this yii\web\View */
-$this->title = 'SIDUMA';
+$this->title = 'SIDUMA | Report History';
 $this->params['breadcrumbs'][] = 'Report History';
 
 $this->registerJs(
@@ -66,7 +66,7 @@ $this->registerJs(
                  <!-- BAR CHART -->
                   <div class="box box-info">
                     <div class="box-header with-border">
-                      <h3 class="box-title"><b>Report History</b></h3>
+                      <h3 class="box-title">Report History</h3>
                       <div class="box-tools pull-right">
                         <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                       </div>

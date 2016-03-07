@@ -17,7 +17,7 @@ class User extends ActiveRecord implements IdentityInterface
 {
     public $auth_key;
     public $access_token;
-
+    
     const ROLE_ADMINISTRATOR = 1;
     const ROLE_MANAGEMENT = 2;
     const ROLE_SUPPORT = 3; 

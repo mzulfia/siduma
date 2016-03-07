@@ -6,13 +6,13 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\ReportSupport */
 
-$this->title = $model->support_report_id;
+$this->title = 'Support Report | View Report';
 $this->params['breadcrumbs'][] = ['label' => 'Report Supports', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'View Report';
 ?>
 <div class="report-support-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>View Report</h1>
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->support_report_id], ['class' => 'btn btn-primary']) ?>

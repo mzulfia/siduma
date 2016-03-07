@@ -1,20 +1,19 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RoleSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Roles';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Roles | All';
+$this->params['breadcrumbs'][] = 'Roles';
 ?>
 <div class="role-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+    <h1>Roles</h1>
+    
     <p>
         <?= Html::a('Create Role', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -24,12 +23,21 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'role_id',
             'role_name',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'contentOptions' => ['style' => 'width: 100px']
+            ],
         ],
+        'pager' => [
+            'firstPageLabel' => 'First',
+            'lastPageLabel' => 'Last',
+        ],
+        'responsive'=>true,
+        'hover'=>true,
+        'condensed'=>true,
+        'floatHeader'=>true,
+        'bordered'=>true,
     ]); ?>
 
 </div>

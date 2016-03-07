@@ -7,9 +7,7 @@ use kartik\form\ActiveForm;
 use kartik\widgets\FileInput;
 use app\models\SupportPosition;
 use app\models\ServiceFamily;
-/* @var $this yii\web\View */
-/* @var $model app\models\Pic */
-/* @var $form yii\widgets\ActiveForm */
+
 ?>
 
 <div class="box box-info">
@@ -52,7 +50,7 @@ use app\models\ServiceFamily;
 
         <?= $form->field($model, 'support_position_id')->dropDownList(ArrayHelper::map(SupportPosition::find()->all(), 'support_position_id', 'position_name'), ['prompt'=>'-Select Position-']) ?>
 
-        <?php //echo $form->field($model2, 'service_family_id')->checkboxList(ArrayHelper::map(ServiceFamily::find()->all(), 'service_family_id', 'service_name'), ['inline'=>true]) ?>
+        <?= $form->field($model, 'support_area')->checkboxList(ArrayHelper::map(ServiceFamily::find()->all(), 'service_family_id', 'service_name'), ['inline'=>true]) ?>
         
         <div class="form-group">
             <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

@@ -5,17 +5,26 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\SupportPosition */
 
-$this->title = 'Update Support Position: ' . ' ' . $model->support_position_id;
+$this->title = 'Support Positions | Update Support Position';
 $this->params['breadcrumbs'][] = ['label' => 'Support Positions', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->support_position_id, 'url' => ['view', 'id' => $model->support_position_id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Update Support Position';
 ?>
+
 <div class="support-position-update">
+	<div class="box box-info">
+	 	<div class="box-header with-border">
+	    	<h3 class="box-title">Update Support Position</h3>
+		</div><!-- /.box-header -->
+		<div class="box-body">
+		    <?php $form = ActiveForm::begin(); ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+		    <?= $form->field($model, 'position_name')->textInput(['maxlength' => true]) ?>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+		    <div class="form-group">
+		        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+		    </div>
 
-</div>
+		    <?php ActiveForm::end(); ?>
+		</div>
+	</div>
+</div>		

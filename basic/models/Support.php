@@ -124,12 +124,14 @@ class Support extends \yii\db\ActiveRecord
     */
 
      public function afterSave($insert, $changedAttributes){
-        \Yii::$app->db->createCommand()->delete('support_area', 'support_id = '.(int) $this->support_id)->execute(); //Delete existing value
-        foreach ($this->support_area  as $id) { //Write new values
-            $sa = new SupportArea();
-            $sa->support_id = $this->support_id;
-            $sa->service_family_id = $id;
-            $sa->save();
+        if(!empty($this->support_area)){
+            \Yii::$app->db->createCommand()->delete('support_area', 'support_id = '.(int) $this->support_id)->execute(); //Delete existing value
+            foreach ($this->support_area  as $id) { //Write new values
+                $sa = new SupportArea();
+                $sa->support_id = $this->support_id;
+                $sa->service_family_id = $id;
+                $sa->save();
+            }
         }
     }
 

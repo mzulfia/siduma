@@ -1,21 +1,62 @@
 <?php
 
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use kartik\time\TimePicker;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Shift */
 
-$this->title = 'Update Shift: ' . ' ' . $model->shift_id;
+$this->title = 'Shifts | Update Shift';
 $this->params['breadcrumbs'][] = ['label' => 'Shifts', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->shift_id, 'url' => ['view', 'id' => $model->shift_id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Update Shift';
 ?>
 <div class="shift-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+   <div class="box box-info">
+	  <div class="box-header with-border">
+	    <h3 class="box-title">Update Shift</h3>
+	  </div><!-- /.box-header -->
+  	  <div class="box-body">
+  	  	 <?php $form = ActiveForm::begin(); ?>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+		    <?= $form->field($model, 'shift_name')->textInput(['maxlength' => true]) ?>
 
+		    <?= $form->field($model, 'shift_start')->widget(TimePicker::classname(), [
+			    'name' => 't1',
+			    'pluginOptions' => [
+				    'showSeconds' => true,
+				    'showMeridian' => false,
+				    'minuteStep' => 1,
+				    'secondStep' => 5,
+				    'defaultTime' => '00:00:00'
+		    	],
+			    'addonOptions' => [
+			        'asButton' => true,
+			        'buttonOptions' => ['class' => 'btn btn-info']
+			    ]
+			]); ?>
+
+		    <?= $form->field($model, 'shift_end')->widget(TimePicker::classname(), [
+			    'name' => 't2',
+			    'pluginOptions' => [
+				    'showSeconds' => true,
+				    'showMeridian' => false,
+				    'minuteStep' => 1,
+				    'secondStep' => 5,
+				    'defaultTime' => '00:00:00'
+		    	],
+			    'addonOptions' => [
+
+			        'asButton' => true,
+			        'buttonOptions' => ['class' => 'btn btn-info']
+			    ]
+			]);?>
+		    <div class="form-group">
+		        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+		    </div>
+
+		<?php ActiveForm::end(); ?>
+  	  </div>
+  	</div>  	
 </div>

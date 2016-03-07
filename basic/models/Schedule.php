@@ -115,7 +115,11 @@ class Schedule extends \yii\db\ActiveRecord
     public function getDmNow(){
         date_default_timezone_set("Asia/Jakarta");
         $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 1', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id])->one();
-        return $model;
+        if(!empty($model)){
+            return $model;
+        } else{
+            return null;
+        }
     }
 
     public function getTeamNow(){

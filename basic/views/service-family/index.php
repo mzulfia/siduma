@@ -7,14 +7,13 @@ use kartik\grid\GridView;
 /* @var $searchModel app\models\ServiceFamilySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Service Families';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Service Families | All';
+$this->params['breadcrumbs'][] = 'Service Families';
 ?>
 <div class="service-family-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+    <h1>Service Families</h1>
+    
     <p>
         <?= Html::a('Create Service Family', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -24,11 +23,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'service_family_id',
             'service_name',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'header' => 'Action',
+                'class' => 'yii\grid\ActionColumn',
+                'contentOptions' => ['style' => 'width:100px;']
+            ],
         ],
         'pager' => [
             'firstPageLabel' => 'First',

@@ -14,12 +14,12 @@ use app\models\ServiceFamily;
 /* @var $searchModel app\models\ReportSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'DM Reports';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'DM Reports | All';
+$this->params['breadcrumbs'][] = 'DM Reports';
 ?>
 <div class="reportdm-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>DM Reports</h1>
     
     <p>
         <?= Html::a('Create Report', ['create'], ['class' => 'btn btn-success']) ?>

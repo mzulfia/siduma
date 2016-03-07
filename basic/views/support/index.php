@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Pic', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Support', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -24,13 +24,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'support_id',
             'support_name',
             'company',
             'no_hp',
             'email',
-            
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'header' => 'Action',
+                'class' => 'yii\grid\ActionColumn',
+                'contentOptions' => ['style' => 'width: 100px']
+            ],
         ],
         'pager' => [
             'firstPageLabel' => 'First',
