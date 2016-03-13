@@ -100,13 +100,20 @@ class PlnPic extends \yii\db\ActiveRecord
     }
 
     public function deleteImage() {
-        $image = getcwd() . "/" . $this->image_path;
-        if (unlink($image)) {
-            $this->image_path = null;
-            $this->save();
+       if(!empty($this->image_path)){
+            $image = getcwd() . "/" . $this->image_path;
+            if(file_exists($image)){
+                if (unlink($image)) {
+                    $this->image_path = null;
+                    $this->save();
+                    return true;
+                }    
+            } else {
+                return false;
+            }
+        } else {
             return true;
         }
-        return false;
     }
 
     /*

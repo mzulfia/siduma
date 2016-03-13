@@ -115,15 +115,19 @@ class DmReport extends \yii\db\ActiveRecord
     */
 
     public function deleteFile() {
-        $file = getcwd() . "/" . $this->file_path;
-        if(file_exists($file)){
-            if (unlink($file)) {
-                $this->file_path = null;
-                $this->save();
-                return true;
-            }    
+        if(!empty($this->file_path)){
+            $file = getcwd() . "/" . $this->file_path;
+            if(file_exists($file)){
+                if (unlink($file)) {
+                    $this->file_path = null;
+                    $this->save();
+                    return true;
+                }    
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            return true;
         }
     }
 }

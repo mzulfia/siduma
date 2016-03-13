@@ -181,4 +181,21 @@ class Schedule extends \yii\db\ActiveRecord
             return false;
         } 
     } 
+
+    public function deleteFile() {
+        if(!empty($this->file_path)){
+            $file = getcwd() . "/" . $this->file_path;
+            if(file_exists($file)){
+                if (unlink($file)) {
+                    $this->file_path = null;
+                    $this->save();
+                    return true;
+                }    
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
 }

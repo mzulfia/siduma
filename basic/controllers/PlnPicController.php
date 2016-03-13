@@ -300,14 +300,36 @@ class PlnPicController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->deleteImage();
-        $this->findModel($id)->delete();
+       $model = $this->findModel($id);
+        if($model->deleteImage()){
+          $model->delete();
+          
+          $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM pln_pic')->queryAll();
+          $next_id = ((int) $size[0]['total']) + 1;
+          Yii::$app->getDb()->createCommand('ALTER TABLE pln_pic AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
-        $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM pln_pic')->queryAll();
-        $next_id = ((int) $size[0]['total']) + 1;
-        Yii::$app->getDb()->createCommand('ALTER TABLE pln_pic AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+          Yii::$app->getSession()->setFlash('success', [
+               'type' => 'success',
+               'duration' => 3000,
+               'message' => 'Delete Success',
+               'title' => 'Notification',
+               'positonY' => 'top',
+               'positonX' => 'right'
+          ]);    
 
-        return $this->redirect(['index']);
+          return $this->redirect(['index']);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', [
+                 'type' => 'danger',
+                 'duration' => 3000,
+                 'message' => 'Delete Failed',
+                 'title' => 'Notification',
+                 'positonY' => 'top',
+                 'positonX' => 'right'
+            ]); 
+
+            return $this->redirect(['index']);   
+        }
     }
 
     /**

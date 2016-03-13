@@ -513,14 +513,35 @@ class DmReportController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->deleteFile();
-        $model->delete();
+        if($model->deleteFile()){
+          $model->delete();
+          
+          $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM dm_report')->queryAll();
+          $next_id = ((int) $size[0]['total']) + 1;
+          Yii::$app->getDb()->createCommand('ALTER TABLE dm_report AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
-        $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM dm_report')->queryAll();
-        $next_id = ((int) $size[0]['total']) + 1;
-        Yii::$app->getDb()->createCommand('ALTER TABLE dm_report AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+          Yii::$app->getSession()->setFlash('success', [
+               'type' => 'success',
+               'duration' => 3000,
+               'message' => 'Delete Success',
+               'title' => 'Notification',
+               'positonY' => 'top',
+               'positonX' => 'right'
+          ]);    
 
-        return $this->redirect(['index']);
+          return $this->redirect(['index']);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', [
+                 'type' => 'danger',
+                 'duration' => 3000,
+                 'message' => 'Delete Failed',
+                 'title' => 'Notification',
+                 'positonY' => 'top',
+                 'positonX' => 'right'
+            ]); 
+
+            return $this->redirect(['index']);   
+        }
     }
 
     /**

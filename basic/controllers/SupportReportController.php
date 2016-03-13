@@ -483,14 +483,35 @@ class SupportReportController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->deleteFile();
-        $model->delete();
+        if($model->deleteFile()){
+          $model->delete();
+          
+          $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM support_report')->queryAll();
+          $next_id = ((int) $size[0]['total']) + 1;
+          Yii::$app->getDb()->createCommand('ALTER TABLE support_report AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
-        $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM support_report')->queryAll();
-        $next_id = ((int) $size[0]['total']) + 1;
-        Yii::$app->getDb()->createCommand('ALTER TABLE support_report AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
-        
-        return $this->redirect(['index']);
+          Yii::$app->getSession()->setFlash('success', [
+               'type' => 'success',
+               'duration' => 3000,
+               'message' => 'Delete Success',
+               'title' => 'Notification',
+               'positonY' => 'top',
+               'positonX' => 'right'
+          ]);    
+
+          return $this->redirect(['index']);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', [
+                 'type' => 'danger',
+                 'duration' => 3000,
+                 'message' => 'Delete Failed',
+                 'title' => 'Notification',
+                 'positonY' => 'top',
+                 'positonX' => 'right'
+            ]); 
+
+            return $this->redirect(['index']);   
+        }
     }
 
     /**
