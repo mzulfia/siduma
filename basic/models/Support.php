@@ -21,7 +21,7 @@ class Support extends \yii\db\ActiveRecord
 
     public $file;
     public $support_area; 
-
+    
     /**
      * @inheritdoc
      */
@@ -70,6 +70,11 @@ class Support extends \yii\db\ActiveRecord
         return $this->hasOne(SupportPosition::className(), ['support_position_id' => 'support_position_id']);
     }
 
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['user_id' => 'user_id']);
+    }
+
     public function getSchedules()
     {
         return $this->hasMany(Schedule::className(), ['support_id' => 'support_id']);
@@ -88,6 +93,17 @@ class Support extends \yii\db\ActiveRecord
         else
         {
             return $model->image_path;    
+        }
+    }
+
+    public function getName($id){
+        $model = Support::find()->where('support_id = :id', [':id' => $id])->one();
+        if(!empty($model->support_name)){
+           return $model->support_name;
+        }
+        else
+        {
+            return null;    
         }
     }
 
@@ -111,12 +127,15 @@ class Support extends \yii\db\ActiveRecord
 
     public function deleteImage() {
         $image = getcwd() . "/" . $this->image_path;
-        if (unlink($image)) {
-            $this->image_path = null;
-            $this->save();
-            return true;
+        if(file_exists($image)){
+            if (unlink($image)) {
+                $this->image_path = null;
+                $this->save();
+                return true;
+            }    
+        } else {
+            return false;
         }
-        return false;
     }
 
     /*

@@ -45,6 +45,11 @@ class DmReportSearch extends DmReport
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ]
+            ],
         ]);
 
         $dataProvider->sort->attributes['service_family_id'] = [
@@ -88,6 +93,11 @@ class DmReportSearch extends DmReport
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ]
+            ],
         ]);
 
         $dataProvider->sort->attributes['service_family_id'] = [

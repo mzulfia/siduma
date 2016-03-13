@@ -1,6 +1,14 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+
+use kartik\widgets\FileInput;
+use kartik\form\ActiveForm;
+
+use app\models\ServiceFamily;
+use app\models\User;
+use app\models\SupportArea;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\ReportSupport */
@@ -29,7 +37,14 @@ $this->params['breadcrumbs'][] = 'Update Report';
             }
         ?>
         
-        <?= $form->field($model, 'file')->widget(FileInput::classname()) ?>
+        <?= $form->field($model, 'file')->widget(FileInput::classname(), [
+                    'pluginOptions' => [
+                         'showCaption' => true,
+                         'showRemove' => false,
+                         'showUpload' => false,
+                     ],
+            ]); 
+        ?>
 
         <?= $form->field($model, 'information')->textArea() ?>
 

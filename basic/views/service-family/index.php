@@ -27,7 +27,8 @@ $this->params['breadcrumbs'][] = 'Service Families';
             [
                 'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
-                'contentOptions' => ['style' => 'width:100px;']
+                'template'=>'{update}{delete}',
+                'contentOptions' => ['style' => 'width:50px;']
             ],
         ],
         'pager' => [
@@ -37,7 +38,6 @@ $this->params['breadcrumbs'][] = 'Service Families';
         'responsive'=>true,
         'hover'=>true,
         'condensed'=>true,
-        'floatHeader'=>true,
         'bordered'=>true,
     ]); ?>
 

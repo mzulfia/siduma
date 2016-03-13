@@ -8,6 +8,10 @@ use app\models\ServiceFamilySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\User;
+use app\components\AccessRules;
+use yii\filters\AccessControl;
+
 
 /**
  * ServiceFamilyController implements the CRUD actions for ServiceFamily model.
@@ -23,6 +27,29 @@ class ServiceFamilyController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'access' => [
+               'class' => AccessControl::className(),
+               'ruleConfig' => [
+                   'class' => AccessRules::className(),
+               ],
+               'only' => ['index','create', 'update', 'delete'],
+               'rules' => [
+                       [
+                           'actions' => ['index','create', 'update', 'delete'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_ADMINISTRATOR
+                           ],
+                       ],
+                       [
+                           'actions' => ['index','create', 'update'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_SUPERVISOR
+                           ],
+                       ],
+                    ],
+                ],
         ];
     }
 
@@ -42,18 +69,6 @@ class ServiceFamilyController extends Controller
     }
 
     /**
-     * Displays a single ServiceFamily model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
      * Creates a new ServiceFamily model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -62,8 +77,31 @@ class ServiceFamilyController extends Controller
     {
         $model = new ServiceFamily();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->service_family_id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->save()){
+                Yii::$app->getSession()->setFlash('success', [
+                     'type' => 'success',
+                     'duration' => 3000,
+                     'message' => 'Update Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);    
+                    
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'message' => 'Update Failed',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);    
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -81,8 +119,31 @@ class ServiceFamilyController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->service_family_id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->update()){
+                Yii::$app->getSession()->setFlash('success', [
+                     'type' => 'success',
+                     'duration' => 3000,
+                     'message' => 'Update Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);    
+                    
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'message' => 'Update Failed',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);    
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -99,6 +160,10 @@ class ServiceFamilyController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM service_family')->queryAll();
+        $next_id = ((int) $size[0]['total']) + 1;
+        Yii::$app->getDb()->createCommand('ALTER TABLE service_family AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
         return $this->redirect(['index']);
     }

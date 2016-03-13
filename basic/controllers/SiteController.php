@@ -6,6 +6,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
@@ -13,10 +14,14 @@ use app\models\Schedule;
 use app\models\User;
 use app\models\ServiceFamily;
 use app\models\DmReport;
+use app\models\Management;
+use app\models\PlnPic;
+use app\components\AccessRules;
+
 
 class SiteController extends Controller
 {
-    // $user = Yii::$app->user->getId();
+    public $defaultAction = 'login';
 
     public function behaviors()
     {
@@ -32,6 +37,25 @@ class SiteController extends Controller
                     ],
                 ],
             ],
+            'access' => [
+               'class' => AccessControl::className(),
+               'ruleConfig' => [
+                   'class' => AccessRules::className(),
+               ],
+               'only' => ['index','login', 'logout', 'contact'],
+               'rules' => [
+                       [
+                           'actions' => ['index','logout', 'contact'],
+                           'allow' => true,
+                           'roles' => ['@']
+                       ],
+                       [
+                           'actions' => ['login'],
+                           'allow' => true,
+                           'roles' => ['?']
+                       ],
+                    ],
+                ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -57,7 +81,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $this->layout = 'main';
-
+        
         $schedule = new Schedule();
         $DmReport = new DmReport();
 
@@ -80,8 +104,9 @@ class SiteController extends Controller
     public function actionLogin()
     {
         $this->layout = 'signin';
+
         if (!Yii::$app->user->isGuest) {
-            return $this->actionIndex();
+            return $this->redirect(['index']);
         } else {
             $model = new LoginForm();
             if ($model->load(Yii::$app->request->post()) && $model->login()) {
@@ -96,7 +121,7 @@ class SiteController extends Controller
                          'positonX' => 'right'
                         ]);
 
-                return $this->actionIndex();
+                return $this->redirect(['index']);
             } else {
                 return $this->render('login', [
                     'model' => $model,
@@ -152,96 +177,13 @@ class SiteController extends Controller
         // return $this->redirect(['login']);
     }
 
-    public function actionHistoryDmReport(){
-        $model = new Schedule();
-        $service_name = '';
-        $ok_erp = 0.0;
-        $bad_erp = 0.0;
-        $ok_email = 0.0;
-        $bad_email = 0.0;
-        $ok_ap2t = 0.0;
-        $bad_ap2t = 0.0;
-        $ok_p2apst = 0.0;
-        $bad_p2apst = 0.0;
-        $ok_bbo = 0.0;
-        $bad_bbo = 0.0;
-        $ok_apkt = 0.0;
-        $bad_apkt = 0.0;
-        $ok_itsm = 0.0;
-        $bad_itsm = 0.0;
-        
-
-        $date = date('Y-m-d');
-        $ok_erp = (float) number_format((float)DmReport::getOkCondition($date, 1), 2, '.', '');
-        $bad_erp = (float) number_format((float)DmReport::getBadCondition($date, 1), 2, '.', '');
-        $ok_email = (float) number_format((float)DmReport::getOkCondition($date, 2), 2, '.', '');
-        $bad_email = (float) number_format((float)DmReport::getBadCondition($date, 2), 2, '.', '');
-        $ok_ap2t = (float) number_format((float)DmReport::getOkCondition($date, 3), 2, '.', '');
-        $bad_ap2t = (float) number_format((float)DmReport::getBadCondition($date, 3), 2, '.', '');
-        $ok_p2apst = (float) number_format((float)DmReport::getOkCondition($date, 4), 2, '.', '');
-        $bad_p2apst = (float) number_format((float)DmReport::getBadCondition($date, 4), 2, '.', '');
-        $ok_bbo = (float) number_format((float)DmReport::getOkCondition($date, 5), 2, '.', '');
-        $bad_bbo = (float) number_format((float)DmReport::getBadCondition($date, 5), 2, '.', '');
-        $ok_apkt = (float) number_format((float)DmReport::getOkCondition($date, 6), 2, '.', '');
-        $bad_apkt = (float) number_format((float)DmReport::getBadCondition($date, 6), 2, '.', '');
-        $ok_itsm = (float) number_format((float)DmReport::getOkCondition($date, 7), 2, '.', '');
-        $bad_itsm = (float) number_format((float)DmReport::getBadCondition($date, 7), 2, '.', '');
-
-        $date = '';
-        if(isset($_POST['dashboard-button']) && $_POST['Schedule']['date'] != ''){
-            $date = $_POST['Schedule']['date'];
-            $ok_erp = (float) number_format((float)DmReport::getOkCondition($date, 1), 2, '.', '');
-            $bad_erp = (float) number_format((float)DmReport::getBadCondition($date, 1), 2, '.', '');
-            $ok_email = (float) number_format((float)DmReport::getOkCondition($date, 2), 2, '.', '');
-            $bad_email = (float) number_format((float)DmReport::getBadCondition($date, 2), 2, '.', '');
-            $ok_ap2t = (float) number_format((float)DmReport::getOkCondition($date, 3), 2, '.', '');
-            $bad_ap2t = (float) number_format((float)DmReport::getBadCondition($date, 3), 2, '.', '');
-            $ok_p2apst = (float) number_format((float)DmReport::getOkCondition($date, 4), 2, '.', '');
-            $bad_p2apst = (float) number_format((float)DmReport::getBadCondition($date, 4), 2, '.', '');
-            $ok_bbo = (float) number_format((float)DmReport::getOkCondition($date, 5), 2, '.', '');
-            $bad_bbo = (float) number_format((float)DmReport::getBadCondition($date, 5), 2, '.', '');
-            $ok_apkt = (float) number_format((float)DmReport::getOkCondition($date, 6), 2, '.', '');
-            $bad_apkt = (float) number_format((float)DmReport::getBadCondition($date, 6), 2, '.', '');
-            $ok_itsm = (float) number_format((float)DmReport::getOkCondition($date, 7), 2, '.', '');
-            $bad_itsm = (float) number_format((float)DmReport::getBadCondition($date, 7), 2, '.', '');
-        }        
-
-        return $this->render('index', [
-            'model' => $model,
-            'date' => $date,
-            'ok_erp' => $ok_erp,
-            'bad_erp' => $bad_erp,
-            'ok_email' => $ok_email,
-            'bad_email' => $bad_email,
-            'ok_ap2t' => $ok_ap2t,
-            'bad_ap2t' => $bad_ap2t,
-            'ok_p2apst' => $ok_p2apst,
-            'bad_p2apst' => $bad_p2apst,
-            'ok_bbo' => $ok_bbo,
-            'bad_bbo' => $bad_bbo,
-            'ok_apkt' => $ok_apkt,
-            'bad_apkt' => $bad_apkt,
-            'ok_itsm' => $ok_itsm,
-            'bad_itsm' => $bad_itsm,
-        ]);   
-
-    }
-
     public function actionContact()
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
+        $management = Management::find()->all();
+        $plnpic = PlnPic::find()->all();
         return $this->render('contact', [
-            'model' => $model,
+            'management' => $management,
+            'plnpic' => $plnpic
         ]);
-    }
-
-    public function actionAbout()
-    {
-        return $this->render('about');
     }
 }

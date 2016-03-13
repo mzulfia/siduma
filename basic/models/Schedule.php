@@ -158,7 +158,7 @@ class Schedule extends \yii\db\ActiveRecord
         return true;
     }
 
-    public function getIsDM($date, $shift_id, $support_id){
+    public function getIsDmNow($date, $shift_id, $support_id){
         $model  = Schedule::find()->where('date = :date AND support_id = :support_id AND shift_id = :shift_id', [':date' => $date, ':support_id' => $support_id, ':shift_id' => $shift_id])->one();
         if(!empty($model))
         {
@@ -168,5 +168,17 @@ class Schedule extends \yii\db\ActiveRecord
         {
             return false;
         } 
-    }   
+    }  
+
+    public function getIsSupportNow($date, $shift_id, $support_id){
+        $model  = Schedule::find()->where('date = :date AND support_id = :support_id AND shift_id = :shift_id', [':date' => $date, ':support_id' => $support_id, ':shift_id' => $shift_id])->one();
+        if(!empty($model))
+        {
+            return ($model->is_dm == 0);
+        }
+        else
+        {
+            return false;
+        } 
+    } 
 }

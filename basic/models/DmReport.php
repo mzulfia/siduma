@@ -50,7 +50,7 @@ class DmReport extends \yii\db\ActiveRecord
             'status' => 'Status',
             'information' => 'Information',
             'created_at' => 'Created At',
-            'support_id' => 'Support ID',
+            'support_id' => 'Reporter Name',
             'service_family_id' => 'Service Family',
             'file' => 'File'
         ];
@@ -116,11 +116,14 @@ class DmReport extends \yii\db\ActiveRecord
 
     public function deleteFile() {
         $file = getcwd() . "/" . $this->file_path;
-        if (unlink($file)) {
-            $this->file_path = null;
-            $this->save();
-            return true;
+        if(file_exists($file)){
+            if (unlink($file)) {
+                $this->file_path = null;
+                $this->save();
+                return true;
+            }    
+        } else {
+            return false;
         }
-        return false;
     }
 }

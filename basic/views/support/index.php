@@ -13,17 +13,17 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="support-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a('Create Support', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            [
+                'label' => 'Username',
+                'attribute' => 'support_username',
+                'value' => 'user.username'
+            ],
             'support_name',
             'company',
             'no_hp',
@@ -41,7 +41,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'responsive'=>true,
         'hover'=>true,
         'condensed'=>true,
-        'floatHeader'=>true,
         'bordered'=>true,
     ]); ?>
 

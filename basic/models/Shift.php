@@ -56,15 +56,13 @@ class Shift extends \yii\db\ActiveRecord
     }
 
     public function getShift($time){
-        // if($time >= "07:30:00" AND $time < "16:00:00"){
-        //     $model = Shift::find()->where('shift_start = "07:30:00"')->one();
-        // } else if($time >= "16:00:00" AND $time < "23:00:00"){
-        //     $model = Shift::find()->where('shift_start = "16:00:00"')->one();
-        // } else{
-        //     $model = Shift::find()->where('shift_start = "23:00:00"')->one();
-        // }
-        
-        $model = Shift::find()->where(':time >= shift_start AND :time < shift_end', [':time' => $time])->one();
+        if($time >= "07:00:00" AND $time < "16:00:00"){
+            $model = Shift::find()->where('shift_start = "07:00:00"')->one();
+        } else if($time >= "16:00:00" AND $time < "23:00:00"){
+            $model = Shift::find()->where('shift_start = "16:00:00"')->one();
+        } else{
+            $model = Shift::find()->where('shift_start = "23:00:00"')->one();
+        }
 
         return $model;   
     }

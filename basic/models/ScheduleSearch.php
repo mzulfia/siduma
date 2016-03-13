@@ -85,7 +85,7 @@ class ScheduleSearch extends Schedule
               'desc' => ['support.email' => SORT_DESC],
         ];
 
-         $dataProvider->sort->attributes['support_id'] = [
+        $dataProvider->sort->attributes['support_id'] = [
               'asc' => ['support.no_hp' => SORT_ASC],
               'desc' => ['support.no_hp' => SORT_DESC],
         ];

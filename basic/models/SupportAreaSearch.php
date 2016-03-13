@@ -12,13 +12,15 @@ use app\models\SupportArea;
  */
 class SupportAreaSearch extends SupportArea
 {
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['support_area_id', 'support_id', 'service_family_id'], 'integer'],
+            [['support_area_id'], 'integer'],
+            [['service_family_id', 'support_id'], 'safe'],
         ];
     }
 
@@ -42,23 +44,28 @@ class SupportAreaSearch extends SupportArea
     {
         $query = SupportArea::find();
 
-        $dataProvider = new ActiveDataProvider([
+         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        $this->load($params);
+        $dataProvider->sort->attributes['support_id'] = [
+              'asc' => ['support.support_name' => SORT_ASC],
+              'desc' => ['support.support_name' => SORT_DESC],
+        ];
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+        $dataProvider->sort->attributes['service_family_id'] = [
+              'asc' => ['service_family.service_name' => SORT_ASC],
+              'desc' => ['service_family.service_name' => SORT_DESC],
+        ];
+
+        if (isset($_GET['SupportAreaSearch']) && !($this->load($params) && $this->validate())) {
+            return $dataProvider; 
         }
 
-        $query->andFilterWhere([
-            'support_area_id' => $this->support_area_id,
-            'support_id' => $this->support_id,
-            'service_family_id' => $this->service_family_id,
-        ]);
+        $query->joinWith(['support', 'serviceFamily']);
+
+        $query->andFilterWhere(['like', 'service_family.service_name', $this->service_family_id])
+            ->andFilterWhere(['like', 'support.support_name', $this->support_id]);
 
         return $dataProvider;
     }

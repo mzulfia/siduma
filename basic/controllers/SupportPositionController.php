@@ -8,6 +8,10 @@ use app\models\SupportPositionSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\User;
+use app\components\AccessRules;
+use yii\filters\AccessControl;
+
 
 /**
  * SupportPositionController implements the CRUD actions for SupportPosition model.
@@ -23,6 +27,22 @@ class SupportPositionController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'access' => [
+               'class' => AccessControl::className(),
+               'ruleConfig' => [
+                   'class' => AccessRules::className(),
+               ],
+               'only' => ['index','create', 'update', 'delete', 'view'],
+               'rules' => [
+                       [
+                           'actions' => ['index','create', 'update', 'delete', 'view'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_ADMINISTRATOR, 
+                           ],
+                       ],
+                    ],
+                ],
         ];
     }
 
@@ -62,8 +82,31 @@ class SupportPositionController extends Controller
     {
         $model = new SupportPosition();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->support_position_id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->save()){
+                Yii::$app->getSession()->setFlash('success', [
+                     'type' => 'success',
+                     'duration' => 3000,
+                     'message' => 'Create Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);    
+                    
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'message' => 'Create Failed',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);    
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -81,8 +124,31 @@ class SupportPositionController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->support_position_id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->update()){
+                Yii::$app->getSession()->setFlash('success', [
+                     'type' => 'success',
+                     'duration' => 3000,
+                     'message' => 'Update Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);    
+                    
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'message' => 'Update Failed',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);    
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -99,6 +165,10 @@ class SupportPositionController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM support_position')->queryAll();
+        $next_id = ((int) $size[0]['total']) + 1;
+        Yii::$app->getDb()->createCommand('ALTER TABLE support_position AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
         return $this->redirect(['index']);
     }

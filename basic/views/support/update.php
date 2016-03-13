@@ -7,6 +7,7 @@ use kartik\form\ActiveForm;
 use kartik\widgets\FileInput;
 use app\models\SupportPosition;
 use app\models\ServiceFamily;
+use app\models\User;
 
 if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
 	$this->title = 'Supports | Update Support';
@@ -54,9 +55,9 @@ if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
 
 	        <?= $form->field($model, 'company')->textInput(['maxlength' => true]) ?>
 
-	        <?= $form->field($model, 'no_hp')->textInput() ?>
+	        <?= $form->field($model, 'no_hp')->textInput(['maxlength' => true]) ?>
 
-	        <?= $form->field($model, 'email')->textInput() ?>
+	        <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
 	        <?= $form->field($model, 'support_position_id')->dropDownList(ArrayHelper::map(SupportPosition::find()->all(), 'support_position_id', 'position_name'), ['prompt'=>'-Select Position-']) ?>
 

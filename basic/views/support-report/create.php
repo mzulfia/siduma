@@ -40,7 +40,14 @@ $this->params['breadcrumbs'][] = $this->title;
             }
         ?>
         
-        <?= $form->field($model, 'file')->widget(FileInput::classname()) ?>
+        <?= $form->field($model, 'file')->widget(FileInput::classname(), [
+                    'pluginOptions' => [
+                         'showCaption' => true,
+                         'showRemove' => false,
+                         'showUpload' => false,
+                     ],
+            ]); 
+        ?>
 
         <?= $form->field($model, 'information')->textArea() ?>
 

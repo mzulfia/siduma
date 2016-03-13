@@ -54,7 +54,7 @@ if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR || Use
                 <?= $form->field($model, 'is_dm')->dropDownList(['1' => 'Ya', '0' => 'Tidak'], ['prompt'=>'-Select Answer-']) ?>
 
                 <p>
-                    *Pagi: 07:00-15:00, Sore: 15:00-23:00, Malam : 23:00-07:00
+                    *Pagi: 07:00-16:00, Sore: 16:00-23:00, Malam : 23:00-07:00
                 </p>
 
                 <div class="form-group">

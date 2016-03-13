@@ -6,11 +6,14 @@ use Yii;
 use app\models\SupportReport;
 use app\models\SupportReportSearch;
 use app\models\User;
+use app\models\Schedule;
 use app\models\Shift;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
+use app\components\AccessRules;
+use yii\filters\AccessControl;
 
 
 /**
@@ -27,7 +30,40 @@ class SupportReportController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-        ];
+           'access' => [
+               'class' => AccessControl::className(),
+               // We will override the default rule config with the new AccessRule class
+               'ruleConfig' => [
+                   'class' => AccessRules::className(),
+               ],
+               'only' => ['index','create', 'update', 'delete', 'view'],
+               'rules' => [
+                       [
+                           'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_ADMINISTRATOR, 
+                           ],
+                       ],
+                       [
+                           'actions' => ['index', 'create', 'update', 'view'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_SUPPORT,
+                           ],
+                       ],
+                       [
+                           'actions' => ['index', 'view'],
+                           'allow' => true,
+                           // Allow moderators and admins to update
+                           'roles' => [
+                               User::ROLE_MANAGEMENT,
+                               User::ROLE_SUPERVISOR,
+                           ],
+                       ],
+                    ],
+                ],
+            ];
     }
 
     /**
@@ -44,7 +80,15 @@ class SupportReportController extends Controller
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
             ]);
-        } else{
+        } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT || User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPERVISOR) {
+            $searchModel = new SupportReportSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+            return $this->render('indexMgtSpv', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
             $support_id = User::getSupportId(Yii::$app->user->getId());
             $searchModel = new SupportReportSearch();
             $searchModel->support_id =  $support_id;
@@ -77,66 +121,237 @@ class SupportReportController extends Controller
      */
     public function actionCreate()
     {
-        $model = new SupportReport();
+        if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+            $model = new SupportReport();
 
-        $post = Yii::$app->request->post();
+            $post = Yii::$app->request->post();
 
-        if($model->load($post)){
-            date_default_timezone_set("Asia/Jakarta");
-            $model->created_at = date("Y-m-d H:i:s"); 
-            $model->support_id = User::getSupportId(Yii::$app->user->getId());
+            if($model->load($post)){
+                date_default_timezone_set("Asia/Jakarta");
+                $model->created_at = date("Y-m-d H:i:s"); 
+                $model->support_id = User::getSupportId(Yii::$app->user->getId());
 
-            $array = SupportReport::getServiceSupportReport($model->service_family_id);
-            if(!empty($array)){
-                if(explode(" ", $model->created_at)[0] == explode(" ", $array->created_at)[0] && Shift::getShift(explode(" ", $model->created_at)[1])->shift_id == Shift::getShift(explode(" ", $array->created_at)[1])->shift_id){
-                    Yii::$app->getSession()->setFlash('danger', [
-                       'type' => 'danger',
-                       'duration' => 3000,
-                       'icon' => 'fa fa-file',
-                       'message' => 'Report has been submitted by someone',
-                       'title' => 'Notification',
-                       'positonY' => 'top',
-                       'positonX' => 'right'
-                    ]);
-                    return $this->render('create', [
-                        'model' => $model,
-                    ]);
-                }
-                else
-                {
+                $array = SupportReport::getServiceSupportReport($model->service_family_id);
+                if(!empty($array)){
+                    if(explode(" ", $model->created_at)[0] == explode(" ", $array->created_at)[0] && Shift::getShift(explode(" ", $model->created_at)[1])->shift_id == Shift::getShift(explode(" ", $array->created_at)[1])->shift_id){
+                        Yii::$app->getSession()->setFlash('danger', [
+                           'type' => 'danger',
+                           'duration' => 3000,
+                           'icon' => 'fa fa-file',
+                           'message' => 'Report has been submitted by someone',
+                           'title' => 'Notification',
+                           'positonY' => 'top',
+                           'positonX' => 'right'
+                        ]);
+                        return $this->render('create', [
+                            'model' => $model,
+                        ]);
+                    }
+                    else
+                    {
+                        $file_upload = UploadedFile::getInstance($model, 'file');
+                        if(!empty($file_upload)){
+                            $model->file = $file_upload;
+                            $model->file->saveAs('uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension);    
+                            $model->file_path = 'uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension;
+                            if($model->save()){
+                                Yii::$app->getSession()->setFlash('success', [
+                                   'type' => 'success',
+                                   'duration' => 3000,
+                                   'icon' => 'fa fa-upload',
+                                   'message' => 'Upload Success',
+                                   'title' => 'Notification',
+                                   'positonY' => 'top',
+                                   'positonX' => 'right'
+                                ]);
+
+                                return $this->redirect(['index']);
+                            } else {
+                                Yii::$app->getSession()->setFlash('danger', [
+                                   'type' => 'danger',
+                                   'duration' => 3000,
+                                   'icon' => 'fa fa-upload',
+                                   'message' => 'Upload Failed',
+                                   'title' => 'Notification',
+                                   'positonY' => 'top',
+                                   'positonX' => 'right'
+                                ]);
+
+                                return $this->redirect(['index']);
+                            }
+                          } else {
+                              return $this->render('create', [
+                                  'model' => $model,
+                              ]);
+                          }
+                    } 
+                } else {
                     $file_upload = UploadedFile::getInstance($model, 'file');
                     if(!empty($file_upload)){
                         $model->file = $file_upload;
                         $model->file->saveAs('uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension);    
                         $model->file_path = 'uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension;
-                        $model->save();
-                        
-                        return $this->redirect(['index']);
+                        if($model->save()){
+                           Yii::$app->getSession()->setFlash('success', [
+                                 'type' => 'success',
+                                 'duration' => 3000,
+                                 'icon' => 'fa fa-upload',
+                                 'message' => 'Upload Success',
+                                 'title' => 'Notification',
+                                 'positonY' => 'top',
+                                 'positonX' => 'right'
+                            ]);
+
+                           return $this->redirect(['index']);
+                        } else {
+                          Yii::$app->getSession()->setFlash('danger', [
+                                   'type' => 'danger',
+                                   'duration' => 3000,
+                                   'icon' => 'fa fa-upload',
+                                   'message' => 'Upload Failed',
+                                   'title' => 'Notification',
+                                   'positonY' => 'top',
+                                   'positonX' => 'right'
+                            ]);
+
+                            return $this->redirect(['index']);
+                        }
+                         
                     } else {
                         return $this->render('create', [
                             'model' => $model,
                         ]);
                     }
-                } 
-            } else {
-                $file_upload = UploadedFile::getInstance($model, 'file');
-                if(!empty($file_upload)){
-                    $model->file = $file_upload;
-                    $model->file->saveAs('uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension);    
-                    $model->file_path = 'uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension;
-                    $model->save();
-                     return $this->redirect(['index']);
-                } else {
-                    return $this->render('create', [
-                        'model' => $model,
-                    ]);
                 }
+            } else {
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
             }
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+          date_default_timezone_set("Asia/Jakarta");
+          if(Schedule::getIsSupportNow(date('Y-m-d'), Shift::getShift(date("H:i:s"))->shift_id, User::getSupportId(Yii::$app->user->getId()))) {
+              $model = new SupportReport();
+
+              $post = Yii::$app->request->post();
+
+              if($model->load($post)){
+                  date_default_timezone_set("Asia/Jakarta");
+                  $model->created_at = date("Y-m-d H:i:s"); 
+                  $model->support_id = User::getSupportId(Yii::$app->user->getId());
+
+                  $array = SupportReport::getServiceSupportReport($model->service_family_id);
+                  if(!empty($array)){
+                      if(explode(" ", $model->created_at)[0] == explode(" ", $array->created_at)[0] && Shift::getShift(explode(" ", $model->created_at)[1])->shift_id == Shift::getShift(explode(" ", $array->created_at)[1])->shift_id){
+                          Yii::$app->getSession()->setFlash('danger', [
+                             'type' => 'danger',
+                             'duration' => 3000,
+                             'icon' => 'fa fa-file',
+                             'message' => 'Report has been submitted by someone',
+                             'title' => 'Notification',
+                             'positonY' => 'top',
+                             'positonX' => 'right'
+                          ]);
+                          return $this->render('create', [
+                              'model' => $model,
+                          ]);
+                      }
+                      else
+                      {
+                          $file_upload = UploadedFile::getInstance($model, 'file');
+                          if(!empty($file_upload)){
+                              $model->file = $file_upload;
+                              $model->file->saveAs('uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension);    
+                              $model->file_path = 'uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension;
+                              if($model->save()){
+                                  Yii::$app->getSession()->setFlash('success', [
+                                     'type' => 'success',
+                                     'duration' => 3000,
+                                     'icon' => 'fa fa-upload',
+                                     'message' => 'Upload Success',
+                                     'title' => 'Notification',
+                                     'positonY' => 'top',
+                                     'positonX' => 'right'
+                                  ]);
+
+                                  return $this->redirect(['index']);
+                              } else {
+                                  Yii::$app->getSession()->setFlash('danger', [
+                                     'type' => 'danger',
+                                     'duration' => 3000,
+                                     'icon' => 'fa fa-upload',
+                                     'message' => 'Upload Failed',
+                                     'title' => 'Notification',
+                                     'positonY' => 'top',
+                                     'positonX' => 'right'
+                                  ]);
+
+                                  return $this->redirect(['index']);
+                              }
+                            } else {
+                                return $this->render('create', [
+                                    'model' => $model,
+                                ]);
+                            }
+                      } 
+                  } else {
+                      $file_upload = UploadedFile::getInstance($model, 'file');
+                      if(!empty($file_upload)){
+                          $model->file = $file_upload;
+                          $model->file->saveAs('uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension);    
+                          $model->file_path = 'uploads/reports/support/' . $model->file->baseName . '.' . $model->file->extension;
+                          if($model->save()){
+                             Yii::$app->getSession()->setFlash('success', [
+                                   'type' => 'success',
+                                   'duration' => 3000,
+                                   'icon' => 'fa fa-upload',
+                                   'message' => 'Upload Success',
+                                   'title' => 'Notification',
+                                   'positonY' => 'top',
+                                   'positonX' => 'right'
+                              ]);
+
+                             return $this->redirect(['index']);
+                          } else {
+                            Yii::$app->getSession()->setFlash('danger', [
+                                     'type' => 'danger',
+                                     'duration' => 3000,
+                                     'icon' => 'fa fa-upload',
+                                     'message' => 'Upload Failed',
+                                     'title' => 'Notification',
+                                     'positonY' => 'top',
+                                     'positonX' => 'right'
+                              ]);
+
+                              return $this->redirect(['index']);
+                          }
+                           
+                      } else {
+                          return $this->render('create', [
+                              'model' => $model,
+                          ]);
+                      }
+                  }
+              } else {
+                  return $this->render('create', [
+                      'model' => $model,
+                  ]);
+              }
+
+          } else {
+              Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'message' => "It's not your schedule",
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+              ]);
+
+              return $this->redirect(['index']);
+          } 
         }
+        
     }
 
     /**
@@ -270,6 +485,10 @@ class SupportReportController extends Controller
         $model = $this->findModel($id);
         $model->deleteFile();
         $model->delete();
+
+        $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM support_report')->queryAll();
+        $next_id = ((int) $size[0]['total']) + 1;
+        Yii::$app->getDb()->createCommand('ALTER TABLE support_report AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
         
         return $this->redirect(['index']);
     }

@@ -5,6 +5,7 @@ $params = require(__DIR__ . '/params.php');
 $config = [
     'id' => 'basic',
     'defaultRoute' => 'site/login',
+    'layout' => 'main',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'components' => [
@@ -18,6 +19,7 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
+            // 'loginUrl' => controller::$app->goHome()
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -33,19 +35,27 @@ $config = [
                 'password' => 'your-password',
                 'port' => '587',
                 'encryption' => 'tls',
-                            ],
+            ],
         ],
         'urlManager' => [
             'class' => 'yii\web\UrlManager',
-            // Disable index.php
             'showScriptName' => false,
-            // Disable r= routes
             'enablePrettyUrl' => true,
-            'rules' => array(
-                    '<controller:\w+>/<id:\d+>' => '<controller>/view',
-                    '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
-                    '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
-            ),
+            // 'enableStrictParsing' => true,
+            'rules' =>  [
+                // '/' => 'site/index',
+                // 'login' => 'site/login',
+                // 'logout' => 'site/logout',
+                '<controller:\w+>/<id:\d+>' => '<controller>/</action>',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+                '<controller:dm-report>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:pln-pic>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:service-family>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:support-area>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:support-position>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:support-report>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+            ]
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -71,6 +81,7 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
+        'allowedIPs' => ['127.0.0.1', '::1', '192.168.0.*', '192.168.178.20']
     ];
 }
 

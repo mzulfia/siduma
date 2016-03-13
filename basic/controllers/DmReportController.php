@@ -14,6 +14,9 @@ use app\models\User;
 use app\models\Shift;
 use app\models\Schedule;
 use app\models\ServiceFamily;
+use app\components\AccessRules;
+use yii\filters\AccessControl;
+
 
 /**
  * DmReportController implements the CRUD actions for DmReport model.
@@ -29,6 +32,37 @@ class DmReportController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'access' => [
+               'class' => AccessControl::className(),
+               'ruleConfig' => [
+                   'class' => AccessRules::className(),
+               ],
+               'only' => ['index','create', 'update', 'delete', 'view'],
+               'rules' => [
+                       [
+                           'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_ADMINISTRATOR, 
+                           ],
+                       ],
+                       [
+                           'actions' => ['index', 'create', 'update', 'view'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_SUPPORT,
+                           ],
+                       ],
+                       [
+                           'actions' => ['index', 'view'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_MANAGEMENT,
+                               User::ROLE_SUPERVISOR,
+                           ],
+                       ],
+                    ],
+                ],
         ];
     }
 
@@ -37,7 +71,6 @@ class DmReportController extends Controller
      * @return mixed
      */
     public function actionIndex(){
-        // if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR || Schedule::getIsDM(date('Y-m-d'), Shift::getShift(date("H:i:s"))->shift_id, User::getSupportId(Yii::$app->user->getId()))){
         if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
             $searchModel = new DmReportSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -46,7 +79,15 @@ class DmReportController extends Controller
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
             ]);
-        } else{
+        } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT || User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPERVISOR) {
+            $searchModel = new DmReportSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+            return $this->render('indexMgtSpv', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
             $support_id = User::getSupportId(Yii::$app->user->getId());
             $searchModel = new DmReportSearch();
             $searchModel->support_id =  $support_id;
@@ -85,57 +126,161 @@ class DmReportController extends Controller
      */
     public function actionCreate()
     {     
-        $service_family = [];
-        for($i=0; $i < sizeof(ServiceFamily::find()->all()); $i++){
-            $service_family[$i] = new DmReport();
-        }
-
-        if(!empty($_POST)){
-            for($i=0; $i < sizeof($service_family); $i++){
-                $service_family[$i]->attributes=$_POST['DmReport'][$i];
-                $service_family[$i]->service_family_id = $i+1;
-                $service_family[$i]->support_id = User::getSupportId(Yii::$app->user->getId());  
-                $service_family[$i]->created_at = date("Y-m-d H:i:s"); 
-                $file_attribute = '['.$i.']file';
-                $file = UploadedFile::getInstance($service_family[$i], $file_attribute);
-                if(!empty($file)){
-                    $erp->file = $file_erp;
-                    $erp->file->saveAs('uploads/reports/dutymanager/' . $service_family[$i]->file->baseName . '.' . $service_family[$i]->file->extension);    
-                    $erp->file_path = 'uploads/reports/dutymanager/' . $service_family[$i]->file->baseName . '.' . $service_family[$i]->file->extension;
-                } 
-            }   
-            for($i=0; $i < sizeof($service_family); $i++){
-                if($i == 0){
-                    $valid=$service_family[$i]->validate();    
-                } else {
-                    $valid=$service_family[$i]->validate() && $valid;    
-                }
+        if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR)
+        {
+            date_default_timezone_set("Asia/Jakarta");
+            $service_family = [];
+            for($i=0; $i < sizeof(ServiceFamily::find()->all()); $i++){
+                $service_family[$i] = new DmReport();
             }
 
-
-            if($valid)
-            { 
+            if(!empty($_POST)){
                 for($i=0; $i < sizeof($service_family); $i++){
-                    $service_family[$i]->save();
+                    $service_family[$i]->attributes=$_POST['DmReport'][$i];
+                    $service_family[$i]->service_family_id = $i+1;
+                    $service_family[$i]->support_id = User::getSupportId(Yii::$app->user->getId());  
+                    $service_family[$i]->created_at = date("Y-m-d H:i:s"); 
+                    $file_attribute = '['.$i.']file';
+                    $file = UploadedFile::getInstance($service_family[$i], $file_attribute);
+                    if(!empty($file)){
+                        $service_family[$i]->file = $file;
+                        $service_family[$i]->file->saveAs('uploads/reports/dutymanager/' . $service_family[$i]->file->baseName . '.' . $service_family[$i]->file->extension);    
+                        $service_family[$i]->file_path = 'uploads/reports/dutymanager/' . $service_family[$i]->file->baseName . '.' . $service_family[$i]->file->extension;
+                    } 
+                }   
+                for($i=0; $i < sizeof($service_family); $i++){
+                    if($i == 0){
+                        $valid=$service_family[$i]->validate();    
+                    } else {
+                        $valid=$service_family[$i]->validate() && $valid;    
+                    }
                 }
 
-                Yii::$app->getSession()->setFlash('success', [
-                   'type' => 'success',
-                   'duration' => 3000,
-                   'icon' => 'fa fa-book',
-                   'message' => 'Report Success',
-                   'title' => 'Notification',
-                   'positonY' => 'top',
-                   'positonX' => 'right'
-                ]);
 
-                $this->redirect(['index']);
+                if($valid)
+                { 
+                    for($i=0; $i < sizeof($service_family); $i++){
+                        $service_family[$i]->save();
+                    }
+
+                    Yii::$app->getSession()->setFlash('success', [
+                       'type' => 'success',
+                       'duration' => 3000,
+                       'icon' => 'fa fa-upload',
+                       'message' => 'Upload Success',
+                       'title' => 'Notification',
+                       'positonY' => 'top',
+                       'positonX' => 'right'
+                    ]);
+
+                    $this->redirect(['index']);
+                }
+                else
+                {
+                    Yii::$app->getSession()->setFlash('danger', [
+                       'type' => 'danger',
+                       'duration' => 3000,
+                       'icon' => 'fa fa-upload',
+                       'message' => 'Upload Failed',
+                       'title' => 'Notification',
+                       'positonY' => 'top',
+                       'positonX' => 'right'
+                    ]);
+
+                    return $this->render('create', [
+                        'service_family' => $service_family,
+                    ]);
+                }
             }
-        }
 
-        return $this->render('create', [
-                'service_family' => $service_family,
-            ]);
+            return $this->render('create', [
+                    'service_family' => $service_family,
+                ]);
+        } else {
+          date_default_timezone_set("Asia/Jakarta");
+          if(Schedule::getIsDmNow(date('Y-m-d'), Shift::getShift(date("H:i:s"))->shift_id, User::getSupportId(Yii::$app->user->getId()))) {
+              date_default_timezone_set("Asia/Jakarta");
+              $service_family = [];
+              for($i=0; $i < sizeof(ServiceFamily::find()->all()); $i++){
+                  $service_family[$i] = new DmReport();
+              }
+
+              if(!empty($_POST)){
+                  for($i=0; $i < sizeof($service_family); $i++){
+                      $service_family[$i]->attributes=$_POST['DmReport'][$i];
+                      $service_family[$i]->service_family_id = $i+1;
+                      $service_family[$i]->support_id = User::getSupportId(Yii::$app->user->getId());  
+                      $service_family[$i]->created_at = date("Y-m-d H:i:s"); 
+                      $file_attribute = '['.$i.']file';
+                      $file = UploadedFile::getInstance($service_family[$i], $file_attribute);
+                      if(!empty($file)){
+                          $service_family[$i]->file = $file;
+                          $service_family[$i]->file->saveAs('uploads/reports/dutymanager/' . $service_family[$i]->file->baseName . '.' . $service_family[$i]->file->extension);    
+                          $service_family[$i]->file_path = 'uploads/reports/dutymanager/' . $service_family[$i]->file->baseName . '.' . $service_family[$i]->file->extension;
+                      } 
+                  }   
+                  for($i=0; $i < sizeof($service_family); $i++){
+                      if($i == 0){
+                          $valid=$service_family[$i]->validate();    
+                      } else {
+                          $valid=$service_family[$i]->validate() && $valid;    
+                      }
+                  }
+
+
+                  if($valid)
+                  { 
+                      for($i=0; $i < sizeof($service_family); $i++){
+                          $service_family[$i]->save();
+                      }
+
+                      Yii::$app->getSession()->setFlash('success', [
+                         'type' => 'success',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-upload',
+                         'message' => 'Upload Success',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                      ]);
+
+                      $this->redirect(['index']);
+                  }
+                  else
+                  {
+                      Yii::$app->getSession()->setFlash('danger', [
+                         'type' => 'danger',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-upload',
+                         'message' => 'Upload Failed',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                      ]);
+
+                      return $this->render('create', [
+                          'service_family' => $service_family,
+                      ]);
+                  }
+              }
+
+              return $this->render('create', [
+                      'service_family' => $service_family,
+                  ]);
+          } else {
+              Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'message' => "It's not your schedule",
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+              ]);
+
+              return $this->redirect(['index']);
+          }  
+        }
+        
     }
     
     /**
@@ -370,6 +515,10 @@ class DmReportController extends Controller
         $model = $this->findModel($id);
         $model->deleteFile();
         $model->delete();
+
+        $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM dm_report')->queryAll();
+        $next_id = ((int) $size[0]['total']) + 1;
+        Yii::$app->getDb()->createCommand('ALTER TABLE dm_report AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
         return $this->redirect(['index']);
     }

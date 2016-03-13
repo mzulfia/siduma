@@ -11,6 +11,10 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 use app\models\Support;
+use app\models\User;
+use app\components\AccessRules;
+use yii\filters\AccessControl;
+
 /**
  * ScheduleController implements the CRUD actions for Schedule model.
  */
@@ -25,6 +29,36 @@ class ScheduleController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'access' => [
+               'class' => AccessControl::className(),
+               'ruleConfig' => [
+                   'class' => AccessRules::className(),
+               ],
+               'only' => ['index','create', 'update', 'delete', 'viewcalendar'],
+               'rules' => [
+                       [
+                           'actions' => ['index','create', 'update', 'delete', 'viewcalendar'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_ADMINISTRATOR, 
+                           ],
+                       ],
+                       [
+                           'actions' => ['index', 'create', 'update', 'viewcalendar'],
+                           'allow' => true,
+                           'roles' => [
+                               User::ROLE_SUPERVISOR,
+                           ],
+                       ],
+                       [
+                           'actions' => ['index', 'viewcalendar'],
+                           'allow' => true,
+                           'roles' => [
+                               '@'
+                           ],
+                       ],
+                    ],
+                ],
         ];
     }
 
@@ -43,17 +77,6 @@ class ScheduleController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Schedule model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
 
     /**
      * Creates a new Schedule model.
@@ -66,136 +89,198 @@ class ScheduleController extends Controller
         
         if(isset($_POST['automatic-button']))
         {
-            $model->load(Yii::$app->request->post());
-            $model->file = UploadedFile::getInstance($model, 'file');
-            $model->file->saveAs('uploads/schedules/' . $model->file->baseName . '.' . $model->file->extension);
-            $inputFile = 'uploads/schedules/' . $model->file->baseName . '.' . $model->file->extension;
-
-            try{
+           try{
+                $model->load(Yii::$app->request->post());
+                $model->file = UploadedFile::getInstance($model, 'file');
+                $model->file->saveAs('uploads/schedules/' . $model->file->baseName . '.' . $model->file->extension);
+                $inputFile = 'uploads/schedules/' . $model->file->baseName . '.' . $model->file->extension;
+                
                 $inputFileType = \PHPExcel_IOFactory::identify($inputFile);
                 $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
                 $objPHPExcel = $objReader->load($inputFile);
-            } 
-            catch(Exception $e)
-            {
-                die('Error');
-            }
 
-            $sheet = $objPHPExcel->getSheet(0);
-            $highestRow = $sheet->getHighestRow();
-            $highestColumn = $sheet->getHighestColumn();
+                $sheet = $objPHPExcel->getSheet(0);
+                $highestRow = $sheet->getHighestRow();
+                $highestColumn = $sheet->getHighestColumn();
 
-            $content =$highestRow-7;
-            
-            $date = [];
-            
-            for($row = 5; $row <= $content; $row++)
-            {
-                $is_dm = [];
-                $shift = [];    
-
-                $rowData = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,NULL,TRUE,FALSE);
-                if($row == 5)
-                {   
-                    $col = 2;
-                    while($col <= 63){
-                        if(!empty($rowData[0][$col])){
-                            array_push($date, $rowData[0][$col]); 
-                        } else{
-                            $col = 63;
-                        }
-
-                        $col = $col + 2;
-                    }
-                } 
-                else
+                $content =$highestRow-7;
+                
+                $date = [];
+                for($row = 5; $row <= $content; $row++)
                 {
-                    // var_dump(Support::find()->where('support_name LIKE :support_name', [':support_name' => $rowData[0][1]])->one());
-                    // insert is_dm
-                    $col = 3;
-                    $max = (sizeof($date)*2)+1;
-                    while($col <= $max){
-                        if($rowData[0][$col] == 'v'){
-                            array_push($is_dm, 1);
-                        } else {
-                            array_push($is_dm, 0);
-                        }
-                        $col = $col + 2;
-                    }
+                    $rowData = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,NULL,TRUE,FALSE);
+                    
+                    if(!empty($rowData[0][0]))
+                    {
+                        $is_dm = [];
+                        $shift = [];    
 
-                    // insert shift
-                    $col = 2;
-                    while($col <= $max){
-                        if($rowData[0][$col] == 'L' || $rowData[0][$col] == ' ' ){
-                            array_push($shift, NULL);
-                        } else {
-                            array_push($shift, $rowData[0][$col]);
-                        }
-                        $col = $col + 2;
-                    }
-                    // var_dump($is_dm);
-                    // var_dump($shift);
+                        if($row == 5)
+                        {   
+                            $col = 2;
+                            while($col <= 63){
+                                if(!empty($rowData[0][$col])){
+                                    array_push($date, $rowData[0][$col]); 
+                                } else{
+                                    $col = 63;
+                                }
 
-                    for($col = 0; $col < sizeof($date); $col++)
-                    {   
-                        if(!empty($shift[$col])){
-                            if(strlen($shift[$col]) > 1)
-                            {
-                                $content = explode('&', $shift[$col]);
-                                for($i = 0; $i < sizeof($content); $i++){
-                                    $model= new Schedule();
-                                    $support = Support::find()->where('upper(support_name) LIKE upper(:support_name)', [':support_name' => trim($rowData[0][1])])->one();
-                                    $model->support_id = $support['support_id'];
-                                    $model->file_path = $inputFile;
-                                    $model->date = $date[$col];
-                                    $model->shift_id = (int) $content[$i];
-                                    $model->is_dm = $is_dm[$col];
-                                    $model->save(false);    
+                                $col = $col + 2;
+                            }
+                        } 
+                        else
+                        {
+                            // var_dump(Support::find()->where('support_name LIKE :support_name', [':support_name' => $rowData[0][1]])->one());
+                            // insert is_dm
+                            $col = 3;
+                            $max = (sizeof($date)*2)+1;
+                            while($col <= $max){
+                                if($rowData[0][$col] == 'v'){
+                                    array_push($is_dm, 1);
+                                } else {
+                                    array_push($is_dm, 0);
+                                }
+                                $col = $col + 2;
+                            }
+
+                            // insert shift
+                            $col = 2;
+                            while($col <= $max){
+                                if(trim($rowData[0][$col]) == 'L' || trim($rowData[0][$col]) == '' ){
+                                    array_push($shift, NULL);
+                                } else {
+                                    array_push($shift, $rowData[0][$col]);
+                                }
+                                $col = $col + 2;
+                            }
+                            // var_dump($date);
+                            // die($inputFile);
+
+                            for($col = 0; $col < sizeof($date); $col++)
+                            {   
+                                if(!empty($shift[$col])){
+                                    if(strlen($shift[$col]) > 1)
+                                    {
+                                        $no = explode('&', $shift[$col]);
+                                        
+                                        for($i = 0; $i < sizeof($no); $i++){
+                                            $model= new Schedule();
+                                            $support = Support::find()->where('upper(support_name) LIKE upper(:support_name)', [':support_name' => trim($rowData[0][1])])->one();
+                                            $model->support_id = $support['support_id'];
+                                            $model->file_path = $inputFile;
+                                            $model->date = $date[$col];
+                                            $model->shift_id = (int) $no[$i];
+                                            $model->is_dm = $is_dm[$col];
+                                            try{
+                                                $model->save(false);    
+                                            } catch(\yii\db\IntegrityException $e){
+                                                Yii::$app->getSession()->setFlash('danger', [
+                                                     'type' => 'danger',
+                                                     'duration' => 3000,
+                                                     'icon' => 'fa fa-upload',
+                                                     'message' => 'Wrong Format',
+                                                     'title' => 'Upload Failed',
+                                                     'positonY' => 'top',
+                                                     'positonX' => 'right'
+                                                ]);
+
+                                                return $this->redirect(['create']);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        $model= new Schedule();
+                                        $support = Support::find()->where('upper(support_name) LIKE upper(:support_name)', [':support_name' => trim($rowData[0][1])])->one();
+                                        $model->support_id = $support['support_id'];
+                                        $model->file_path = $inputFile;
+                                        $model->date = $date[$col];
+                                        $model->shift_id = (int) $shift[$col];
+                                        $model->is_dm = $is_dm[$col];
+                                        try{
+                                            $model->save(false);    
+                                        } catch(\yii\db\IntegrityException $e){
+                                           Yii::$app->getSession()->setFlash('danger', [
+                                                 'type' => 'danger',
+                                                 'duration' => 3000,
+                                                 'icon' => 'fa fa-upload',
+                                                 'message' => 'Wrong Format',
+                                                 'title' => 'Upload Failed',
+                                                 'positonY' => 'top',
+                                                 'positonX' => 'right'
+                                            ]);
+
+                                            return $this->redirect(['create']);
+                                        }
+                                    }
                                 }
                             }
-                            else
-                            {
-                                $model= new Schedule();
-                                $support = Support::find()->where('upper(support_name) LIKE upper(:support_name)', [':support_name' => trim($rowData[0][1])])->one();
-                                $model->support_id = $support['support_id'];
-                                $model->file_path = $inputFile;
-                                $model->date = $date[$col];
-                                $model->shift_id = (int) $shift[$col];
-                                $model->is_dm = $is_dm[$col];
-                                $model->save(false);    
-                            }
-                        }
+                        }  
                     }
-                }        
+                    else
+                    {
+                        $row  = $content;
+                    }   
+                }
+
+                Yii::$app->getSession()->setFlash('success', [
+                     'type' => 'success',
+                     'duration' => 3000,
+                     'icon' => 'fa fa-upload',
+                     'message' => 'Upload Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);
+
+                return $this->redirect(['create']);
+            } 
+            catch(\yii\base\Exception $e)
+            {
+                Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'icon' => 'fa fa-upload',
+                     'message' => 'Upload Failed',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);
+               
+                return $this->redirect(['create']);
             }
-           
-
-            Yii::$app->getSession()->setFlash('success', [
-                 'type' => 'success',
-                 'duration' => 3000,
-                 'icon' => 'fa fa-upload',
-                 'message' => 'Upload Success',
-                 'title' => 'Notification',
-                 'positonY' => 'top',
-                 'positonX' => 'right'
-             ]);
-
-             return $this->redirect(['create']);
         }  
         elseif(isset($_POST['manual-button']))
         {
             $model->load(Yii::$app->request->post());
-            $model->save();
-            Yii::$app->getSession()->setFlash('success', [
-                 'type' => 'success',
-                 'duration' => 3000,
-                 'icon' => 'fa fa-calendar',
-                 'message' => 'Create Success',
-                 'title' => 'Notification',
-                 'positonY' => 'top',
-                 'positonX' => 'right'
-             ]);
-            return $this->redirect(['index']);
+            if($model->save())
+            {
+                Yii::$app->getSession()->setFlash('success', [
+                     'type' => 'success',
+                     'duration' => 3000,
+                     'icon' => 'fa fa-calendar',
+                     'message' => 'Create Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                 ]);    
+                return $this->redirect(['index']);
+            }
+            else
+            {
+                Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'icon' => 'fa fa-calendar',
+                     'message' => 'Create Failed',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                 ]);    
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
         }
         else 
         {
@@ -215,8 +300,36 @@ class ScheduleController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->schedule_id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->save(false))
+            {
+                Yii::$app->getSession()->setFlash('success', [
+                     'type' => 'success',
+                     'duration' => 3000,
+                     'icon' => 'fa fa-upload',
+                     'message' => 'Update Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);
+
+                $this->redirect(['index']);   
+            }
+            else
+            {
+                Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'icon' => 'fa fa-upload',
+                     'message' => 'Update Failed',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                ]);
+
+                $this->redirect(['index']);   
+            }
+             
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -233,6 +346,10 @@ class ScheduleController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM schedule')->queryAll();
+        $next_id = ((int) $size[0]['total']) + 1;
+        Yii::$app->getDb()->createCommand('ALTER TABLE schedule AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
         return $this->redirect(['index']);
     }
@@ -295,7 +412,7 @@ class ScheduleController extends Controller
             $tasks[] = $event;
         }
 
-        return $this->render('viewschedule', [
+        return $this->render('viewcalendar', [
             'events' => $tasks,
         ]);
     }

@@ -21,9 +21,9 @@ DashboardAsset::register($this);
 	
 	    <!-- CSS -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
-        <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css">
-		<link rel="stylesheet" href="css/form-elements.css">
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="<?php echo \Yii::$app->homeUrl;?>css/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="<?php echo \Yii::$app->homeUrl;?>css/form-elements.css">
+        <link rel="stylesheet" href="<?php echo \Yii::$app->homeUrl;?>css/style.css">
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -33,7 +33,7 @@ DashboardAsset::register($this);
         <![endif]-->
 
         <!-- Favicon and touch icons -->
-        <link rel="shortcut icon" href="images/ico/favicon.png">
+        <link rel="shortcut icon" href="<?php echo \Yii::$app->homeUrl;?> images/ico/favicon.png">
         <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
@@ -113,10 +113,10 @@ DashboardAsset::register($this);
 
 
         <!-- Javascript -->
-        <script src="assets/js/jquery-1.11.1.min.js"></script>
-        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-        <script src="assets/js/jquery.backstretch.min.js"></script>
-        <script src="assets/js/scripts.js"></script>
+        <script src="<?php echo \Yii::$app->homeUrl;?>js/jquery-1.11.1.min.js"></script>
+        <script src="<?php echo \Yii::$app->homeUrl;?>js/bootstrap/bootstrap.min.js"></script>
+        <script src="<?php echo \Yii::$app->homeUrl;?>js/jquery.backstretch.min.js"></script>
+        <script src="<?php echo \Yii::$app->homeUrl;?>js/scripts.js"></script>
         
         <!--[if lt IE 10]>
             <script src="assets/js/placeholder.js"></script>

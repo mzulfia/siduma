@@ -36,8 +36,12 @@ $this->params['breadcrumbs'][] = 'Create Report';
                 echo '<h3><u>'. ServiceFamily::find()->where('service_family_id = :id', [':id' => $i+1])->one()->service_name .'</u></h3>';
                 echo $form->field($service_family[$i], $status)->radioList(['2' => 'Normal', '1' => 'Warning', '0' => 'Critical']);
                 echo $form->field($service_family[$i], $file)->widget(FileInput::classname(), [
-                    'options' => ['accept' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'],
-                ]);
+                    'pluginOptions' => [
+                         'showCaption' => true,
+                         'showRemove' => false,
+                         'showUpload' => false,
+                     ],
+                ]); 
                 echo $form->field($service_family[$i], $information)->textArea();
             }    
 

@@ -10,6 +10,7 @@ use app\models\User;
 use app\models\UserSearch;
 use app\models\Support;
 use app\models\Management;
+use app\models\Supervisor;
 use app\components\AccessRules;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -38,33 +39,24 @@ class UserController extends Controller
                'ruleConfig' => [
                    'class' => AccessRules::className(),
                ],
-               'only' => ['index','create', 'update', 'delete'],
+               'only' => ['index','create', 'update', 'delete', 'view', 'changepassword'],
                'rules' => [
                        [
-                           'actions' => ['index','create'],
+                           'actions' => ['index','create', 'update', 'delete', 'view', 'changepassword'],
                            'allow' => true,
-                           // Allow users, moderators and admins to create
                            'roles' => [
                                User::ROLE_ADMINISTRATOR
                            ],
                        ],
                        [
-                           'actions' => ['update'],
+                           'actions' => ['changepassword'],
                            'allow' => true,
-                           // Allow moderators and admins to update
                            'roles' => [
-                               User::ROLE_ADMINISTRATOR, 
-                               USER::ROLE_SUPPORT
-                           ],
+                               User::ROLE_MANAGEMENT,
+                               User::ROLE_SUPERVISOR,
+                               User::ROLE_SUPPORT
+                            ],
                        ],
-                       [
-                           'actions' => ['delete'],
-                           'allow' => true,
-                           // Allow admins to delete
-                           'roles' => [
-                               User::ROLE_ADMINISTRATOR
-                       ],
-                    ],
                 ],
             ],    
         ];
@@ -106,6 +98,8 @@ class UserController extends Controller
     {
         $model = new User();
         $support = new Support();
+        $management = new Management();
+        $supervisor = new Supervisor();
         
         $post = Yii::$app->request->post();
 
@@ -117,7 +111,34 @@ class UserController extends Controller
                 if($model->role_id == User::ROLE_SUPPORT)
                 {
                     $support->user_id = $model->user_id;
-                    $support->save();
+                    if($support->save()){
+                      Yii::$app->getSession()->setFlash('success', [
+                         'type' => 'success',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-user',
+                         'message' => 'Create Success',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                      ]);  
+
+                      $this->redirect(['index']); 
+                    } else {
+                      Yii::$app->getSession()->setFlash('danger', [
+                         'type' => 'danger',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-user',
+                         'message' => 'Create Success',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                      ]);
+
+                      $this->redirect(['index']); 
+                    }
+                } elseif($model->role_id == User::ROLE_MANAGEMENT){
+                    $management->user_id = $model->user_id;
+                    $management->save(false);
                     
                     Yii::$app->getSession()->setFlash('success', [
                        'type' => 'success',
@@ -128,20 +149,65 @@ class UserController extends Controller
                        'positonY' => 'top',
                        'positonX' => 'right'
                     ]);
+
+                    $this->redirect(['index']); 
+                } elseif($model->role_id == User::ROLE_SUPERVISOR){
+                    $supervisor->user_id = $model->user_id;
+                    $supervisor->save();
+                    
+                    Yii::$app->getSession()->setFlash('success', [
+                       'type' => 'success',
+                       'duration' => 3000,
+                       'icon' => 'fa fa-user',
+                       'message' => 'Create Success',
+                       'title' => 'Notification',
+                       'positonY' => 'top',
+                       'positonX' => 'right'
+                    ]);
+
+                    $this->redirect(['index']); 
+                } else{
+                  Yii::$app->getSession()->setFlash('success', [
+                       'type' => 'success',
+                       'duration' => 3000,
+                       'icon' => 'fa fa-user',
+                       'message' => 'Create Success',
+                       'title' => 'Notification',
+                       'positonY' => 'top',
+                       'positonX' => 'right'
+                    ]);
+
+                  $this->redirect(['index']); 
                 }
-                $this->redirect(['index']); 
             }
             else
             {
-                Yii::$app->getSession()->setFlash('danger', [
-                   'type' => 'danger',
-                   'duration' => 3000,
-                   'icon' => 'fa fa-user',
-                   'message' => 'Create Failed',
-                   'title' => 'Notification',
-                   'positonY' => 'top',
-                   'positonX' => 'right'
-                ]);
+                $support->user_id = $model->user_id;
+                if($support->save()){
+                  Yii::$app->getSession()->setFlash('success', [
+                     'type' => 'success',
+                     'duration' => 3000,
+                     'icon' => 'fa fa-user',
+                     'message' => 'Create Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                  ]);  
+
+                  $this->redirect(['index']); 
+                } else {
+                  Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'icon' => 'fa fa-user',
+                     'message' => 'Create Success',
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+                  ]);
+
+                  $this->redirect(['index']); 
+                }
             }   
         }
 
@@ -174,9 +240,20 @@ class UserController extends Controller
                        'title' => 'Notification',
                        'positonY' => 'top',
                        'positonX' => 'right'
-                  ]); 
+                    ]);
+
                     $this->redirect(['index']); 
                 } else {
+                    Yii::$app->getSession()->setFlash('danger', [
+                       'type' => 'danger',
+                       'duration' => 3000,
+                       'icon' => 'fa fa-user',
+                       'message' => 'Update Failed',
+                       'title' => 'Notification',
+                       'positonY' => 'top',
+                       'positonX' => 'right'
+                    ]);
+
                     return $this->render('update', [
                         'model' => $model,
                     ]);
@@ -204,6 +281,16 @@ class UserController extends Controller
                   ]); 
                     $this->redirect(['index']); 
                 } else {
+                    Yii::$app->getSession()->setFlash('danger', [
+                       'type' => 'danger',
+                       'duration' => 3000,
+                       'icon' => 'fa fa-user',
+                       'message' => 'Update Failed',
+                       'title' => 'Notification',
+                       'positonY' => 'top',
+                       'positonX' => 'right'
+                    ]);
+
                     return $this->render('updateUnauthorized', [
                         'model' => $model,
                     ]);
@@ -227,7 +314,7 @@ class UserController extends Controller
             if($model->validate()){
                 try{
                     $modeluser->password = $_POST['PasswordForm']['newpass'];
-                    $modeluser->salt_password = Yii::$app->security->generatePasswordHash($model->newpass);
+                    $modeluser->salt_password = Yii::$app->security->generatePasswordHash($_POST['PasswordForm']['newpass']);
                     if($modeluser->save()){
                        Yii::$app->getSession()->setFlash('success', [
                            'type' => 'success',
@@ -238,7 +325,7 @@ class UserController extends Controller
                            'positonY' => 'top',
                            'positonX' => 'right'
                       ]); 
-                        return $this->redirect(['changepassword']);
+                      $this->redirect(['changepassword']);
                     }else{
                        Yii::$app->getSession()->setFlash('danger', [
                            'type' => 'danger',
@@ -249,22 +336,38 @@ class UserController extends Controller
                            'positonY' => 'top',
                            'positonX' => 'right'
                       ]); 
-                        return $this->redirect(['changepassword']);
+                      $this->redirect(['changepassword']);
                     }
                 }catch(Exception $e){
-                    Yii::$app->getSession()->setFlash(
-                        'error',"{$e->getMessage()}"
-                    );
+                    Yii::$app->getSession()->setFlash('danger', [
+                         'type' => 'danger',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-user',
+                         'message' => "Password didn't change",
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                    ]); 
                     return $this->render('changepassword',[
                         'model'=>$model
                     ]);
                 }
             }else{
+                Yii::$app->getSession()->setFlash('danger', [
+                         'type' => 'danger',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-user',
+                         'message' => "Wrong Format",
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                ]);
+
                 return $this->render('changepassword',[
                     'model'=>$model
                 ]);
             }
-        }else{
+        } else{
             return $this->render('changepassword',[
                 'model'=>$model
             ]);
@@ -280,6 +383,10 @@ class UserController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM user')->queryAll();
+        $next_id = ((int) $size[0]['total']) + 1;
+        Yii::$app->getDb()->createCommand('ALTER TABLE user AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
         return $this->redirect(['index']);
     }

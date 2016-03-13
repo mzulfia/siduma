@@ -10,7 +10,6 @@ use yii\bootstrap\ActiveForm;
 ?>
 
 <?php $form = ActiveForm::begin();?>
-    <form role="form" action="" method="post" class="login-form">
     <div class="form-group">
         <?= $form->field($model, 'username')->textInput() ?> 
         <?= $form->field($model, 'password')->passwordInput()?>

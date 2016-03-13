@@ -145,7 +145,11 @@ a.desc:after {
     width: 200px;
     height: 200px;
 }
-
+.img-circle-sidebar{
+    border-radius: 50%;
+    width: 45px;
+    height: auto;
+}
 .img-circle-team{
     border-radius: 50%;
     width: 50px; 
@@ -177,4 +181,13 @@ a.desc:after {
     /*display: table-cell;*/
     position: relative;
     width:100%;
+}
+
+ul.users-list-icon.clearfix{
+    list-style: none;
+}
+.users-list-icon >li{
+    float: left;
+    padding: 10px;
+    text-align: center;
 }

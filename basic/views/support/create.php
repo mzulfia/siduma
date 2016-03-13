@@ -7,7 +7,7 @@ use kartik\widgets\FileInput;
 use app\models\SupportPosition;
 use app\models\ServiceFamily;
 
-$this->title = 'Supports | Create Support'
+$this->title = 'Supports | Create Support';
 $this->params['breadcrumbs'][] = ['label' => 'Supports', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Create Support';
 ?>
@@ -47,9 +47,9 @@ $this->params['breadcrumbs'][] = 'Create Support';
 
 	        <?= $form->field($model, 'company')->textInput(['maxlength' => true]) ?>
 
-	        <?= $form->field($model, 'no_hp')->textInput() ?>
+	        <?= $form->field($model, 'no_hp')->textInput(['maxlength' => true]) ?>
 
-	        <?= $form->field($model, 'email')->textInput() ?>
+	        <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
 	        <?= $form->field($model, 'support_position_id')->dropDownList(ArrayHelper::map(SupportPosition::find()->all(), 'support_position_id', 'position_name'), ['prompt'=>'-Select Position-']) ?>
 
@@ -64,29 +64,3 @@ $this->params['breadcrumbs'][] = 'Create Support';
 	</div>  
 </div>
 
-
-	        
-
-
-<script>
-// var btnCust = '<button type="button" class="btn btn-default" title="Add picture tags" ' + 
-//     'onclick="alert(\'Call your custom code here.\')">' +
-//     '<i class="glyphicon glyphicon-tag"></i>' +
-//     '</button>'; 
-// $("#avatar").fileinput({
-//     overwriteInitial: true,
-//     maxFileSize: 1500,
-//     showClose: false,
-//     showCaption: false,
-//     browseLabel: '',
-//     removeLabel: '',
-//     browseIcon: '<i class="glyphicon glyphicon-folder-open"></i>',
-//     removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
-//     removeTitle: 'Cancel or reset changes',
-//     elErrorContainer: '#kv-avatar-errors',
-//     msgErrorClass: 'alert alert-block alert-danger',
-//     defaultPreviewContent: '<img src="/uploads/default_avatar_male.jpg" alt="Your Avatar" style="width:160px">',
-//     layoutTemplates: {main2: '{preview} ' +  btnCust + ' {remove} {browse}'},
-//     allowedFileExtensions: ["jpg", "png", "gif"]
-// });
-</script>

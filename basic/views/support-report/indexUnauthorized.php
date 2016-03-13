@@ -8,6 +8,9 @@ use kartik\export\ExportMenu;
 use kartik\daterange\DateRangePicker;
 
 use app\models\ServiceFamily;
+use app\models\Schedule;
+use app\models\Shift;
+use app\models\User;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ReportSearch */
@@ -20,9 +23,12 @@ $this->params['breadcrumbs'][] = 'Support Reports';
 
     <h1>Support Reports</h1>
 
-    <p>
-        <?= Html::a('Create Report', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php
+        date_default_timezone_set("Asia/Jakarta");
+        if(Schedule::getIsSupportNow(date('Y-m-d'), Shift::getShift(date("H:i:s"))->shift_id, User::getSupportId(Yii::$app->user->getId()))) {
+            echo "<p>". Html::a('Create Report', ['create'], ['class' => 'btn btn-success']) . "</p>";
+        }
+    ?>
 
     <?php
         $gridColumns = [
@@ -106,7 +112,6 @@ $this->params['breadcrumbs'][] = 'Support Reports';
         'responsive'=>true,
         'hover'=>true,
         'condensed'=>true,
-        'floatHeader'=>true,
         'bordered'=>true,
     ]); ?>
 

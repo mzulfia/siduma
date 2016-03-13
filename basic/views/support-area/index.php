@@ -1,11 +1,8 @@
 <?php
 
-use yii\helpers\Html;
-use yii\grid\GridView;
 
-/* @var $this yii\web\View */
-/* @var $searchModel app\models\SupportAreaSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+use yii\helpers\Html;
+use kartik\grid\GridView;
 
 $this->title = 'Support Areas';
 $this->params['breadcrumbs'][] = $this->title;
@@ -13,24 +10,31 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="support-area-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a('Create Support Area', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'support_area_id',
-            'support_id',
-            'service_family_id',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'label' => 'Support Name',
+                'attribute' => 'support_id',
+                'value' => 'support.support_name'
+            ],
+            [
+                'label' => 'Service Family',
+                'attribute' => 'service_family_id',
+                'value' => 'serviceFamily.service_name'
+            ],
         ],
+        'pager' => [
+            'firstPageLabel' => 'First',
+            'lastPageLabel' => 'Last',
+        ],
+        'responsive'=>true,
+        'hover'=>true,
+        'condensed'=>true,
+        'bordered'=>true,
     ]); ?>
 
 </div>

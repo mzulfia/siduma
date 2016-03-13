@@ -64,9 +64,10 @@ $this->params['breadcrumbs'][] = 'Schedules';
                  'contentOptions' => ['style' => 'width:100px;']
             ],
             [
+                'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
-                'header'=>'Actions',
-                'contentOptions' => ['style' => 'width:100px;']
+                'template'=>'{update}{delete}',
+                'contentOptions' => ['style' => 'width:50px;']
             ],
         ],
         'pager' => [
@@ -76,7 +77,6 @@ $this->params['breadcrumbs'][] = 'Schedules';
         'responsive'=>true,
         'hover'=>true,
         'condensed'=>true,
-        'floatHeader'=>true,
         'bordered'=>true,
     ]); ?>
 

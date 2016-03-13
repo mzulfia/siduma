@@ -25,8 +25,10 @@ $this->params['breadcrumbs'][] = 'Roles';
             ['class' => 'yii\grid\SerialColumn'],
             'role_name',
             [
+                'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
-                'contentOptions' => ['style' => 'width: 100px']
+                'template'=>'{update}{delete}',
+                'contentOptions' => ['style' => 'width:50px;']
             ],
         ],
         'pager' => [
@@ -36,7 +38,6 @@ $this->params['breadcrumbs'][] = 'Roles';
         'responsive'=>true,
         'hover'=>true,
         'condensed'=>true,
-        'floatHeader'=>true,
         'bordered'=>true,
     ]); ?>
 

@@ -40,9 +40,9 @@ $this->params['breadcrumbs'][] = 'Create Schedule';
       <h3 class="box-title">Create Schedule</h3>
     </div>
     <div class="box-body">
-        <?= Html::button('Manual', ['class' => 'btn btn-warning input-manual', 'title' => 'Manual', 'value' => 'manual','onclick' => 'showForm(this.value)']) ?>
+        <?= Html::button('Manual', ['class' => 'btn btn-warning input-manual', 'value' => 'manual','onclick' => 'showForm(this.value)']) ?>
 
-        <?= Html::button('Upload Excel', ['class' => 'btn btn-warning input-automatic', 'title' => 'Upload Excel', 'value' => 'automatic', 'onclick' => 'showForm(this.value)']) ?>
+        <?= Html::button('Upload Excel', ['class' => 'btn btn-warning input-automatic', 'value' => 'automatic', 'onclick' => 'showForm(this.value)']) ?>
 
             <div class="row col-md-12" id="input-automatic" style="display: block">
                 <br>
@@ -54,6 +54,12 @@ $this->params['breadcrumbs'][] = 'Create Schedule';
                 ); ?>
 
                 <?= $form->field($model, 'file')->widget(FileInput::classname(), [
+                    'pluginOptions' => [
+                         'showCaption' => true,
+                         'showRemove' => false,
+                         'showUpload' => false,
+                         'allowedFileExtensions'=>['xlsx','xls']
+                     ],
                     'options' => ['accept' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'],
                 ]); ?>
                 <p>Accepted File: xlsx, xls</p>
@@ -91,7 +97,7 @@ $this->params['breadcrumbs'][] = 'Create Schedule';
                 <?= $form->field($model, 'is_dm')->dropDownList(['1' => 'Ya', '0' => 'Tidak'], ['prompt'=>'-Select Answer-']) ?>
 
                 <p>
-                    *Pagi: 07:00-15:00, Sore: 15:00-23:00, Malam : 23:00-07:00
+                    *Pagi: 07:00-16:00, Sore: 16:00-23:00, Malam : 23:00-07:00
                 </p>
 
                 <div class="form-group">

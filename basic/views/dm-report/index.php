@@ -9,18 +9,19 @@ use kartik\grid\GridView;
 use kartik\export\ExportMenu;
 use kartik\daterange\DateRangePicker;
 use app\models\ServiceFamily;
+use app\models\User;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ReportSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'DM Reports | All';
-$this->params['breadcrumbs'][] = 'DM Reports';
+$this->params['breadcrumbs'][] = 'Duty Manager Reports';
 ?>
 <div class="reportdm-index">
 
-    <h1>DM Reports</h1>
-    
+    <h1>Duty Manager Reports</h1>
+
     <p>
         <?= Html::a('Create Report', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -56,9 +57,9 @@ $this->params['breadcrumbs'][] = 'DM Reports';
             [
                 'label' => 'Status',
                 'attribute'=> 'status',
-                'filter' => Html::activeDropDownList($searchModel, 'status', ['2' => 'Normal', '1' => 'Caution', '0' => 'Bad'],['class'=>'form-control','prompt' => '-']),
+                'filter' => Html::activeDropDownList($searchModel, 'status', ['2' => 'Normal', '1' => 'Warning', '0' => 'Critical'],['class'=>'form-control','prompt' => '-']),
                 'value' => function ($model) {
-                    return $model->status == 2 ? 'Normal' : ($model->status == 1 ? 'Sufficient' : 'Bad');
+                    return $model->status == 2 ? 'Normal' : ($model->status == 1 ? 'Warning' : 'Critical');
                 },
                 'contentOptions' => ['style' => 'width:125px;']
             ],
@@ -77,15 +78,15 @@ $this->params['breadcrumbs'][] = 'DM Reports';
             ],
             'information:ntext',
             [
-                'label' => 'Support',
                 'attribute' => 'support_id',
                 'value' => 'support.support_name',
-                'contentOptions' => ['style' => 'width:150px;']
+                'contentOptions' => ['style' => 'width:200px;']
             ],
             [
                 'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
-                'contentOptions' => ['style' => 'width:100px;']
+                'template'=>'{update}{delete}',
+                'contentOptions' => ['style' => 'width:50px;']
             ],
         ];
 
@@ -134,7 +135,6 @@ $this->params['breadcrumbs'][] = 'DM Reports';
             'responsive'=>true,
             'hover'=>true,
             'condensed'=>true,
-            'floatHeader'=>true,
             'bordered'=>true,
         ]); 
 

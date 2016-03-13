@@ -30,7 +30,14 @@ $this->params['breadcrumbs'][] = 'Update Report';
 
         <?= $form->field($model, 'status')->radioList(['2' => 'Normal', '1' => 'Warning', '0' => 'Critical']) ?>
 
-        <?= $form->field($model, 'file')->widget(FileInput::classname()) ?>
+        <?= $form->field($model, 'file')->widget(FileInput::classname(), [
+                    'pluginOptions' => [
+                         'showCaption' => true,
+                         'showRemove' => false,
+                         'showUpload' => false,
+                     ],
+            ]); 
+        ?>
 
         <?= $form->field($model, 'information')->textArea() ?>
 

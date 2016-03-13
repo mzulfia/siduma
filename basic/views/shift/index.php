@@ -29,7 +29,8 @@ $this->params['breadcrumbs'][] = 'Shifts';
             [
                 'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
-                'contentOptions' => ['style' => 'width:100px;']
+                'template'=>'{update}{delete}',
+                'contentOptions' => ['style' => 'width:50px;']
             ],
         ],
         'pager' => [
@@ -39,7 +40,6 @@ $this->params['breadcrumbs'][] = 'Shifts';
         'responsive'=>true,
         'hover'=>true,
         'condensed'=>true,
-        'floatHeader'=>true,
         'bordered'=>true,
     ]); ?>
 

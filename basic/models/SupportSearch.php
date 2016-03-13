@@ -12,7 +12,9 @@ use app\models\Support;
  */
 class SupportSearch extends Support
 {
-     public function attributes()
+    public $support_username;
+
+    public function attributes()
     {
         // add related fields to searchable attributes
         return array_merge(parent::attributes(), ['support_position_id']);
@@ -24,7 +26,7 @@ class SupportSearch extends Support
     {
         return [
             [['support_id', 'support_position_id', 'user_id'], 'integer'],
-            [['support_name', 'no_hp', 'company', 'email'], 'safe'],
+            [['support_name', 'no_hp', 'company', 'email', 'support_username'], 'safe'],
         ];
     }
 
@@ -48,13 +50,22 @@ class SupportSearch extends Support
     {
         $query = Support::find();
 
+        $dataProvider->sort->attributes['support_username'] = [
+              'asc' => ['user.username' => SORT_ASC],
+              'desc' => ['user.username' => SORT_DESC],
+        ];
+
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        if (isset($_GET['ReportSearch']) && !($this->load($params) && $this->validate())) {
+        if (isset($_GET['SupportSearch']) && !($this->load($params) && $this->validate())) {
             return $dataProvider; 
         }
+
+        $query->joinWith(['user']);
+
         $query->andFilterWhere([
             'support_id' => $this->support_id,
             'support_position_id' => $this->support_position_id,
@@ -64,8 +75,9 @@ class SupportSearch extends Support
         $query->andFilterWhere(['like', 'support_name', $this->support_name])
             ->andFilterWhere(['like', 'company', $this->company])
             ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'no_hp', $this->no_hp]);
-
+            ->andFilterWhere(['like', 'no_hp', $this->no_hp])
+            ->andFilterWhere(['like', 'user.username', $this->support_username]);
+        
         return $dataProvider;
     }
 }

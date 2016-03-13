@@ -37,7 +37,8 @@ $this->params['breadcrumbs'][] = 'Users';
             [
                 'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
-                'contentOptions' => ['style' => 'width:100px;']
+                'template'=>'{update}{delete}',
+                'contentOptions' => ['style' => 'width:50px;']
             ],
         ],
         'pager' => [
@@ -47,7 +48,6 @@ $this->params['breadcrumbs'][] = 'Users';
         'responsive'=>true,
         'hover'=>true,
         'condensed'=>true,
-        'floatHeader'=>true,
         'bordered'=>true,
     ]); ?>
 

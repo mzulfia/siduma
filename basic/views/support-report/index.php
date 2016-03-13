@@ -9,6 +9,7 @@ use kartik\grid\GridView;
 use kartik\export\ExportMenu;
 use kartik\daterange\DateRangePicker;
 use app\models\ServiceFamily;
+use app\models\User;
 
 
 /* @var $this yii\web\View */
@@ -21,7 +22,6 @@ $this->params['breadcrumbs'][] = 'Support Reports';
 <div class="support-report-index">
 
     <h1>Support Reports</h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
         <?= Html::a('Create Report', ['create'], ['class' => 'btn btn-success']) ?>
@@ -71,12 +71,13 @@ $this->params['breadcrumbs'][] = 'Support Reports';
                 'label' => 'Support',
                 'attribute' => 'support_id',
                 'value' => 'support.support_name',
-                'contentOptions' => ['style' => 'width:150px;']
+                'contentOptions' => ['style' => 'width:200px;']
             ],
             [
                 'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
-                'contentOptions' => ['style' => 'width:100px;']
+                'template'=>'{update}{delete}',
+                'contentOptions' => ['style' => 'width:50px;']
             ],
         ];
 
@@ -114,7 +115,6 @@ $this->params['breadcrumbs'][] = 'Support Reports';
         'responsive'=>true,
         'hover'=>true,
         'condensed'=>true,
-        'floatHeader'=>true,
         'bordered'=>true,
     ]); ?>
 

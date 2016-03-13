@@ -49,4 +49,13 @@ class SupportPosition extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Support::className(), ['support_position_id' => 'support_position_id']);
     }
+
+    public function getPosition($id){
+        $model = SupportPosition::find()->where('support_position_id = :id', [':id' => $id])->one();
+        if(!empty($model)){
+            return $model->position_name;
+        } else {
+            return null;
+        }
+    }
 }

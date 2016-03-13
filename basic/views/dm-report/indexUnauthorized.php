@@ -8,6 +8,9 @@ use kartik\export\ExportMenu;
 use kartik\daterange\DateRangePicker;
 
 use app\models\ServiceFamily;
+use app\models\Schedule;
+use app\models\Shift;
+use app\models\User;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ReportSearch */
@@ -20,10 +23,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Create Report', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
+    <?php
+        date_default_timezone_set("Asia/Jakarta");
+        if(Schedule::getIsDmNow(date('Y-m-d'), Shift::getShift(date("H:i:s"))->shift_id, User::getSupportId(Yii::$app->user->getId()))) {
+            echo "<p>". Html::a('Create Report', ['create'], ['class' => 'btn btn-success']) . "</p>";
+        }
+    ?>
 
     <?php
         $gridColumns = [
@@ -55,9 +60,9 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Status',
                 'attribute'=> 'status',
-                'filter' => Html::activeDropDownList($searchModel, 'status', ['2' => 'Normal', '1' => 'Caution', '0' => 'Bad'],['class'=>'form-control','prompt' => '-']),
+                'filter' => Html::activeDropDownList($searchModel, 'status', ['2' => 'Normal', '1' => 'Warning', '0' => 'Critical'],['class'=>'form-control','prompt' => '-']),
                 'value' => function ($model) {
-                    return $model->status == 2 ? 'Normal' : ($model->status == 1 ? 'Caution' : 'Bad');
+                    return $model->status == 2 ? 'Normal' : ($model->status == 1 ? 'Warning' : 'Critical');
                 },
                 'contentOptions' => ['style' => 'width:125px;']
             ],
@@ -124,7 +129,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'responsive'=>true,
             'hover'=>true,
             'condensed'=>true,
-            'floatHeader'=>true,
             'bordered'=>true,
     ]); ?>
 

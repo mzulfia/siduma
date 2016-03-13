@@ -15,7 +15,7 @@ use app\models\SupportArea;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Active Support on ' . $date;
-$this->params['breadcrumbs'][] = ['label' => 'Schedules', 'url' => ['viewschedule']];
+$this->params['breadcrumbs'][] = ['label' => 'Schedules', 'url' => ['viewcalendar']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -29,20 +29,36 @@ $this->params['breadcrumbs'][] = $this->title;
 //    });
 // });");
 
+// $this->registerJs("$(function() {
+//     $(document).on('click', '.popupModal', function(){
+//     $('#modal').modal('show').find('#modalContent')
+//     .load($(this).attr('value'));
+//    });
+// });");
+
 $this->registerJs("$(function() {
-    $(document).on('click', '.popupModal', function(){
-    $('#modal').modal('show').find('#modalContent')
-    .load($(this).attr('value'));
+   $('.popupModal').click(function(e) {
+    e.preventDefault();
+    $('#modal-profile').modal('show').find('#modalContent')
+    .load($(this).attr('href'));
+    e.preventDefault();
    });
 });");
+
+$this->registerJs("$(function() {
+      $('#modal-profile').on('hidden.bs.modal', function (e) {
+           $(this).find('#modalContent').val('').end();
+      });
+  });");
+
 
 ?>
 
 
 <?php
         Modal::begin([
-            'header' => '<h4>Schedule</h4>',
-            'id' => 'modal',
+            'header' => '<h4>Profile</h4>',
+            'id' => 'modal-profile',
             'size' => 'modal-lg'
         ]);
 

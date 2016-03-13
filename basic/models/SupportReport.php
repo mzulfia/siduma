@@ -35,7 +35,7 @@ class SupportReport extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['information'], 'string'],
+            [['service_family_id','information'], 'required'],
             [['created_at'], 'safe'],
             [['support_id', 'service_family_id'], 'integer'],
             [['file_path'], 'string', 'max' => 200],
@@ -53,7 +53,7 @@ class SupportReport extends \yii\db\ActiveRecord
             'information' => 'Information',
             'file_path' => 'File Path',
             'created_at' => 'Created At',
-            'support_id' => 'Support',
+            'support_id' => 'Reporter Name',
             'service_family_id' => 'Service Family',
         ];
     }
@@ -84,13 +84,16 @@ class SupportReport extends \yii\db\ActiveRecord
         setter
     */
 
-    public function deleteFile() {
+   public function deleteFile() {
         $file = getcwd() . "/" . $this->file_path;
-        if (unlink($file)) {
-            $this->file_path = null;
-            $this->save();
-            return true;
+        if(file_exists($file)){
+            if (unlink($file)) {
+                $this->file_path = null;
+                $this->save();
+                return true;
+            }    
+        } else {
+            return false;
         }
-        return false;
     }
 }

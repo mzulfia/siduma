@@ -18,7 +18,7 @@ class SupportReportSearch extends SupportReport
     public function rules()
     {
         return [
-            [['support_report_id', 'support_id', 'service_family_id'], 'integer'],
+            [['service_family_id'], 'integer'],
             [['information', 'created_at', 'support_id', 'service_family_id'], 'safe'],
         ];
     }
@@ -45,6 +45,11 @@ class SupportReportSearch extends SupportReport
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ]
+            ],
         ]);
 
         $dataProvider->sort->attributes['service_family_id'] = [
@@ -87,6 +92,11 @@ class SupportReportSearch extends SupportReport
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ]
+            ],
         ]);
 
         $dataProvider->sort->attributes['service_family_id'] = [
