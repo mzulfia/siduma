@@ -33,7 +33,7 @@ class SupportArea extends \yii\db\ActiveRecord
     {
         return [
             [['support_id', 'service_family_id'], 'integer'],
-            [['support_name', 'service_name'], 'safe']
+            [['support_name', 'service_name', 'service_family_id'], 'safe']
         ];
     }
 
@@ -85,7 +85,6 @@ class SupportArea extends \yii\db\ActiveRecord
 
     public function getTeamIconNow(){
         date_default_timezone_set("Asia/Jakarta");
-        // $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 0', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id])->all();
         $model = Yii::$app->getDb()->createCommand('SELECT support.support_id, support_name, email, no_hp, support_position_id, GROUP_CONCAT(support_area.service_family_id separator ", ") FROM support LEFT JOIN schedule ON support.support_id = schedule.support_id LEFT JOIN support_area ON support.support_id = support_area.support_id WHERE `date` = :dt AND shift_id = :shift_id AND is_dm = 0  AND (service_family_id = 3 OR service_family_id = 4 OR service_family_id = 5 OR service_family_id = 6) GROUP BY support.support_id ORDER BY service_family_id', [':dt' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id])->queryAll();
         if(!empty($model)){
             return $model;
@@ -96,7 +95,6 @@ class SupportArea extends \yii\db\ActiveRecord
 
     public function getTeamOthersNow(){
         date_default_timezone_set("Asia/Jakarta");
-        // $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 0', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id])->all();
         $model = Yii::$app->getDb()->createCommand('SELECT support.support_id, support_name, email, no_hp, support_position_id FROM support LEFT JOIN schedule ON support.support_id = schedule.support_id LEFT JOIN support_area ON support.support_id = support_area.support_id WHERE `date` = :dt AND shift_id = :shift_id AND is_dm = 0  AND (service_family_id != 3 AND service_family_id != 4 AND service_family_id != 5 AND service_family_id != 6) GROUP BY support.support_id ORDER BY service_family_id', [':dt' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id])->queryAll();
         if(!empty($model)){
             return $model;

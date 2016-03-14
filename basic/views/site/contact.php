@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = 'Contact Info';
     <div class="body-content">
         <div class="row">
           <div class="col-lg-12">
-              <div class="box box-success">
+              <div class="box box-info">
                 <div class="box-header" style="text-align: center">
                     <h3 class="box-title"><b>SIDUMA | CONTACT INFO</b></h3>
                 </div>
@@ -61,7 +61,7 @@ $this->params['breadcrumbs'][] = 'Contact Info';
         </div>
         <div class="row">
             <div class="col-lg-12">
-              <div class="box box-danger">
+              <div class="box box-info">
                     <div class="box-header with-border">
                       <h3 class="box-title"><b>Management</b></h3>
                       <!-- <div class="box-tools pull-right">
@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = 'Contact Info';
         </div>
         <div class="row">
             <div class="col-lg-12">
-              <div class="box box-danger">
+              <div class="box box-info">
                     <div class="box-header with-border">
                       <h3 class="box-title"><b>PLN PIC</b></h3>
                       <!-- <div class="box-tools pull-right">

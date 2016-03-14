@@ -320,7 +320,7 @@ class UserController extends Controller
                            'type' => 'success',
                            'duration' => 3000,
                            'icon' => 'fa fa-user',
-                           'message' => 'Password Change',
+                           'message' => 'Change Password Success',
                            'title' => 'Notification',
                            'positonY' => 'top',
                            'positonX' => 'right'
@@ -331,7 +331,7 @@ class UserController extends Controller
                            'type' => 'danger',
                            'duration' => 3000,
                            'icon' => 'fa fa-user',
-                           'message' => "Password didn't change",
+                           'message' => "Change Password Failed",
                            'title' => 'Notification',
                            'positonY' => 'top',
                            'positonX' => 'right'
@@ -343,7 +343,7 @@ class UserController extends Controller
                          'type' => 'danger',
                          'duration' => 3000,
                          'icon' => 'fa fa-user',
-                         'message' => "Password didn't change",
+                         'message' => "Change Password Failed",
                          'title' => 'Notification',
                          'positonY' => 'top',
                          'positonX' => 'right'

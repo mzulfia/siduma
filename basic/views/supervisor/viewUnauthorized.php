@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 use app\models\User;
 use app\models\Supervisor;
 
-$this->title = "Profile";
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = "Supervisors | View Profile";
+$this->params['breadcrumbs'][] = "View Profile";
 ?>
 <div class="supervisor-viewUnauthorized">
 

@@ -6,13 +6,13 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\ServiceFamily */
 
-$this->title = $model->service_family_id;
+$this->title = 'Service Families | View Service Family';
 $this->params['breadcrumbs'][] = ['label' => 'Service Families', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'View Service Family';
 ?>
 <div class="service-family-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>View Service Family</h1>
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->service_family_id], ['class' => 'btn btn-primary']) ?>

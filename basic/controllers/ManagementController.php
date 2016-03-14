@@ -43,14 +43,14 @@ class ManagementController extends Controller
                'only' => ['index','create', 'update', 'delete', 'view'],
                'rules' => [
                        [
-                           'actions' => ['index','create', 'update', 'delete', 'view'],
+                           'actions' => ['index','create', 'update', 'delete'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_ADMINISTRATOR, 
                            ],
                        ],
                        [
-                           'actions' => ['update', 'view'],
+                           'actions' => ['update'],
                            'allow' => true,
                            'roles' => [
                                 User::ROLE_MANAGEMENT,
@@ -59,11 +59,8 @@ class ManagementController extends Controller
                        [
                            'actions' => ['view'],
                            'allow' => true,
-                           'roles' => [
-                               User::ROLE_SUPERVISOR,
-                               User::ROLE_SUPPORT,
-                           ],
-                       ],
+                           'roles' => ['@'],
+                       ]
                     ],
                 ],
         ];
@@ -376,6 +373,8 @@ class ManagementController extends Controller
                 }   
             }
         } catch(\yii\base\Exception $e){
+            $model = $this->findModel($id);
+            
             Yii::$app->getSession()->setFlash('danger', [
                  'type' => 'danger',
                  'duration' => 3000,
@@ -401,9 +400,8 @@ class ManagementController extends Controller
     public function actionDelete($id)
     {
        $model = $this->findModel($id);
-        if($model->deleteImage()){
-          $model->delete();
-          
+       $model->deleteImage();
+        if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM management')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
           Yii::$app->getDb()->createCommand('ALTER TABLE management AUTO_INCREMENT = :id', [':id' => $next_id])->execute();

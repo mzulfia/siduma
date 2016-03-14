@@ -428,10 +428,7 @@ class ScheduleController extends Controller
             } else{
                 $event->color = '#a6004c';
             }
-            // $event->editable = true;
-            // $event->startEditable = true;
-            // $event->allDay = true;
-            // $event->durationEditable = true;
+            
             $tasks[] = $event;
         }
 

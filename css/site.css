@@ -182,12 +182,3 @@ a.desc:after {
     position: relative;
     width:100%;
 }
-
-ul.users-list-icon.clearfix{
-    list-style: none;
-}
-.users-list-icon >li{
-    float: left;
-    padding: 10px;
-    text-align: center;
-}

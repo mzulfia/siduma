@@ -483,9 +483,8 @@ class SupportReportController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if($model->deleteFile()){
-          $model->delete();
-          
+        $model->deleteFile();
+        if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM support_report')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
           Yii::$app->getDb()->createCommand('ALTER TABLE support_report AUTO_INCREMENT = :id', [':id' => $next_id])->execute();

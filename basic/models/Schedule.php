@@ -31,6 +31,7 @@ class Schedule extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['date', 'shift_id', 'support_id', 'is_dm'], 'required'],
             [['date', 'shift_id', 'support_id','is_dm'], 'required'],
             [['date', 'shift_id', 'support_id','is_dm'], 'safe'],
             [['shift_id', 'is_dm'], 'integer'],
@@ -174,7 +175,7 @@ class Schedule extends \yii\db\ActiveRecord
         $model  = Schedule::find()->where('date = :date AND support_id = :support_id AND shift_id = :shift_id', [':date' => $date, ':support_id' => $support_id, ':shift_id' => $shift_id])->one();
         if(!empty($model))
         {
-            return ($model->is_dm == 0);
+            return true;
         }
         else
         {
@@ -192,7 +193,7 @@ class Schedule extends \yii\db\ActiveRecord
                     return true;
                 }    
             } else {
-                return false;
+                return true;
             }
         } else {
             return true;

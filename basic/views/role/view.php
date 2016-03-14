@@ -6,13 +6,13 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Role */
 
-$this->title = $model->role_id;
+$this->title = 'Roles | View Role';
 $this->params['breadcrumbs'][] = ['label' => 'Roles', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'View Role';
 ?>
 <div class="role-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>View Role</h1>
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->role_id], ['class' => 'btn btn-primary']) ?>

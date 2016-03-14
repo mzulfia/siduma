@@ -20,21 +20,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <?php  
-// $this->registerJs("$(function() {
-//    $('.popupModal').click(function(e) {
-//     e.preventDefault();
-//     $('#modal').modal('show').find('#modalContent')
-//     .load($(this).attr('href'));
-//     e.preventDefault();
-//    });
-// });");
-
-// $this->registerJs("$(function() {
-//     $(document).on('click', '.popupModal', function(){
-//     $('#modal').modal('show').find('#modalContent')
-//     .load($(this).attr('value'));
-//    });
-// });");
 
 $this->registerJs("$(function() {
    $('.popupModal').click(function(e) {

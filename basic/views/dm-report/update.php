@@ -10,6 +10,7 @@ use app\models\ServiceFamily;
 use app\models\User;
 use app\models\SupportArea;
 
+$this->title = 'DM Reports | Update Report';
 $this->params['breadcrumbs'][] = ['label' => 'Duty Manager Reports', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update Report';
 ?>
@@ -38,7 +39,12 @@ $this->params['breadcrumbs'][] = 'Update Report';
                      ],
             ]); 
         ?>
-
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-9">
+            <p>Max Size: 1 MB</p>
+          </div>  
+        </div>  
+        
         <?= $form->field($model, 'information')->textArea() ?>
 
         <div class="form-group">

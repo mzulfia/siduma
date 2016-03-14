@@ -2,14 +2,17 @@
 
 
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use kartik\grid\GridView;
 
-$this->title = 'Support Areas';
-$this->params['breadcrumbs'][] = $this->title;
+use app\models\ServiceFamily;
+
+$this->title = 'Support Areas | All';
+$this->params['breadcrumbs'][] = 'Support Areas';
 ?>
 <div class="support-area-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>Support Areas</h1>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -23,6 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'label' => 'Service Family',
+                'filter' => Html::activeDropDownList($searchModel, 'service_family_id', ArrayHelper::map(ServiceFamily::find()->all(), 'service_family_id', 'service_name'),['class'=>'form-control','prompt' => '-']),
                 'attribute' => 'service_family_id',
                 'value' => 'serviceFamily.service_name'
             ],

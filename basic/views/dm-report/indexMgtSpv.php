@@ -13,12 +13,12 @@ use app\models\ServiceFamily;
 /* @var $searchModel app\models\ReportSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Duty Manager Reports';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'DM Reports | All';
+$this->params['breadcrumbs'][] = 'Duty Manager Reports';
 ?>
 <div class="report-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>Duty Manager Reports</h1>
 
     <?php
         $gridColumns = [

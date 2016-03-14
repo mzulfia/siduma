@@ -36,6 +36,7 @@ class PlnPic extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['pic_name', 'email', 'no_hp'], 'required'],
             [['pic_name', 'email', 'no_hp'], 'string', 'max' => 50],
             [['image_path'], 'string', 'max' => 255],
             [['file'], 'file', 'maxSize'=>'200000'],
@@ -109,7 +110,7 @@ class PlnPic extends \yii\db\ActiveRecord
                     return true;
                 }    
             } else {
-                return false;
+                return true;
             }
         } else {
             return true;

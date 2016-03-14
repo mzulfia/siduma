@@ -20,7 +20,6 @@
 /* @var $this yii\web\View */
 
 $this->title = 'SIDUMA | Dashboard';
-// $this->params['breadcrumbs'][] = 'Dashboard';
 
 $this->registerJs("$(function() {
    $('.popupModal').click(function(e) {
@@ -84,7 +83,7 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
   <div class="body-content">
     <div class="row">
       <div class="col-lg-12">
-          <div class="box box-success">
+          <div class="box box-info">
             <div class="box-header" style="text-align: center">
                 <h3 class="box-title"><b>SIDUMA | DASHBOARD</b></h3>
             </div>
@@ -95,38 +94,37 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
       <?php 
         $max = sizeof(ServiceFamily::find()->all());
         $size = 100/($max);
+        $last_updated  = '';
         for($i=1; $i <= sizeof(ServiceFamily::find()->all()); $i++){
           $array = DmReport::getServiceDmReport($i);
           if(isset($array)){
               if($array->status == 2){
                  echo '
-                  <a class="modalPopup" href="'. Url::to(['dm-report/view/', 'id'=>$array->dm_report_id]) . '">
-                   <div class="col-lg-2 col-xs-6" style="width: '. $size .'%">
+                 <a class="modalPopup" href="'. Url::to(['dm-report/view/', 'id'=>$array->dm_report_id]) . '">
+                  <div class="col-lg-3 col-xs-6" style="width: '. $size .'%">
                       <div class="small-box bg-green">
                           <div class="inner">
                             <p><b>' .  explode(" ", $array->service->service_name)[0]  . '</b></p>
                           </div>
                       </div>    
-                   </div>
-                  </a>' ;
+                 </div>
+                </a>' ;
 
-               
                } elseif($array->status == 1){
                  echo '
                    <a class="modalPopup" href="'. Url::to(['dm-report/view/', 'id'=>$array->dm_report_id]) . '">
-                     <div class="col-lg-2 col-xs-6" style="width: '. $size .'%">
+                     <div class="col-lg-3 col-xs-6" style="width: '. $size .'%">
                         <div class="small-box bg-yellow">
                           <div class="inner">
                             <p><b>' .  explode(" ", $array->service->service_name)[0]  . '</b></p>
                          </div>
                         </div>
                      </div>
-                  </a>'
-                   ;
+                  </a>';
                } else{
                 echo '
                   <a class="modalPopup" href="'. Url::to(['dm-report/view/', 'id'=>$array->dm_report_id]) . '">
-                   <div class="col-lg-2 col-xs-6" style="width: '. $size .'%">
+                   <div class="col-lg-3 col-xs-6" style="width: '. $size .'%">
                       <div class="small-box bg-red">
                         <div class="inner">
                           <p><b>' .  explode(" ", $array->service->service_name)[0]  . '</b></p>
@@ -135,8 +133,10 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
                    </div>
                   </a>';
             }
+            $last_updated = $array->created_at;
          }
-      }  
+      }
+      echo '<p style="text-align: right; padding-right: 15px;"><i> last updated: '. $last_updated . '</i></p>';  
     ?>
     </div>
 
@@ -255,7 +255,7 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
               </div>
             </div><!-- /.box-header -->
             <div class="box-body no-padding">
-              <ul class="users-list-icon clearfix">
+              <ul class="users-list clearfix">
                 <?php
                     $arrays_team = SupportArea::getTeamIconNow();
                     $size_iconbox = 0;

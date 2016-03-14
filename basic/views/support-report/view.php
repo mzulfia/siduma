@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model app\models\ReportSupport */
 
 $this->title = 'Support Report | View Report';
-$this->params['breadcrumbs'][] = ['label' => 'Report Supports', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Support Reports', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'View Report';
 ?>
 <div class="report-support-view">

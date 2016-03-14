@@ -13,7 +13,7 @@ use app\models\SupportArea;
 /* @var $this yii\web\View */
 /* @var $model app\models\ReportSupport */
 $this->title = 'Support Reports | Update Report';
-$this->params['breadcrumbs'][] = ['label' => 'Report Supports', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Support Reports', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update Report';
 ?>
 <div class="box box-info">
@@ -45,6 +45,11 @@ $this->params['breadcrumbs'][] = 'Update Report';
                      ],
             ]); 
         ?>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-9">
+            <p>Max Size: 1 MB</p>
+          </div>  
+        </div>  
 
         <?= $form->field($model, 'information')->textArea() ?>
 

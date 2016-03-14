@@ -16,7 +16,7 @@ use app\models\SupportArea;
 
 $this->title = 'Support Reports | Create Report';
 $this->params['breadcrumbs'][] = ['label' => 'Support Reports', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'Create Report';
 ?>
 
 <div class="box box-info">
@@ -48,6 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
                      ],
             ]); 
         ?>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-9">
+            <p>Max Size: 1 MB</p>
+          </div>  
+        </div>  
 
         <?= $form->field($model, 'information')->textArea() ?>
 

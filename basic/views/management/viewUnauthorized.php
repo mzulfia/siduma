@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 use app\models\User;
 use app\models\Management;
 
-$this->title = "Profile";
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = "Managements | View Profile";
+$this->params['breadcrumbs'][] = 'View Profile';
 ?>
 <div class="management-viewUnauthorized">
 

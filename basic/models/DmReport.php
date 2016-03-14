@@ -36,6 +36,7 @@ class DmReport extends \yii\db\ActiveRecord
             [['status', 'support_id', 'service_family_id'], 'integer'],
             [['information'], 'string'],
             [['file_path'], 'string', 'max' => 200],
+            [['file'], 'file', 'maxSize'=>'1000000'],
             [['file'], 'file', 'skipOnEmpty' => true]
         ];
     }
@@ -124,7 +125,7 @@ class DmReport extends \yii\db\ActiveRecord
                     return true;
                 }    
             } else {
-                return false;
+                return true;
             }
         } else {
             return true;

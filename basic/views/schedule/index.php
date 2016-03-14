@@ -1,9 +1,11 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use kartik\grid\GridView;
 
 use kartik\daterange\DateRangePicker;
+use app\models\Shift;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ServiceFamilySearch */
@@ -50,6 +52,7 @@ $this->params['breadcrumbs'][] = 'Schedules';
             ],
             [
                 'label' => 'Shift Name',
+                'filter' => Html::activeDropDownList($searchModel, 'shift_id', ArrayHelper::map(Shift::find()->all(), 'shift_id', 'shift_name'),['class'=>'form-control','prompt' => '-']),
                 'attribute' => 'shift_id',
                 'value' => 'shift.shift_name',
                 'contentOptions' => ['style' => 'width:100px;']

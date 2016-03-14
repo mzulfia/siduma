@@ -16,7 +16,7 @@ DashboardAsset::register($this);
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>
-    <title>Sistem Informasi Duty Manager</title>
+    <title>SIDUMA</title>
     <?php $this->head() ?>
 	
 	    <!-- CSS -->

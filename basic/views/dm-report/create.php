@@ -41,7 +41,13 @@ $this->params['breadcrumbs'][] = 'Create Report';
                          'showRemove' => false,
                          'showUpload' => false,
                      ],
-                ]); 
+                ]);
+                echo '
+                <div class="form-group">
+                  <div class="col-sm-offset-2 col-sm-9">
+                    <p>Max Size: 1 MB</p>
+                  </div>  
+                </div>'; 
                 echo $form->field($service_family[$i], $information)->textArea();
             }    
 

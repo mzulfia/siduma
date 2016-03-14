@@ -8,9 +8,9 @@ use app\models\User;
 /* @var $this yii\web\View */
 /* @var $model app\models\Report */
 
-$this->title = 'Report';
-$this->params['breadcrumbs'][] = ['label' => 'Reports', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'DM Reports | View Report';
+$this->params['breadcrumbs'][] = ['label' => 'Duty Manager Reports', 'url' => ['index']];
+$this->params['breadcrumbs'][] = 'View Report';
 ?>
 <div class="report-view">
 

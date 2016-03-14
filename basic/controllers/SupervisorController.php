@@ -379,6 +379,8 @@ class SupervisorController extends Controller
                 }
             }
         } catch(\yii\base\Exception $e){
+            $model = $this->findModel($id);
+            
             Yii::$app->getSession()->setFlash('danger', [
                  'type' => 'danger',
                  'duration' => 3000,
@@ -404,9 +406,8 @@ class SupervisorController extends Controller
     public function actionDelete($id)
     {
        $model = $this->findModel($id);
-        if($model->deleteImage()){
-          $model->delete();
-          
+       $model->deleteImage();
+        if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM supervisor')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
           Yii::$app->getDb()->createCommand('ALTER TABLE supervisor AUTO_INCREMENT = :id', [':id' => $next_id])->execute();

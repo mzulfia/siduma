@@ -7,12 +7,12 @@ use kartik\grid\GridView;
 /* @var $searchModel app\models\PicSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Supports';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Supports | All';
+$this->params['breadcrumbs'][] = 'Supports';
 ?>
 <div class="support-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>Supports</h1>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

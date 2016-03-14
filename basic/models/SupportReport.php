@@ -39,6 +39,7 @@ class SupportReport extends \yii\db\ActiveRecord
             [['created_at'], 'safe'],
             [['support_id', 'service_family_id'], 'integer'],
             [['file_path'], 'string', 'max' => 200],
+            [['file'], 'file', 'maxSize'=>'1000000'],
             [['file'], 'file', 'skipOnEmpty' => false]
         ];
     }
@@ -94,7 +95,7 @@ class SupportReport extends \yii\db\ActiveRecord
                     return true;
                 }    
             } else {
-                return false;
+                return true;
             }
         } else {
             return true;

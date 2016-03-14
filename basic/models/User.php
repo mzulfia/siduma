@@ -38,7 +38,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
       
         return [
-            [['username', 'password', 'salt_password'], 'required'],
+            [['username', 'password', 'salt_password', 'role_id'], 'required'],
             [['password'], StrengthValidator::className(), 'preset'=>'normal', 'userAttribute'=>'username'],
             [['username'], 'unique'],
             [['role_id'], 'integer'],

@@ -12,7 +12,7 @@ use app\models\User;
 /* @var $this yii\web\View */
 /* @var $model app\models\Management */
 
-$this->title = 'Managements | Update Management';
+$this->title = 'Managements | Update Profile';
 $this->params['breadcrumbs'][] = ['label' => 'Managements', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update Profile';
 ?>

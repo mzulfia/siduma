@@ -26,6 +26,7 @@ class SupportPosition extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['position_name'], 'required'],
             [['position_name'], 'string', 'max' => 50]
         ];
     }

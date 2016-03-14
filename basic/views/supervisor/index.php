@@ -4,12 +4,12 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 
-$this->title = 'Supervisors';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Supervisors | All';
+$this->params['breadcrumbs'][] = 'Supervisors';
 ?>
 <div class="supervisor-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>Supervisors</h1>
 
     <p>
         <?= Html::a('Create Supervisor', ['create'], ['class' => 'btn btn-success']) ?>

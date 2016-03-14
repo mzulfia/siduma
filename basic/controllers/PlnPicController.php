@@ -43,12 +43,17 @@ class PlnPicController extends Controller
                'only' => ['index','create', 'update', 'delete', 'view'],
                'rules' => [
                        [
-                           'actions' => ['index','create', 'update', 'delete', 'view'],
+                           'actions' => ['index','create', 'update', 'delete'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_ADMINISTRATOR, 
                            ],
                        ],
+                       [
+                            'actions' => ['view'],
+                           'allow' => true,
+                           'roles' => ['@'],
+                       ]
                     ],
                 ],
         ];
@@ -301,9 +306,8 @@ class PlnPicController extends Controller
     public function actionDelete($id)
     {
        $model = $this->findModel($id);
-        if($model->deleteImage()){
-          $model->delete();
-          
+       $model->deleteImage();
+        if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM pln_pic')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
           Yii::$app->getDb()->createCommand('ALTER TABLE pln_pic AUTO_INCREMENT = :id', [':id' => $next_id])->execute();

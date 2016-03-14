@@ -64,8 +64,11 @@ class SupportAreaSearch extends SupportArea
 
         $query->joinWith(['support', 'serviceFamily']);
 
-        $query->andFilterWhere(['like', 'service_family.service_name', $this->service_family_id])
-            ->andFilterWhere(['like', 'support.support_name', $this->support_id]);
+        $query->andFilterWhere([
+            'service_family.service_family_id' => $this->service_family_id
+        ]);
+
+        $query->andFilterWhere(['like', 'support.support_name', $this->support_id]);
 
         return $dataProvider;
     }

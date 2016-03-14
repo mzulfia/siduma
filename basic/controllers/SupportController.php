@@ -45,27 +45,32 @@ class SupportController extends Controller
                'only' => ['index','create', 'update', 'delete', 'view'],
                'rules' => [
                        [
-                           'actions' => ['index','create', 'update', 'delete', 'view'],
+                           'actions' => ['index','create', 'update', 'delete'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_ADMINISTRATOR, 
                            ],
                        ],
                        [
-                           'actions' => ['update', 'view'],
+                           'actions' => ['update'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_SUPPORT,
                            ],
                        ],
                        [
-                           'actions' => ['index', 'view'],
+                           'actions' => ['index'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_MANAGEMENT,
                                User::ROLE_SUPERVISOR,
                            ],
                        ],
+                       [
+                           'actions' => ['view'],
+                           'allow' => true,
+                           'roles' => ['@'],
+                       ]
                     ],
                 ],
         ];
@@ -77,13 +82,24 @@ class SupportController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new SupportSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+            $searchModel = new SupportSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            $searchModel = new SupportSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+            return $this->render('indexUnauthorized', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+        
     }
 
     /**
@@ -390,6 +406,8 @@ class SupportController extends Controller
                 }
             }
         } catch(\yii\base\Exception $e){
+            $model = $this->findModel($id);
+            
             Yii::$app->getSession()->setFlash('danger', [
                  'type' => 'danger',
                  'duration' => 3000,
@@ -414,9 +432,8 @@ class SupportController extends Controller
    public function actionDelete($id)
     {
        $model = $this->findModel($id);
-        if($model->deleteImage()){
-          $model->delete();
-          
+       $model->deleteImage();
+        if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM support')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
           Yii::$app->getDb()->createCommand('ALTER TABLE support AUTO_INCREMENT = :id', [':id' => $next_id])->execute();

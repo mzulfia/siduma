@@ -4,33 +4,30 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\PlnPicSearch */
+/* @var $searchModel app\models\PicSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'PLN PICs | All';
-$this->params['breadcrumbs'][] = 'PLN PICs';
+$this->title = 'Supports | All';
+$this->params['breadcrumbs'][] = 'Supports';
 ?>
-<div class="pln-pic-index">
+<div class="support-index">
 
-    <h1>PLN PICs</h1>
-    
-    <p>
-        <?= Html::a('Create PLN PIC', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <h1>Supports</h1>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'pic_name',
-            'email',
-            'no_hp',
             [
-                'header' => 'Action',
-                'class' => 'yii\grid\ActionColumn',
-                'contentOptions' => ['style' => 'width: 100px']
+                'label' => 'Username',
+                'attribute' => 'support_username',
+                'value' => 'user.username'
             ],
+            'support_name',
+            'company',
+            'no_hp',
+            'email',
         ],
         'pager' => [
             'firstPageLabel' => 'First',

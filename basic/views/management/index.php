@@ -9,12 +9,12 @@ use kartik\grid\GridView;
 /* @var $searchModel app\models\ManagementSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Managements';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Managements | All';
+$this->params['breadcrumbs'][] = 'Managements';
 ?>
 <div class="management-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>Managements</h1>
 
     <p>
         <?= Html::a('Create Management', ['create'], ['class' => 'btn btn-success']) ?>

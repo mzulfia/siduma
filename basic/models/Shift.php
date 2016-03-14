@@ -28,6 +28,7 @@ class Shift extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['shift_name', 'shift_start', 'shift_end'], 'required'],
             [['shift_start', 'shift_end'], 'safe'],
             [['shift_name'], 'string', 'max' => 50]
         ];
