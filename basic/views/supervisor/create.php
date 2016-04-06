@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = 'Create Supervisor';
 ?>
 <div class="supervisor-create">
 	<div class="box box-info">
-	    <div class="box-header">
+	    <div class="box-header with-border">
 	      <h3 class="box-title">Create Supervisor</h3>
 	    </div>
 	    <div class="box-body">
@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = 'Create Supervisor';
 	                     'options' => ['accept' => 'image/*'],
 	                 ]);
 	            ?>
-	        <p>Accepted File: jpg, png; Max Size: 200KB; Pixel Size: 200x200px</p>
+	        <p>Accepted File: jpg, png; Max File Size: 200KB; Pixel Size: 225x225 px</p>
 	        
 
 	        <?= $form->field($model, 'spv_name')->textInput(['maxlength' => true]) ?>

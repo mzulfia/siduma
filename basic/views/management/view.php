@@ -7,12 +7,18 @@ use app\models\User;
 use app\models\Management;
 
 
-$this->title = "Managements | View Profile";
-$this->params['breadcrumbs'][] = 'View Profile';
+if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+    $this->title = 'Managements | Profile';
+    $this->params['breadcrumbs'][] = ['label' => 'Managements', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = 'Profile';
+} else{
+   $this->title = "Managements | Profile";
+    $this->params['breadcrumbs'][] = 'Profile';
+}
 ?>
 <div class="management-view">
 
-    <h1>View Profile</h1>
+    <h1>Profile</h1>
 
     <p>
         <?php if(User::getRoleId(Yii::$app->user->id) == User::ROLE_ADMINISTRATOR): ?>

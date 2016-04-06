@@ -25,8 +25,8 @@ class SupportSearch extends Support
     public function rules()
     {
         return [
-            [['support_id', 'support_position_id', 'user_id'], 'integer'],
-            [['support_name', 'no_hp', 'company', 'email', 'support_username'], 'safe'],
+            [['support_id', 'user_id'], 'integer'],
+            [['support_name', 'no_hp', 'company', 'email', 'support_username', 'support_position_id'], 'safe'],
         ];
     }
 
@@ -50,26 +50,31 @@ class SupportSearch extends Support
     {
         $query = Support::find();
 
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
         $dataProvider->sort->attributes['support_username'] = [
               'asc' => ['user.username' => SORT_ASC],
               'desc' => ['user.username' => SORT_DESC],
         ];
 
+        $dataProvider->sort->attributes['support_position_id'] = [
+              'asc' => ['support_position.position_name' => SORT_ASC],
+              'desc' => ['support_position.position_name' => SORT_DESC],
+        ];
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
 
         if (isset($_GET['SupportSearch']) && !($this->load($params) && $this->validate())) {
             return $dataProvider; 
         }
 
-        $query->joinWith(['user']);
+        $query->joinWith(['user', 'pos']);
 
         $query->andFilterWhere([
             'support_id' => $this->support_id,
-            'support_position_id' => $this->support_position_id,
             'user_id' => $this->user_id,
+            'support_position.support_position_id' => $this->support_position_id
         ]);
 
         $query->andFilterWhere(['like', 'support_name', $this->support_name])

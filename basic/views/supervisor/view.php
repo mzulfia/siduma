@@ -6,13 +6,18 @@ use yii\widgets\DetailView;
 use app\models\User;
 use app\models\Supervisor;
 
-
-$this->title = "Supervisors | View Profile";
-$this->params['breadcrumbs'][] = 'View Profile';
+if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+    $this->title = 'Supervisors | Profile';
+    $this->params['breadcrumbs'][] = ['label' => 'Supervisors', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = 'Profile';
+} else{
+   $this->title = "Supervisors | Profile";
+    $this->params['breadcrumbs'][] = 'Profile';
+}
 ?>
 <div class="supervisor-view">
 
-    <h1>View Profile</h1>
+    <h1>Profile</h1>
 
     <p>
         <?php if(User::getRoleId(Yii::$app->user->id) == User::ROLE_ADMINISTRATOR): ?>

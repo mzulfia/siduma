@@ -34,7 +34,6 @@ $this->params['breadcrumbs'][] = 'Contact Info';
 
 ?>
 
-
 <?php
         Modal::begin([
             'header' => '<h4>Profile</h4>',

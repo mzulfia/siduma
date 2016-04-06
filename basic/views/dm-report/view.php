@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = 'View Report';
 ?>
 <div class="report-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>View Report</h1>
 
     <p>
         <?php if(User::getRoleId(Yii::$app->user->id) == User::ROLE_ADMINISTRATOR): ?>

@@ -26,6 +26,7 @@ class ServiceFamily extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['service_name'], 'required'],
             [['service_name'], 'string', 'max' => 50]
         ];
     }

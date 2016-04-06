@@ -88,14 +88,32 @@ class ManagementController extends Controller
      */
     public function actionView($id)
     {
-       if(Yii::$app->request->isAjax){
+        if(Yii::$app->request->isAjax){
             return $this->renderAjax('viewUnauthorized', [
                 'model' => $this->findModel($id),
             ]);
         } else {
-            return $this->render('view', [
-                'model' => $this->findModel($id),
-            ]);
+            if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT){
+                if(User::getManagementId(Yii::$app->user->getId()) == $id){
+                    return $this->render('view', [
+                        'model' => $this->findModel($id),
+                    ]);
+                } else {
+                    return $this->redirect(['view', 'id' => User::getManagementId(Yii::$app->user->getId())]);    
+                }
+            } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPERVISOR) {
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            } else {
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            }
         }
     }
 
@@ -152,7 +170,7 @@ class ManagementController extends Controller
                             $mgt = Management::findOne($id);
                             $mgt->deleteImage();
                             $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                            if($model->update()){
+                            if($model->save()){
                                 $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                 Image::getImagine()->open(Management::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -187,7 +205,7 @@ class ManagementController extends Controller
                         else
                         {
                             $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                            if($model->update()){
+                            if($model->save()){
                                 $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                 Image::getImagine()->open(Management::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -219,7 +237,7 @@ class ManagementController extends Controller
                             }   
                         }
                     } else{
-                        if($model->update()){
+                        if($model->save()){
                             Yii::$app->getSession()->setFlash('success', [
                                  'type' => 'success',
                                  'duration' => 3000,
@@ -268,7 +286,7 @@ class ManagementController extends Controller
                                 $mgt = Management::findOne($id);
                                 $mgt->deleteImage();
                                 $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                                if($model->update()){
+                                if($model->save()){
                                     $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                     Image::getImagine()->open(Management::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -302,7 +320,7 @@ class ManagementController extends Controller
                             else
                             {
                                 $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                                if($model->update()){
+                                if($model->save()){
                                     $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                     Image::getImagine()->open(Management::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -333,25 +351,20 @@ class ManagementController extends Controller
                                 }   
                             }
                         } else{
-                            $model->update();
-                        }
-                        
-                        return $this->redirect(['view', 'id' => $model->management_id]);
-                    } else {
-                        if($model->update()){
-                            Yii::$app->getSession()->setFlash('success', [
-                                 'type' => 'success',
-                                 'duration' => 3000,
-                                 'icon' => 'fa fa-user',
-                                 'message' => 'Update Success',
-                                 'title' => 'Notification',
-                                 'positonY' => 'top',
-                                 'positonX' => 'right'
-                             ]);  
-
-                            return $this->redirect(['view', 'id' => $model->management_id]);
-                        } else {
-                             Yii::$app->getSession()->setFlash('danger', [
+                            if($model->save()){
+                                Yii::$app->getSession()->setFlash('success', [
+                                     'type' => 'success',
+                                     'duration' => 3000,
+                                     'icon' => 'fa fa-user',
+                                     'message' => 'Update Success',
+                                     'title' => 'Notification',
+                                     'positonY' => 'top',
+                                     'positonX' => 'right'
+                                ]);    
+                                    
+                                return $this->redirect(['view', 'id' => $model->management_id]);
+                            } else {
+                                Yii::$app->getSession()->setFlash('danger', [
                                      'type' => 'danger',
                                      'duration' => 3000,
                                      'icon' => 'fa fa-user',
@@ -359,12 +372,19 @@ class ManagementController extends Controller
                                      'title' => 'Notification',
                                      'positonY' => 'top',
                                      'positonX' => 'right'
-                                 ]);    
-
-                               return $this->render('update', [
+                                ]);    
+                                    
+                                return $this->render('update', [
                                     'model' => $model,
                                 ]);
+                            }
                         }
+                        
+                        return $this->redirect(['view', 'id' => $model->management_id]);
+                    } else {
+                        return $this->render('update', [
+                            'model' => $model,
+                        ]);
                     }    
                 }
                 else
@@ -404,7 +424,7 @@ class ManagementController extends Controller
         if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM management')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
-          Yii::$app->getDb()->createCommand('ALTER TABLE management AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+          Yii::$app->getDb()->createCommand('ALTER TABLE management ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
           Yii::$app->getSession()->setFlash('success', [
                'type' => 'success',

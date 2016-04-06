@@ -25,20 +25,20 @@ $this->params['breadcrumbs'][] = 'Duty Manager Reports';
             [
                 'class' => 'yii\grid\SerialColumn',
             ],
-             [
+            [
                 'attribute' => 'created_at',
                 'value' => 'created_at', 
                 'filter' => DateRangePicker::widget([
-                        'model'=>$searchModel,
-                        'attribute'=>'created_at',
-                        'convertFormat'=>true,
-                        'pluginOptions'=>[
-                            'locale'=>[
-                                'format'=>'Y-m-d'
-                            ]
-                        ]
-                    ]),
-                'contentOptions' => ['style' => 'width:150px;']
+                    'name' => 'created_at_1',
+                    'model' => $searchModel,
+                    'attribute' => 'created_at',
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'locale'=>['format' => 'Y-m-d'],
+                    ],
+                    'presetDropdown'=>true,
+                ]),
+                'contentOptions' => ['style' => 'width:200px;']
             ],
             [
                 'label' => 'Service Family',
@@ -120,5 +120,11 @@ $this->params['breadcrumbs'][] = 'Duty Manager Reports';
             'condensed'=>true,
             'bordered'=>true,
     ]); ?>
+
+    <div class="row">
+        <div class="col-md-12" style = 'text-align: center;'> 
+            <?= Html::a('Export Report', ['/dm-report/exportreport'], ['class'=>'btn btn-primary']) ?>
+        </div>    
+    </div>    
 
 </div>

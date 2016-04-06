@@ -201,21 +201,33 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $command = Yii::$app->getDb()->createCommand('SELECT management_id FROM user, management WHERE user.user_id = management.user_id AND management.user_id = :user_id', [':user_id' => $id])->queryAll();
 
-        return $command[0]['management_id'];
+        if(!empty($command[0]['management_id'])){
+            return $command[0]['management_id'];   
+        } else {
+            return null;
+        }
     }
 
     public function getSupervisorId($id) 
     {
         $command = Yii::$app->getDb()->createCommand('SELECT supervisor_id FROM user, supervisor WHERE user.user_id = supervisor.user_id AND supervisor.user_id = :user_id', [':user_id' => $id])->queryAll();
 
-        return $command[0]['supervisor_id'];
+        if(!empty($command[0]['supervisor_id'])){
+            return $command[0]['supervisor_id'];   
+        } else {
+            return null;
+        }
     }
     
     public function getSupportId($id) 
     {
         $command = Yii::$app->getDb()->createCommand('SELECT support_id FROM user, support WHERE user.user_id = support.user_id AND support.user_id = :user_id', [':user_id' => $id])->queryAll();
 
-        return $command[0]['support_id'];
+        if(!empty($command[0]['support_id'])){
+            return $command[0]['support_id'];   
+        } else {
+            return null;
+        }
     }
 }
 ?>

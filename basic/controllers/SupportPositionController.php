@@ -32,10 +32,10 @@ class SupportPositionController extends Controller
                'ruleConfig' => [
                    'class' => AccessRules::className(),
                ],
-               'only' => ['index','create', 'update', 'delete', 'view'],
+               'only' => ['index','create', 'update', 'delete'],
                'rules' => [
                        [
-                           'actions' => ['index','create', 'update', 'delete', 'view'],
+                           'actions' => ['index','create', 'update', 'delete'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_ADMINISTRATOR, 
@@ -125,7 +125,7 @@ class SupportPositionController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-            if($model->update()){
+            if($model->save()){
                 Yii::$app->getSession()->setFlash('success', [
                      'type' => 'success',
                      'duration' => 3000,
@@ -168,7 +168,7 @@ class SupportPositionController extends Controller
         if($model->delete()){
             $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM support_position')->queryAll();
             $next_id = ((int) $size[0]['total']) + 1;
-            Yii::$app->getDb()->createCommand('ALTER TABLE support_position AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+            Yii::$app->getDb()->createCommand('ALTER TABLE support_position ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
             Yii::$app->getSession()->setFlash('success', [
                  'type' => 'success',

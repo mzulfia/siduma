@@ -23,8 +23,8 @@ Highcharts.theme = {
    chart: {
       backgroundColor: null,
       style: {
-         fontFamily: "Signika, serif"
-      }
+         fontFamily: "Signika, serif",
+      },
    },
    title: {
       style: {

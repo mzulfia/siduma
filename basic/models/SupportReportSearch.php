@@ -62,7 +62,7 @@ class SupportReportSearch extends SupportReport
               'desc' => ['service_family.service_name' => SORT_DESC],
         ];
 
-         $dataProvider->sort->attributes['support_id'] = [
+        $dataProvider->sort->attributes['support_id'] = [
               'asc' => ['support.support_name' => SORT_ASC],
               'desc' => ['support.support_name' => SORT_DESC],
         ];
@@ -126,6 +126,53 @@ class SupportReportSearch extends SupportReport
         ]);
         
         $query->andFilterWhere(['like', 'service_family.service_family_id', $this->service_family_id]);
+
+        if(sizeof(explode(" - ", $this->created_at)) > 1)
+          $query->andFilterWhere(['between', 'created_at', explode(" - ", $this->created_at)[0], date('Y-m-d', strtotime(explode(" - ", $this->created_at)[1] . ' +1 day'))]);
+        
+        return $dataProvider;
+    }
+
+    public function searchSupportReports_DM($params)
+    {
+        $query = SupportReport::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ]
+            ],
+        ]);
+
+        $dataProvider->sort->attributes['service_family_id'] = [
+              'asc' => ['service_family.service_name' => SORT_ASC],
+              'desc' => ['service_family.service_name' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['service_family_id'] = [
+              'asc' => ['service_family.service_name' => SORT_ASC],
+              'desc' => ['service_family.service_name' => SORT_DESC],
+        ];
+
+         $dataProvider->sort->attributes['support_id'] = [
+              'asc' => ['support.support_name' => SORT_ASC],
+              'desc' => ['support.support_name' => SORT_DESC],
+        ];
+
+        if (isset($_GET['SupportReportSearch']) && !($this->load($params) && $this->validate())) {
+            return $dataProvider; 
+        }
+
+        $query->joinWith(['service', 'support']);
+
+        $query->andFilterWhere([
+            'information' => $this->information,
+        ]);
+        
+        $query->andFilterWhere(['like', 'service_family.service_family_id', $this->service_family_id]);
+        $query->andFilterWhere(['like', 'support.support_name', $this->support_id]);
        
 
         if(sizeof(explode(" - ", $this->created_at)) > 1)

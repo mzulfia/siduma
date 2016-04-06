@@ -35,20 +35,20 @@ $this->params['breadcrumbs'][] = 'Support Reports';
             [
                 'class' => 'yii\grid\SerialColumn',
             ],
-             [
+            [
                 'attribute' => 'created_at',
                 'value' => 'created_at', 
                 'filter' => DateRangePicker::widget([
-                        'model'=>$searchModel,
-                        'attribute'=>'created_at',
-                        'convertFormat'=>true,
-                        'pluginOptions'=>[
-                            'locale'=>[
-                                'format'=>'Y-m-d'
-                            ]
-                        ]
-                    ]),
-                'contentOptions' => ['style' => 'width:150px;']
+                    'name' => 'created_at_1',
+                    'model' => $searchModel,
+                    'attribute' => 'created_at',
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'locale'=>['format' => 'Y-m-d'],
+                    ],
+                    'presetDropdown'=>true,
+                ]),
+                'contentOptions' => ['style' => 'width:200px;']
             ],
             [
                 'label' => 'Service Family',
@@ -75,6 +75,12 @@ $this->params['breadcrumbs'][] = 'Support Reports';
                 'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',
                 'template'=>'{update}',
+                'buttons'=> [
+                    'update' => function ($url, $model){
+                        return $model->support_id == User::getSupportId(\Yii::$app->user->getId()) ? Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, 
+                            [ 'title' => Yii::t('app', 'Update') ]) : '';
+                    }
+                ],
                 'contentOptions' => ['style' => 'width:50px;']
             ],
         ];

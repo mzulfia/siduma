@@ -57,6 +57,7 @@ class Shift extends \yii\db\ActiveRecord
     }
 
     public function getShift($time){
+        $model = "";
         if($time >= "07:00:00" AND $time < "16:00:00"){
             $model = Shift::find()->where('shift_start = "07:00:00"')->one();
         } else if($time >= "16:00:00" AND $time < "23:00:00"){
@@ -66,5 +67,28 @@ class Shift extends \yii\db\ActiveRecord
         }
 
         return $model;   
+    }
+
+    public function getShiftNext($time){
+        $shift_all = Shift::find()->all();
+        $model = "";
+        $shift_next = "";
+        if($time >= "07:00:00" AND $time < "16:00:00"){
+            $model = Shift::find()->where('shift_start = "07:00:00"')->one();
+        } else if($time >= "16:00:00" AND $time < "23:00:00"){
+            $model = Shift::find()->where('shift_start = "16:00:00"')->one();
+        } else{
+            $model = Shift::find()->where('shift_start = "23:00:00"')->one();
+        }
+
+        for($i = 0; $i < sizeof($shift_all); $i++){
+            if(($i == sizeof($shift_all)-1) && ($model->shift_id == $shift_all[$i]->shift_id)){
+                $shift_next = $shift_all[0]->shift_id;
+            } elseif(($i < sizeof($shift_all)-1) && ($model->shift_id == $shift_all[$i]->shift_id)){
+                $shift_next = $shift_all[$i+1]->shift_id;
+            }
+        }
+
+        return $shift_next;
     }
 }

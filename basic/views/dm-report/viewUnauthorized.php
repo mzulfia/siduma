@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = 'View Report';
             ],
             'information:ntext',
             [
-                'label' => 'Support Name',
+                'label' => 'Reporter Name',
                 'value' => $model->support->support_name
             ],
             [

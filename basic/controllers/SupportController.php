@@ -114,9 +114,27 @@ class SupportController extends Controller
                 'model' => $this->findModel($id),
             ]);
         } else {
-            return $this->render('view', [
-                'model' => $this->findModel($id),
-            ]);
+            if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT){
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPERVISOR) {
+                 return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            } else {
+                if(User::getSupportId(Yii::$app->user->getId()) == $id){
+                    return $this->render('view', [
+                        'model' => $this->findModel($id),
+                    ]);
+                } else {
+                    return $this->redirect(['view', 'id' => User::getSupportId(Yii::$app->user->getId())]);    
+                }
+            }
         }
     }
 
@@ -176,7 +194,7 @@ class SupportController extends Controller
                             $mgt = Support::findOne($id);
                             $mgt->deleteImage();
                             $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                            if($model->update()){
+                            if($model->save()){
                                 $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                 Image::getImagine()->open(Support::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -211,7 +229,7 @@ class SupportController extends Controller
                         else
                         {
                             $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                            if($model->update()){
+                            if($model->save()){
                                 $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                 Image::getImagine()->open(Support::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -243,7 +261,7 @@ class SupportController extends Controller
                             }   
                         }
                     } else{
-                        if($model->update()){
+                        if($model->save()){
                                 Yii::$app->getSession()->setFlash('success', [
                                      'type' => 'success',
                                      'duration' => 3000,
@@ -297,7 +315,7 @@ class SupportController extends Controller
                                 $mgt = Support::findOne($id);
                                 $mgt->deleteImage();
                                 $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                                if($model->update()){
+                                if($model->save()){
                                     $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                     Image::getImagine()->open(Support::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -332,7 +350,7 @@ class SupportController extends Controller
                             else
                             {
                                 $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                                if($model->update()){
+                                if($model->save()){
                                     $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                     Image::getImagine()->open(Support::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -364,7 +382,7 @@ class SupportController extends Controller
                                 }   
                             }
                         } else{
-                            if($model->update()){
+                            if($model->save()){
                                     Yii::$app->getSession()->setFlash('success', [
                                          'type' => 'success',
                                          'duration' => 3000,
@@ -436,7 +454,7 @@ class SupportController extends Controller
         if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM support')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
-          Yii::$app->getDb()->createCommand('ALTER TABLE support AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+          Yii::$app->getDb()->createCommand('ALTER TABLE support ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
           Yii::$app->getSession()->setFlash('success', [
                'type' => 'success',

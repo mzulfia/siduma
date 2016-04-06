@@ -14,9 +14,9 @@ use app\models\SupportArea;
 /* @var $searchModel app\models\PicSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Active Support on ' . $date;
-$this->params['breadcrumbs'][] = ['label' => 'Schedules', 'url' => ['viewcalendar']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Schedules | Active Supports';
+$this->params['breadcrumbs'][] = ['label' => 'Schedules', 'url' => ['viewschedule']];
+$this->params['breadcrumbs'][] = 'Active Supports';
 ?>
 
 <?php  
@@ -35,8 +35,6 @@ $this->registerJs("$(function() {
            $(this).find('#modalContent').val('').end();
       });
   });");
-
-
 ?>
 
 
@@ -53,6 +51,8 @@ $this->registerJs("$(function() {
 
         Modal::end(); 
 ?>
+
+<?php echo '<h2>Active Supports on <b>' . $date . '</b></h2><br>'; ?>
 
 <?php
     foreach($morning_dm as $item){

@@ -36,16 +36,16 @@ $this->params['breadcrumbs'][] = 'Duty Manager Reports';
                 'attribute' => 'created_at',
                 'value' => 'created_at', 
                 'filter' => DateRangePicker::widget([
-                        'model'=>$searchModel,
-                        'attribute'=>'created_at',
-                        'convertFormat'=>true,
-                        'pluginOptions'=>[
-                            'locale'=>[
-                                'format'=>'Y-m-d'
-                            ]
-                        ]
-                    ]),
-                'contentOptions' => ['style' => 'width:150px;']
+                    'name' => 'created_at_1',
+                    'model' => $searchModel,
+                    'attribute' => 'created_at',
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'locale'=>['format' => 'Y-m-d'],
+                    ],
+                    'presetDropdown'=>true,
+                ]),
+                'contentOptions' => ['style' => 'width:200px;']
             ],
             [
                 'label' => 'Service Family',
@@ -103,11 +103,6 @@ $this->params['breadcrumbs'][] = 'Duty Manager Reports';
                 ExportMenu::FORMAT_CSV => false,
                 ExportMenu::FORMAT_EXCEL => false,
                 ExportMenu::FORMAT_PDF => false,
-                // GridView::PDF => [
-                //    'config' => [
-                //        'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
-                //    ],
-                // ],
             ],
             'filename' => 'Duty Manager Report_' . date('Y-m-d'),
         ]) . '</ul>';
@@ -139,6 +134,10 @@ $this->params['breadcrumbs'][] = 'Duty Manager Reports';
         ]); 
 
     ?>
-   
- 
+    
+    <div class="row">
+        <div class="col-md-12" style = 'text-align: center;'> 
+            <?= Html::a('Export Report', ['/dm-report/exportreport'], ['class'=>'btn btn-primary']) ?>
+        </div>    
+    </div>    
 </div>

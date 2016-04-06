@@ -32,9 +32,8 @@ class Schedule extends \yii\db\ActiveRecord
     {
         return [
             [['date', 'shift_id', 'support_id', 'is_dm'], 'required'],
-            [['date', 'shift_id', 'support_id','is_dm'], 'required'],
-            [['date', 'shift_id', 'support_id','is_dm'], 'safe'],
             [['shift_id', 'is_dm'], 'integer'],
+            [['file'], 'file', 'maxSize'=>'1000000'],
             [['file_path'], 'string', 'max' => 200],
             [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'xls, xlsx']
         ];
@@ -116,6 +115,16 @@ class Schedule extends \yii\db\ActiveRecord
     public function getDmNow(){
         date_default_timezone_set("Asia/Jakarta");
         $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 1', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id])->one();
+        if(!empty($model)){
+            return $model;
+        } else{
+            return null;
+        }
+    }
+
+    public function getDmNext(){
+        date_default_timezone_set("Asia/Jakarta");
+        $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 1', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShiftNext(date('H:i:s'))])->one();
         if(!empty($model)){
             return $model;
         } else{

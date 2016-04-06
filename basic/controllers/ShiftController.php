@@ -113,7 +113,7 @@ class ShiftController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if($model->update()){
+            if($model->save()){
                 Yii::$app->getSession()->setFlash('success', [
                      'type' => 'success',
                      'duration' => 3000,
@@ -156,7 +156,7 @@ class ShiftController extends Controller
         if($model->delete()){
             $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM shift')->queryAll();
             $next_id = ((int) $size[0]['total']) + 1;
-            Yii::$app->getDb()->createCommand('ALTER TABLE shift AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+            Yii::$app->getDb()->createCommand('ALTER TABLE shift ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
             Yii::$app->getSession()->setFlash('success', [
                  'type' => 'success',

@@ -10,8 +10,8 @@ use app\models\SupportArea;
 /* @var $this yii\web\View */
 /* @var $model app\models\Pic */
 
-$this->title = "Supports | View Profile";
-$this->params['breadcrumbs'][] = 'View Profile';
+$this->title = "Supports | Profile";
+$this->params['breadcrumbs'][] = 'Profile';
 ?>
 <div class="support-viewUnauthorized">
 

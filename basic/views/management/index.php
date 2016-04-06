@@ -16,10 +16,6 @@ $this->params['breadcrumbs'][] = 'Managements';
 
     <h1>Managements</h1>
 
-    <p>
-        <?= Html::a('Create Management', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -27,7 +23,7 @@ $this->params['breadcrumbs'][] = 'Managements';
             ['class' => 'yii\grid\SerialColumn'],
             [
                 'label' => 'Username',
-                'attribute' => 'support_username',
+                'attribute' => 'management_username',
                 'value' => 'user.username'
             ],
             'mgt_name',

@@ -17,6 +17,8 @@ use app\models\ServiceFamily;
 use app\components\AccessRules;
 use yii\filters\AccessControl;
 
+use kartik\mpdf\Pdf;
+
 
 /**
  * DmReportController implements the CRUD actions for DmReport model.
@@ -37,24 +39,24 @@ class DmReportController extends Controller
                'ruleConfig' => [
                    'class' => AccessRules::className(),
                ],
-               'only' => ['index','create', 'update', 'delete', 'view'],
+               'only' => ['index','create', 'update', 'delete', 'view', 'exportReport'],
                'rules' => [
                        [
-                           'actions' => ['index', 'create', 'update', 'delete'],
+                           'actions' => ['index', 'create', 'update', 'delete', 'exportReport'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_ADMINISTRATOR, 
                            ],
                        ],
                        [
-                           'actions' => ['index', 'create', 'update'],
+                           'actions' => ['index', 'create', 'update', 'exportReport'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_SUPPORT,
                            ],
                        ],
                        [
-                           'actions' => ['index'],
+                           'actions' => ['index', 'exportReport'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_MANAGEMENT,
@@ -78,6 +80,7 @@ class DmReportController extends Controller
     public function actionIndex(){
         if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
             $searchModel = new DmReportSearch();
+            $searchModel->created_at = date('Y-m-d'). ' - ' . date('Y-m-d');
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
             return $this->render('index', [
@@ -86,6 +89,7 @@ class DmReportController extends Controller
             ]);
         } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT || User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPERVISOR) {
             $searchModel = new DmReportSearch();
+            $searchModel->created_at = date('Y-m-d'). ' - ' . date('Y-m-d');
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
             return $this->render('indexMgtSpv', [
@@ -93,16 +97,30 @@ class DmReportController extends Controller
                 'dataProvider' => $dataProvider,
             ]);
         } else {
-            $support_id = User::getSupportId(Yii::$app->user->getId());
-            $searchModel = new DmReportSearch();
-            $searchModel->support_id =  $support_id;
-            $dataProvider = $searchModel->searchDmReports(Yii::$app->request->queryParams);
+          date_default_timezone_set("Asia/Jakarta");
+          if(Schedule::getIsDmNow(date('Y-m-d'), Shift::getShift(date("H:i:s"))->shift_id, User::getSupportId(Yii::$app->user->getId()))) {
+              $support_id = User::getSupportId(Yii::$app->user->getId());
+              $searchModel = new DmReportSearch();
+              $searchModel->support_id = $support_id;
+              $searchModel->created_at = date('Y-m-d'). ' - ' . date('Y-m-d');
+              $dataProvider = $searchModel->searchDmReports(Yii::$app->request->queryParams);
 
-            return $this->render('indexUnauthorized', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
+              return $this->render('indexUnauthorized', [
+                  'searchModel' => $searchModel,
+                  'dataProvider' => $dataProvider,
+              ]);
+          } else {
+              Yii::$app->getSession()->setFlash('danger', [
+                     'type' => 'danger',
+                     'duration' => 3000,
+                     'message' => "It's not your schedule",
+                     'title' => 'Notification',
+                     'positonY' => 'top',
+                     'positonX' => 'right'
+              ]);
 
+              return $this->goBack();
+          }  
         }
     }
 
@@ -196,11 +214,11 @@ class DmReportController extends Controller
                         'service_family' => $service_family,
                     ]);
                 }
+            } else {
+                  return $this->render('create', [
+                      'service_family' => $service_family,
+                  ]);
             }
-
-            return $this->render('create', [
-                    'service_family' => $service_family,
-                ]);
         } else {
           date_default_timezone_set("Asia/Jakarta");
           if(Schedule::getIsDmNow(date('Y-m-d'), Shift::getShift(date("H:i:s"))->shift_id, User::getSupportId(Yii::$app->user->getId()))) {
@@ -267,11 +285,11 @@ class DmReportController extends Controller
                           'service_family' => $service_family,
                       ]);
                   }
-              }
-
-              return $this->render('create', [
+              } else {
+                  return $this->render('create', [
                       'service_family' => $service_family,
                   ]);
+              }
           } else {
               Yii::$app->getSession()->setFlash('danger', [
                      'type' => 'danger',
@@ -285,7 +303,6 @@ class DmReportController extends Controller
               return $this->redirect(['index']);
           }  
         }
-        
     }
     
     /**
@@ -298,62 +315,95 @@ class DmReportController extends Controller
     {
        $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post())) 
-        {
-            $model->file = UploadedFile::getInstance($model, 'file');
-            if(!is_null($model->file))
+        if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPPORT){
+          if($model->support_id == User::getSupportId(Yii::$app->user->getId())){
+            if ($model->load(Yii::$app->request->post())) 
             {
-                $ext =  end((explode(".", $model->file->name)));
-                $filename = $model->file->baseName;
-                if(!empty($model->file_path)){
-                    $dm = DmReport::findOne($id);
-                    $dm->deleteFile();
-                    $model->file_path =  'uploads/reports/dutymanager/' . $filename.".{$ext}";
-                    if($model->update()){
-                        $model->file->saveAs('uploads/reports/dutymanager/' . $filename .".{$ext}");   
-                        Yii::$app->getSession()->setFlash('success', [
-                           'type' => 'success',
-                           'duration' => 3000,
-                           'icon' => 'fa fa-upload',
-                           'message' => 'Upload Success',
-                           'title' => 'Notification',
-                           'positonY' => 'top',
-                           'positonX' => 'right'
-                        ]);
+                $model->created_at = date("Y-m-d H:i:s"); 
+                $model->file = UploadedFile::getInstance($model, 'file');
+                if(!is_null($model->file))
+                {
+                    $ext =  end((explode(".", $model->file->name)));
+                    $filename = $model->file->baseName;
+                    if(!empty($model->file_path)){
+                        $dm = DmReport::findOne($id);
+                        $dm->deleteFile();
+                        $model->file_path =  'uploads/reports/dutymanager/' . $filename.".{$ext}";
+                        if($model->save()){
+                            $model->file->saveAs('uploads/reports/dutymanager/' . $filename .".{$ext}");   
+                            Yii::$app->getSession()->setFlash('success', [
+                               'type' => 'success',
+                               'duration' => 3000,
+                               'icon' => 'fa fa-upload',
+                               'message' => 'Upload Success',
+                               'title' => 'Notification',
+                               'positonY' => 'top',
+                               'positonX' => 'right'
+                            ]);
 
-                        return $this->redirect(['index']);
+                            return $this->redirect(['index']);
 
-                    } else {
-                        Yii::$app->getSession()->setFlash('danger', [
-                           'type' => 'danger',
-                           'duration' => 3000,
-                           'icon' => 'fa fa-upload',
-                           'message' => 'Upload Failed',
-                           'title' => 'Notification',
-                           'positonY' => 'top',
-                           'positonX' => 'right'
-                        ]);
+                        } else {
+                            Yii::$app->getSession()->setFlash('danger', [
+                               'type' => 'danger',
+                               'duration' => 3000,
+                               'icon' => 'fa fa-upload',
+                               'message' => 'Upload Failed',
+                               'title' => 'Notification',
+                               'positonY' => 'top',
+                               'positonX' => 'right'
+                            ]);
 
-                        return $this->render('update', [
-                            'model' => $model,
-                        ]);
+                            return $this->render('update', [
+                                'model' => $model,
+                            ]);
+                        }
                     }
-                }
+                    else
+                    {
+                        $model->file_path =  'uploads/reports/dutymanager/' . $filename.".{$ext}";
+                        if($model->save()){
+                            Yii::$app->getSession()->setFlash('success', [
+                               'type' => 'success',
+                               'duration' => 3000,
+                               'icon' => 'fa fa-upload',
+                               'message' => 'Upload Success',
+                               'title' => 'Notification',
+                               'positonY' => 'top',
+                               'positonX' => 'right'
+                            ]);
+
+                            $model->file->saveAs('uploads/reports/dutymanager/' . $filename .".{$ext}");   
+                            return $this->redirect(['index']);
+
+                        } else{
+                            Yii::$app->getSession()->setFlash('danger', [
+                               'type' => 'danger',
+                               'duration' => 3000,
+                               'icon' => 'fa fa-upload',
+                               'message' => 'Upload Failed',
+                               'title' => 'Notification',
+                               'positonY' => 'top',
+                               'positonX' => 'right'
+                            ]);
+
+                            return $this->redirect(['index']);
+                        }   
+                    }
+                } 
                 else
                 {
-                    $model->file_path =  'uploads/reports/dutymanager/' . $filename.".{$ext}";
-                    if($model->update()){
+                    if($model->save()){
                         Yii::$app->getSession()->setFlash('success', [
                            'type' => 'success',
                            'duration' => 3000,
                            'icon' => 'fa fa-upload',
-                           'message' => 'Upload Success',
+                           'message' => 'Update Success',
                            'title' => 'Notification',
                            'positonY' => 'top',
                            'positonX' => 'right'
                         ]);
 
-                        $model->file->saveAs('uploads/reports/dutymanager/' . $filename .".{$ext}");   
                         return $this->redirect(['index']);
 
                     } else{
@@ -361,7 +411,7 @@ class DmReportController extends Controller
                            'type' => 'danger',
                            'duration' => 3000,
                            'icon' => 'fa fa-upload',
-                           'message' => 'Upload Failed',
+                           'message' => 'Update Success',
                            'title' => 'Notification',
                            'positonY' => 'top',
                            'positonX' => 'right'
@@ -371,41 +421,135 @@ class DmReportController extends Controller
                     }   
                 }
             } 
-            else
+            else 
             {
-                if($model->update()){
-                    Yii::$app->getSession()->setFlash('success', [
-                       'type' => 'success',
-                       'duration' => 3000,
-                       'icon' => 'fa fa-upload',
-                       'message' => 'Update Success',
-                       'title' => 'Notification',
-                       'positonY' => 'top',
-                       'positonX' => 'right'
-                    ]);
-
-                    return $this->redirect(['index']);
-
-                } else{
-                    Yii::$app->getSession()->setFlash('danger', [
-                       'type' => 'danger',
-                       'duration' => 3000,
-                       'icon' => 'fa fa-upload',
-                       'message' => 'Update Success',
-                       'title' => 'Notification',
-                       'positonY' => 'top',
-                       'positonX' => 'right'
-                    ]);
-
-                    return $this->redirect(['index']);
-                }   
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
             }
-        } 
-        else 
-        {
-            return $this->render('update', [
-                'model' => $model,
+          } else{
+            Yii::$app->getSession()->setFlash('danger', [
+                   'type' => 'danger',
+                   'duration' => 3000,
+                   'message' => "You're not allowed",
+                   'title' => 'Notification',
+                   'positonY' => 'top',
+                   'positonX' => 'right'
             ]);
+
+            return $this->goBack();
+          } 
+        } else{
+          if ($model->load(Yii::$app->request->post())) 
+            {
+                $model->created_at = date("Y-m-d H:i:s"); 
+                $model->file = UploadedFile::getInstance($model, 'file');
+                if(!is_null($model->file))
+                {
+                    $ext =  end((explode(".", $model->file->name)));
+                    $filename = $model->file->baseName;
+                    if(!empty($model->file_path)){
+                        $dm = DmReport::findOne($id);
+                        $dm->deleteFile();
+                        $model->file_path =  'uploads/reports/dutymanager/' . $filename.".{$ext}";
+                        if($model->save()){
+                            $model->file->saveAs('uploads/reports/dutymanager/' . $filename .".{$ext}");   
+                            Yii::$app->getSession()->setFlash('success', [
+                               'type' => 'success',
+                               'duration' => 3000,
+                               'icon' => 'fa fa-upload',
+                               'message' => 'Upload Success',
+                               'title' => 'Notification',
+                               'positonY' => 'top',
+                               'positonX' => 'right'
+                            ]);
+
+                            return $this->redirect(['index']);
+
+                        } else {
+                            Yii::$app->getSession()->setFlash('danger', [
+                               'type' => 'danger',
+                               'duration' => 3000,
+                               'icon' => 'fa fa-upload',
+                               'message' => 'Upload Failed',
+                               'title' => 'Notification',
+                               'positonY' => 'top',
+                               'positonX' => 'right'
+                            ]);
+
+                            return $this->render('update', [
+                                'model' => $model,
+                            ]);
+                        }
+                    }
+                    else
+                    {
+                        $model->file_path =  'uploads/reports/dutymanager/' . $filename.".{$ext}";
+                        if($model->save()){
+                            Yii::$app->getSession()->setFlash('success', [
+                               'type' => 'success',
+                               'duration' => 3000,
+                               'icon' => 'fa fa-upload',
+                               'message' => 'Upload Success',
+                               'title' => 'Notification',
+                               'positonY' => 'top',
+                               'positonX' => 'right'
+                            ]);
+
+                            $model->file->saveAs('uploads/reports/dutymanager/' . $filename .".{$ext}");   
+                            return $this->redirect(['index']);
+
+                        } else{
+                            Yii::$app->getSession()->setFlash('danger', [
+                               'type' => 'danger',
+                               'duration' => 3000,
+                               'icon' => 'fa fa-upload',
+                               'message' => 'Upload Failed',
+                               'title' => 'Notification',
+                               'positonY' => 'top',
+                               'positonX' => 'right'
+                            ]);
+
+                            return $this->redirect(['index']);
+                        }   
+                    }
+                } 
+                else
+                {
+                    if($model->save()){
+                        Yii::$app->getSession()->setFlash('success', [
+                           'type' => 'success',
+                           'duration' => 3000,
+                           'icon' => 'fa fa-upload',
+                           'message' => 'Update Success',
+                           'title' => 'Notification',
+                           'positonY' => 'top',
+                           'positonX' => 'right'
+                        ]);
+
+                        return $this->redirect(['index']);
+
+                    } else{
+                        Yii::$app->getSession()->setFlash('danger', [
+                           'type' => 'danger',
+                           'duration' => 3000,
+                           'icon' => 'fa fa-upload',
+                           'message' => 'Update Success',
+                           'title' => 'Notification',
+                           'positonY' => 'top',
+                           'positonX' => 'right'
+                        ]);
+
+                        return $this->redirect(['index']);
+                    }   
+                }
+            } 
+            else 
+            {
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
         }
     }
 
@@ -431,81 +575,55 @@ class DmReportController extends Controller
 
     public function actionReporthistory() {
         $model = new Schedule();
-        $service_name = '';
-        $normal_erp = 0.0;
-        $warning_erp = 0.0;
-        $critical_erp = 0.0;
-        $normal_email = 0.0;
-        $warning_email = 0.0;
-        $critical_email = 0.0;
-        $normal_ap2t = 0.0;
-        $warning_ap2t = 0.0;
-        $critical_ap2t = 0.0;
-        $normal_p2apst = 0.0;
-        $warning_p2apst = 0.0;
-        $critical_p2apst = 0.0;
-        $normal_bbo = 0.0;
-        $warning_bbo = 0.0;
-        $critical_bbo = 0.0;
-        $normal_apkt = 0.0;
-        $warning_apkt = 0.0;
-        $critical_apkt = 0.0;
-        $normal_itsm = 0.0;
-        $warning_itsm = 0.0;
-        $critical_itsm = 0.0;
- 
 
-        $date = '';
-        if(isset($_POST['dashboard-button']) && $_POST['Schedule']['date'] != ''){
+        $service_family = [];
+        for($i=0; $i < sizeof(ServiceFamily::find()->all()); $i++){
+            $service_family[$i] = [0.0, 0.0, 0.0];
+        }
+
+        $date = date('Y-m-d'). ' - ' . date('Y-m-d');
+        if(isset($_POST['report-button']) && $_POST['Schedule']['date'] != ''){
             $date = $_POST['Schedule']['date'];
-            $normal_erp = (float) number_format((float)DmReport::getNormalCondition($date, 1), 2, '.', '');
-            $warning_erp = (float) number_format((float)DmReport::getWarningCondition($date, 1), 2, '.', '');
-            $critical_erp = (float) number_format((float)DmReport::getCriticalCondition($date, 1), 2, '.', '');
-            $normal_email = (float) number_format((float)DmReport::getNormalCondition($date, 2), 2, '.', '');
-            $warning_email = (float) number_format((float)DmReport::getWarningCondition($date, 2), 2, '.', '');
-            $critical_email = (float) number_format((float)DmReport::getCriticalCondition($date, 2), 2, '.', '');
-            $normal_ap2t = (float) number_format((float)DmReport::getNormalCondition($date, 3), 2, '.', '');
-            $warning_ap2t = (float) number_format((float)DmReport::getWarningCondition($date, 3), 2, '.', '');
-            $critical_ap2t = (float) number_format((float)DmReport::getCriticalCondition($date, 3), 2, '.', '');
-            $normal_p2apst = (float) number_format((float)DmReport::getNormalCondition($date, 4), 2, '.', '');
-            $warning_p2apst = (float) number_format((float)DmReport::getWarningCondition($date, 4), 2, '.', '');
-            $critical_p2apst = (float) number_format((float)DmReport::getCriticalCondition($date, 4), 2, '.', '');
-            $normal_bbo = (float) number_format((float)DmReport::getNormalCondition($date, 5), 2, '.', '');
-            $warning_bbo = (float) number_format((float)DmReport::getWarningCondition($date, 5), 2, '.', '');
-            $critical_bbo = (float) number_format((float)DmReport::getCriticalCondition($date, 5), 2, '.', '');
-            $normal_apkt = (float) number_format((float)DmReport::getNormalCondition($date, 6), 2, '.', '');
-            $warning_apkt = (float) number_format((float)DmReport::getWarningCondition($date, 6), 2, '.', '');
-            $critical_apkt = (float) number_format((float)DmReport::getCriticalCondition($date, 6), 2, '.', '');
-            $normal_itsm = (float) number_format((float)DmReport::getNormalCondition($date, 7), 2, '.', '');
-            $warning_itsm = (float) number_format((float)DmReport::getWarningCondition($date, 7), 2, '.', '');
-            $critical_itsm = (float) number_format((float)DmReport::getCriticalCondition($date, 7), 2, '.', '');
+            for($i = 0; $i < sizeof($service_family); $i++){
+                $service_family[$i][0] = (float) number_format((float)DmReport::getNormalCondition($date, $i+1), 2, '.', '');
+                $service_family[$i][1] = (float) number_format((float)DmReport::getWarningCondition($date, $i+1), 2, '.', '');
+                $service_family[$i][2] = (float) number_format((float)DmReport::getCriticalCondition($date, $i+1), 2, '.', '');
+            }
         }        
 
         return $this->render('reportHistory', [
             'model' => $model,
             'date' => $date,
-            'normal_erp' => $normal_erp,
-            'warning_erp' => $warning_erp,
-            'critical_erp' => $critical_erp,
-            'normal_email' => $normal_email,
-            'warning_email' => $warning_email,
-            'critical_email' => $critical_email,
-            'normal_ap2t' => $normal_ap2t,
-            'warning_ap2t' => $warning_ap2t,
-            'critical_ap2t' => $critical_ap2t,
-            'normal_p2apst' => $normal_p2apst,
-            'warning_p2apst' => $warning_p2apst,
-            'critical_p2apst' => $critical_p2apst,
-            'normal_bbo' => $normal_bbo,
-            'warning_bbo' => $warning_bbo,
-            'critical_bbo' => $critical_bbo,
-            'normal_apkt' => $normal_apkt,
-            'warning_apkt' => $warning_apkt,
-            'critical_apkt' => $critical_apkt,
-            'normal_itsm' => $normal_itsm,
-            'warning_itsm' => $warning_itsm,
-            'critical_itsm' => $critical_itsm,
+            'service_family' => $service_family
         ]);    
+    }
+
+    public function actionExportreport(){
+      if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPPORT)
+        {
+            if(Schedule::getIsDmNow(date('Y-m-d'), Shift::getShift(date("H:i:s"))->shift_id, User::getSupportId(Yii::$app->user->getId()))) {
+                $content = $this->renderPartial('exportReport');
+                $pdf = Yii::$app->pdf;
+                $pdf->content = $content;
+                return $pdf->render();
+            } else {
+                Yii::$app->getSession()->setFlash('danger', [
+                       'type' => 'danger',
+                       'duration' => 3000,
+                       'message' => "It's not your schedule",
+                       'title' => 'Notification',
+                       'positonY' => 'top',
+                       'positonX' => 'right'
+                ]);
+
+                return $this->goBack();
+            }  
+        } else{
+            $content = $this->renderPartial('exportReport');
+            $pdf = Yii::$app->pdf;
+            $pdf->content = $content;
+            return $pdf->render();
+        }
     } 
 
 
@@ -522,7 +640,7 @@ class DmReportController extends Controller
         if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM dm_report')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
-          Yii::$app->getDb()->createCommand('ALTER TABLE dm_report AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+          Yii::$app->getDb()->createCommand('ALTER TABLE dm_report ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
           Yii::$app->getSession()->setFlash('success', [
                'type' => 'success',

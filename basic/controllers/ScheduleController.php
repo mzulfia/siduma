@@ -34,27 +34,28 @@ class ScheduleController extends Controller
                'ruleConfig' => [
                    'class' => AccessRules::className(),
                ],
-               'only' => ['index','create', 'update', 'delete', 'viewcalendar'],
+               'only' => ['index','create', 'update', 'delete', 'viewschedule', 'viewmyschedule', 'viewactiveall', 'remove', 'deletebydate'],
                'rules' => [
                        [
-                           'actions' => ['index','create', 'update', 'delete', 'viewcalendar'],
+                           'actions' => ['index','create', 'update', 'delete', 'viewschedule', 'remove', 'deletebydate'],
                            'allow' => true,
                            'roles' => [
                                User::ROLE_ADMINISTRATOR, 
+                               User::ROLE_SUPERVISOR
                            ],
                        ],
                        [
-                           'actions' => ['index', 'create', 'update', 'viewcalendar'],
+                           'actions' => ['viewschedule', 'viewactive'],
                            'allow' => true,
                            'roles' => [
-                               User::ROLE_SUPERVISOR,
+                               User::ROLE_MANAGEMENT
                            ],
                        ],
                        [
-                           'actions' => ['index', 'viewcalendar'],
+                           'actions' => ['viewschedule', 'viewmyschedule', 'viewactive'],
                            'allow' => true,
                            'roles' => [
-                               '@'
+                               User::ROLE_SUPPORT
                            ],
                        ],
                     ],
@@ -68,13 +69,55 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ScheduleSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if(Yii::$app->request->post()){
+            $date_start = explode(" - ", $_POST['Schedule']['date'])[0];
+            $date_end = explode(" - ", $_POST['Schedule']['date'])[1];
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+            $schedules = Schedule::find()->where('date >= :date_start AND date <= :date_end', [':date_start' => $date_start, ':date_end' => $date_end])->all();
+            
+            for($i = 0; $i < sizeof($schedules); $i++){
+                $schedule = $this->findModel($schedules[$i]->schedule_id);
+                if($schedule->deleteFile()){
+                  $schedule->delete();
+                } else {
+                    Yii::$app->getSession()->setFlash('danger', [
+                         'type' => 'danger',
+                         'duration' => 3000,
+                         'message' => 'Delete Failed',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                    ]); 
+                }
+            }
+
+            $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM schedule')->queryAll();
+            $next_id = ((int) $size[0]['total']) + 1;
+            Yii::$app->getDb()->createCommand('ALTER TABLE schedule ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+
+
+            Yii::$app->getSession()->setFlash('success', [
+               'type' => 'success',
+               'duration' => 3000,
+               'message' => 'Delete Success',
+               'title' => 'Notification',
+               'positonY' => 'top',
+               'positonX' => 'right'
+            ]);    
+            
+            return $this->redirect(['index']);
+        } else{
+            $model = new Schedule();
+            $searchModel = new ScheduleSearch();
+            $searchModel->date = date('Y-m-d'). ' - ' . date('Y-m-d');
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+            return $this->render('index', [
+                'model' => $model,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
     }
 
 
@@ -106,6 +149,9 @@ class ScheduleController extends Controller
                 $content =$highestRow-7;
                 
                 $date = [];
+
+                $rowData = $sheet->rangeToArray('A5'.':'.$highestColumn.'5',NULL,TRUE,FALSE);
+                
                 for($row = 5; $row <= $content; $row++)
                 {
                     $rowData = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,NULL,TRUE,FALSE);
@@ -118,24 +164,23 @@ class ScheduleController extends Controller
                         if($row == 5)
                         {   
                             $col = 2;
-                            while($col <= 63){
-                                if(!empty($rowData[0][$col])){
-                                    array_push($date, $rowData[0][$col]); 
-                                } else{
-                                    $col = 63;
-                                }
+                            while($col < sizeof($rowData[0])){
+                                if(!empty(trim($rowData[0][$col]))){
+                                    array_push($date, trim($rowData[0][$col])); 
 
-                                $col = $col + 2;
+                                    $col = $col + 2;
+                                } else{
+                                    $col = sizeof($rowData[0]);
+                                }
                             }
                         } 
                         else
                         {
-                            // var_dump(Support::find()->where('support_name LIKE :support_name', [':support_name' => $rowData[0][1]])->one());
                             // insert is_dm
                             $col = 3;
                             $max = (sizeof($date)*2)+1;
                             while($col <= $max){
-                                if($rowData[0][$col] == 'v'){
+                                if(trim($rowData[0][$col]) == 'v'){
                                     array_push($is_dm, 1);
                                 } else {
                                     array_push($is_dm, 0);
@@ -149,12 +194,14 @@ class ScheduleController extends Controller
                                 if(trim($rowData[0][$col]) == 'L' || trim($rowData[0][$col]) == '' ){
                                     array_push($shift, NULL);
                                 } else {
-                                    array_push($shift, $rowData[0][$col]);
+                                    array_push($shift, trim($rowData[0][$col]));
                                 }
                                 $col = $col + 2;
                             }
+
                             // var_dump($date);
-                            // die($inputFile);
+                            // var_dump($shift);
+                            // var_dump($is_dm);
 
                             for($col = 0; $col < sizeof($date); $col++)
                             {   
@@ -173,7 +220,7 @@ class ScheduleController extends Controller
                                             $model->is_dm = $is_dm[$col];
                                             try{
                                                 $model->save(false);    
-                                            } catch(\yii\db\IntegrityException $e){
+                                            } catch(\yii\base\Exception $e){
                                                 Yii::$app->getSession()->setFlash('danger', [
                                                      'type' => 'danger',
                                                      'duration' => 3000,
@@ -199,7 +246,7 @@ class ScheduleController extends Controller
                                         $model->is_dm = $is_dm[$col];
                                         try{
                                             $model->save(false);    
-                                        } catch(\yii\db\IntegrityException $e){
+                                        } catch(\yii\base\Exception $e){
                                            Yii::$app->getSession()->setFlash('danger', [
                                                  'type' => 'danger',
                                                  'duration' => 3000,
@@ -253,7 +300,7 @@ class ScheduleController extends Controller
         elseif(isset($_POST['manual-button']))
         {
             $model->load(Yii::$app->request->post());
-            if($model->save())
+            if($model->save(false))
             {
                 Yii::$app->getSession()->setFlash('success', [
                      'type' => 'success',
@@ -337,46 +384,6 @@ class ScheduleController extends Controller
         }
     }
 
-    /**
-     * Deletes an existing Schedule model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-       $model = $this->findModel($id);
-        if($model->deleteFile()){
-          $model->delete();
-          
-          $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM schedule')->queryAll();
-          $next_id = ((int) $size[0]['total']) + 1;
-          Yii::$app->getDb()->createCommand('ALTER TABLE schedule AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
-
-          Yii::$app->getSession()->setFlash('success', [
-               'type' => 'success',
-               'duration' => 3000,
-               'message' => 'Delete Success',
-               'title' => 'Notification',
-               'positonY' => 'top',
-               'positonX' => 'right'
-          ]);    
-
-          return $this->redirect(['index']);
-        } else {
-            Yii::$app->getSession()->setFlash('danger', [
-                 'type' => 'danger',
-                 'duration' => 3000,
-                 'message' => 'Delete Failed',
-                 'title' => 'Notification',
-                 'positonY' => 'top',
-                 'positonX' => 'right'
-            ]); 
-
-            return $this->redirect(['index']);   
-        }
-    }
-
     public function actionViewactive($date)
     {
         $morning_dm = Schedule::find()->where('date = :date AND shift_id = 1 AND is_dm = 1',[':date' => $date])->all();
@@ -410,7 +417,7 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function actionViewcalendar(){
+    public function actionViewschedule(){
         $schedules = Schedule::find()->where('is_dm = 1')->all();
         
         $tasks = [];
@@ -432,9 +439,115 @@ class ScheduleController extends Controller
             $tasks[] = $event;
         }
 
-        return $this->render('viewcalendar', [
+        return $this->render('viewschedule', [
             'events' => $tasks,
         ]);
+    }
+
+    public function actionViewmyschedule($id){
+        if(User::getSupportId(Yii::$app->user->getId()) == $id){
+            $schedules = Schedule::find()->where('support_id = :id', [':id' => $id])->all();
+        
+            $tasks = [];
+
+            foreach($schedules as $schedule){
+                $event = new  \yii2fullcalendar\models\Event();
+                $event->id = $schedule->schedule_id;
+                $event->title = Schedule::getSupportName($schedule->support_id);
+                $event->start = date('Y-m-d\TH:i:s\Z',strtotime($schedule->date.' '.Schedule::getShiftStart($schedule->shift_id)));
+                $event->end = date('Y-m-d\TH:i:s\Z',strtotime($schedule->date.' '.Schedule::getShiftEnd($schedule->shift_id)));
+                if($schedule->shift_id == 1){
+                    $event->color = '#3c8dbc';
+                } elseif($schedule->shift_id == 2){
+                    $event->color = '#bc6b3c';
+                } else{
+                    $event->color = '#a6004c';
+                }
+                
+                $tasks[] = $event;
+            }
+
+            return $this->render('viewmyschedule', [
+                'events' => $tasks,
+            ]);
+        } else {
+            return $this->redirect(['viewmyschedule', 'id' => User::getSupportId(Yii::$app->user->getId())]);    
+        }
+    }
+
+    public function actionRemove()
+    {   if(Yii::$app->request->isAjax)
+        {
+            $checkedIDs=$_POST['checked'];
+            foreach($checkedIDs as $id){
+                $model = $this->findModel($id);
+                if($model->deleteFile()){
+                  $model->delete();
+                } else {
+                    Yii::$app->getSession()->setFlash('danger', [
+                         'type' => 'danger',
+                         'duration' => 3000,
+                         'message' => 'Delete Failed',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                    ]); 
+                }
+            }
+
+            $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM schedule')->queryAll();
+            $next_id = ((int) $size[0]['total']) + 1;
+            Yii::$app->getDb()->createCommand('ALTER TABLE schedule ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+
+            Yii::$app->getSession()->setFlash('success', [
+               'type' => 'success',
+               'duration' => 3000,
+               'message' => 'Delete Success',
+               'title' => 'Notification',
+               'positonY' => 'top',
+               'positonX' => 'right'
+            ]);    
+        }
+    }
+
+    /**
+     * Deletes an existing Schedule model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+       $model = $this->findModel($id);
+        if($model->deleteFile()){
+          $model->delete();
+          
+          $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM schedule')->queryAll();
+          $next_id = ((int) $size[0]['total']) + 1;
+          Yii::$app->getDb()->createCommand('ALTER TABLE schedule ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+
+          Yii::$app->getSession()->setFlash('success', [
+               'type' => 'success',
+               'duration' => 3000,
+               'message' => 'Delete Success',
+               'title' => 'Notification',
+               'positonY' => 'top',
+               'positonX' => 'right'
+          ]);    
+
+          return $this->redirect(['index']);
+        } else {
+            Yii::$app->getSession()->setFlash('danger', [
+                 'type' => 'danger',
+                 'duration' => 3000,
+                 'message' => 'Delete Failed',
+                 'title' => 'Notification',
+                 'positonY' => 'top',
+                 'positonX' => 'right'
+            ]); 
+
+            return $this->redirect(['index']);   
+        }
     }
 
     /**

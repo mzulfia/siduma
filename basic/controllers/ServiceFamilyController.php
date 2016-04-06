@@ -120,7 +120,7 @@ class ServiceFamilyController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-            if($model->update()){
+            if($model->save()){
                 Yii::$app->getSession()->setFlash('success', [
                      'type' => 'success',
                      'duration' => 3000,
@@ -163,7 +163,7 @@ class ServiceFamilyController extends Controller
         if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM service_family')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
-          Yii::$app->getDb()->createCommand('ALTER TABLE service_family AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+          Yii::$app->getDb()->createCommand('ALTER TABLE service_family ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
           Yii::$app->getSession()->setFlash('success', [
                'type' => 'success',

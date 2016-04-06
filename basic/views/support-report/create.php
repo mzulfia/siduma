@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = 'Create Report';
 ?>
 
 <div class="box box-info">
-    <div class="box-header">
+    <div class="box-header with-border">
       <h3 class="box-title">Evaluation Form - Support</h3>
     </div>
     <div class="box-body">
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = 'Create Report';
         ?>
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-9">
-            <p>Max Size: 1 MB</p>
+            <p>Max File Size: 1 MB</p>
           </div>  
         </div>  
 

@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use kartik\form\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SupportPosition */

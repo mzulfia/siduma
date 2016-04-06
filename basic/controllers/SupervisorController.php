@@ -95,9 +95,27 @@ class SupervisorController extends Controller
                 'model' => $this->findModel($id),
             ]);
         } else {
-            return $this->render('view', [
-                'model' => $this->findModel($id),
-            ]);
+            if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_MANAGEMENT){
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            } elseif(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPERVISOR) {
+                if(User::getSupervisorId(Yii::$app->user->getId()) == $id){
+                    return $this->render('view', [
+                        'model' => $this->findModel($id),
+                    ]);
+                } else {
+                    return $this->redirect(['view', 'id' => User::getSupervisorId(Yii::$app->user->getId())]);    
+                }
+            } else {
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            }
         }
     }
 
@@ -154,7 +172,7 @@ class SupervisorController extends Controller
                             $spv = Supervisor::findOne($id);
                             $spv->deleteImage();
                             $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                            if($model->update()){
+                            if($model->save()){
                                 $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                 Image::getImagine()->open(Supervisor::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -188,7 +206,7 @@ class SupervisorController extends Controller
                         else
                         {
                             $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                            if($model->update()){
+                            if($model->save()){
                                 $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                 Image::getImagine()->open(Supervisor::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -220,7 +238,7 @@ class SupervisorController extends Controller
                             }   
                         }
                     } else {
-                        if($model->update()){
+                        if($model->save()){
                             Yii::$app->getSession()->setFlash('success', [
                                  'type' => 'success',
                                  'duration' => 3000,
@@ -271,7 +289,7 @@ class SupervisorController extends Controller
                                 $spv = Supervisor::findOne($id);
                                 $spv->deleteImage();
                                 $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                                if($model->update()){
+                                if($model->save()){
                                     $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                     Image::getImagine()->open(Supervisor::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -305,7 +323,7 @@ class SupervisorController extends Controller
                             else
                             {
                                 $model->image_path =  'uploads/profile_pictures/' . $filename.".{$ext}";
-                                if($model->update()){
+                                if($model->save()){
                                     $model->file->saveAs('uploads/profile_pictures/' . $filename .".{$ext}");   
                                     Image::getImagine()->open(Supervisor::getProfilePicture($id))->thumbnail(new Box(400, 400))->save(getcwd() . '/uploads/profile_pictures/' . $filename .".{$ext}", ['quality' => 90]); 
 
@@ -337,7 +355,7 @@ class SupervisorController extends Controller
                                 }   
                             }
                         } else {
-                            if($model->update()){
+                            if($model->save()){
                                 Yii::$app->getSession()->setFlash('success', [
                                      'type' => 'success',
                                      'duration' => 3000,
@@ -375,7 +393,7 @@ class SupervisorController extends Controller
                 }
                 else
                 {
-                    return $this->redirect(['update', 'id' => User::getSupervisortId(Yii::$app->user->getId())]);
+                    return $this->redirect(['update', 'id' => User::getSupervisorId(Yii::$app->user->getId())]);
                 }
             }
         } catch(\yii\base\Exception $e){
@@ -410,7 +428,7 @@ class SupervisorController extends Controller
         if($model->delete()){
           $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM supervisor')->queryAll();
           $next_id = ((int) $size[0]['total']) + 1;
-          Yii::$app->getDb()->createCommand('ALTER TABLE supervisor AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
+          Yii::$app->getDb()->createCommand('ALTER TABLE supervisor ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
 
           Yii::$app->getSession()->setFlash('success', [
                'type' => 'success',

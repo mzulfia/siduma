@@ -45,17 +45,15 @@ class ManagementSearch extends Management
     public function search($params)
     {
         $query = Management::find();
-        
+          
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
 
         $dataProvider->sort->attributes['management_username'] = [
               'asc' => ['user.username' => SORT_ASC],
               'desc' => ['user.username' => SORT_DESC],
         ];
-
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
 
         if (isset($_GET['ManagementSearch']) && !($this->load($params) && $this->validate())) {
             return $dataProvider; 

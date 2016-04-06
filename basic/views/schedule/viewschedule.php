@@ -15,9 +15,24 @@ use app\models\Schedule;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 
-$this->title = 'Schedules | View Calendar';
+$this->title = 'Schedules | View Schedules';
 $this->params['breadcrumbs'][] = 'Schedules';
+
+$this->registerJs("$(function(){
+    $(document).on('click','.fc-day',function(){
+        var date = $(this).attr('data-date');
+        document.location = '". \Yii::$app->homeUrl ."schedule/viewactive?date=' + date;
+    });
+});");
+
+$this->registerJs("$(function(){
+    $(document).on('click','.fc-day-number',function(){
+        var date = $(this).attr('data-date');
+        document.location = '". \Yii::$app->homeUrl ."schedule/viewactive?date=' + date;
+    });
+});");
 ?>
+
 <style>
     .legend { list-style: none; }
     .legend li { float: left; margin-right: 10px; }
@@ -47,5 +62,6 @@ $this->params['breadcrumbs'][] = 'Schedules';
   </div>
 </div>
   
+
 
 

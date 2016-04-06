@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = 'Create Schedule';
 </script>
 
 <div class="box box-info">
-    <div class="box-header">
+    <div class="box-header with-border">
       <h3 class="box-title">Create Schedule</h3>
     </div>
     <div class="box-body">
@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = 'Create Schedule';
                      ],
                     'options' => ['accept' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'],
                 ]); ?>
-                <p>Accepted File: xlsx, xls</p>
+                <p>Accepted File: xlsx, xls; Max File Size: 1 MB</p>
 
                 <div class="form-group">
                     <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['name' => 'automatic-button', 'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

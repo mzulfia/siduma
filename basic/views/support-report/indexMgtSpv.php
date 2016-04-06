@@ -25,20 +25,20 @@ $this->params['breadcrumbs'][] = 'Support Reports';
             [
                 'class' => 'yii\grid\SerialColumn',
             ],
-             [
+            [
                 'attribute' => 'created_at',
                 'value' => 'created_at', 
                 'filter' => DateRangePicker::widget([
-                        'model'=>$searchModel,
-                        'attribute'=>'created_at',
-                        'convertFormat'=>true,
-                        'pluginOptions'=>[
-                            'locale'=>[
-                                'format'=>'Y-m-d'
-                            ]
-                        ]
-                    ]),
-                'contentOptions' => ['style' => 'width:150px;']
+                    'name' => 'created_at_1',
+                    'model' => $searchModel,
+                    'attribute' => 'created_at',
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'locale'=>['format' => 'Y-m-d'],
+                    ],
+                    'presetDropdown'=>true,
+                ]),
+                'contentOptions' => ['style' => 'width:200px;']
             ],
             [
                 'label' => 'Service Family',

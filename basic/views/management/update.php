@@ -12,13 +12,18 @@ use app\models\User;
 /* @var $this yii\web\View */
 /* @var $model app\models\Management */
 
-$this->title = 'Managements | Update Profile';
-$this->params['breadcrumbs'][] = ['label' => 'Managements', 'url' => ['index']];
-$this->params['breadcrumbs'][] = 'Update Profile';
+if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+    $this->title = 'Managements | Update Profile';
+    $this->params['breadcrumbs'][] = ['label' => 'Managements', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = 'Update Profile';
+} else{
+   $this->params['breadcrumbs'][] = ['label' => 'Profile', 'url' => ['view', 'id' => $model->management_id]];
+   $this->params['breadcrumbs'][] = 'Update Profile';
+}
 ?>
 <div class="management-update">
 	<div class="box box-info">
-	    <div class="box-header">
+	    <div class="box-header with-border">
 	      <h3 class="box-title">Update Profile</h3>
 	    </div>
 	    <div class="box-body">
@@ -44,7 +49,7 @@ $this->params['breadcrumbs'][] = 'Update Profile';
 	                     'options' => ['accept' => 'image/*'],
 	                 ]);
 	            ?>
-	        <p>Accepted File: jpg, png; Max Size: 200KB; Pixel Size: 200x200px</p>
+	        <p>Accepted File: jpg, png; Max File Size: 200KB; Pixel Size: 225x225 px</p>
 	        
 
 	        <?= $form->field($model, 'mgt_name')->textInput(['maxlength' => true]) ?>

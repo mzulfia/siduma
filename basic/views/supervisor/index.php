@@ -11,10 +11,6 @@ $this->params['breadcrumbs'][] = 'Supervisors';
 
     <h1>Supervisors</h1>
 
-    <p>
-        <?= Html::a('Create Supervisor', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -22,7 +18,7 @@ $this->params['breadcrumbs'][] = 'Supervisors';
             ['class' => 'yii\grid\SerialColumn'],
             [
                 'label' => 'Username',
-                'attribute' => 'support_username',
+                'attribute' => 'supervisor_username',
                 'value' => 'user.username'
             ],
             'spv_name',

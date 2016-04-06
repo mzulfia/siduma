@@ -26,15 +26,10 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
                 ],
             ],
             'access' => [
@@ -44,25 +39,30 @@ class SiteController extends Controller
                ],
                'only' => ['index','login', 'logout', 'contact'],
                'rules' => [
-                       [
-                           'actions' => ['index','logout', 'contact'],
-                           'allow' => true,
-                           'roles' => ['@']
-                       ],
-                       [
-                           'actions' => ['login'],
-                           'allow' => true,
-                           'roles' => ['?']
-                       ],
-                    ],
-                ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
+                   [
+                       'actions' => ['index','login', 'logout', 'contact'],
+                       'allow' => true,
+                       'roles' => ['@']
+                   ],
+                   [
+                       'actions' => ['login'],
+                       'allow' => true,
+                       'roles' => ['?']
+                   ],
                 ],
             ],
         ];
+    }
+
+    public function beforeAction($action)
+    {
+        if (parent::beforeAction($action)) {
+            if ($action->id=='error')
+                 $this->layout ='errorLayout';
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function actions()
@@ -80,7 +80,7 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        $this->layout = 'main';
+        $this->layout = 'dashboard';
         
         $schedule = new Schedule();
         $DmReport = new DmReport();
@@ -145,13 +145,11 @@ class SiteController extends Controller
                 if($schedule->is_dm == 1)
                     $is_dm = 'Ya';    
                 
-                $note = 'Shift: ' . $schedule->shift->shift_name . ', Waktu: ' . $schedule->shift->shift_start . ' s.d. ' . $schedule->shift->shift_end . ', Duty Manager: ' .  $is_dm ;
+                $note = 'Shift: ' . $schedule->shift->shift_name . ', Time: ' . $schedule->shift->shift_start . ' s.d. ' . $schedule->shift->shift_end . ', Duty Manager: ' .  $is_dm ;
             } else {
                 $note = 'Besok Anda Libur';
             }
             
-            
-        
             Yii::$app->getSession()->setFlash('warning', [
                  'type' => 'warning',
                  'duration' => 10000,
@@ -172,9 +170,8 @@ class SiteController extends Controller
              'positonX' => 'right'
             ]);
         }
-
-        return $this->goHome();
-        // return $this->redirect(['login']);
+        
+        return $this->redirect(['site/login']);
     }
 
     public function actionContact()

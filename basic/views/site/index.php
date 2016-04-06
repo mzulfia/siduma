@@ -68,7 +68,7 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
 
         Modal::begin([
             'header' => '<h4>Report</h4>',
-            'id' => 'modal-report',
+          'id' => 'modal-report',
             'size' => 'modal-lg'
         ]);
 
@@ -101,7 +101,7 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
               if($array->status == 2){
                  echo '
                  <a class="modalPopup" href="'. Url::to(['dm-report/view/', 'id'=>$array->dm_report_id]) . '">
-                  <div class="col-lg-3 col-xs-6" style="width: '. $size .'%">
+                  <div class="col-lg-1 col-xs-2" >
                       <div class="small-box bg-green">
                           <div class="inner">
                             <p><b>' .  explode(" ", $array->service->service_name)[0]  . '</b></p>
@@ -133,11 +133,16 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
                    </div>
                   </a>';
             }
-            $last_updated = $array->created_at;
          }
       }
-      echo '<p style="text-align: right; padding-right: 15px;"><i> last updated: '. $last_updated . '</i></p>';  
     ?>
+    </div>
+
+    <div class="col-md-12">
+        <?php 
+            $last_updated = DmReport::getLastUpdated()->created_at;
+            echo '<p style="text-align: right; padding-right: 15px;margin-right: -30px !important;"><i> last updated: '. $last_updated . '</i></p>';  
+        ?>
     </div>
 
     <div class="row">     
@@ -285,7 +290,7 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
             $text = '';
             foreach ($services as $service) {
                 $text .= $service->service_name . ': ';
-                $array = SupportReport::getServiceSupportReport($service->service_family_id);
+                $array = DmReport::getServiceDmReport($service->service_family_id);
                 if(!empty($array)){
                   $text .= $array->information . " | ";
                 } else {
@@ -293,7 +298,7 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
                 }
             }
             echo '
-            <div style="position: relative;bottom:-15px;left:0;right:0;width:100%;">
+            <div style="position: relative;bottom:20px;left:0;right:0;width:100%;">
               <span style="font-family: Source Sans Pro; font-size: 20px; font-weight:bold; color: white;" >
                   <marquee direction="left" scrollamount="5" width="100%" bgcolor="#3c8dbc" >
                     '. $text .'

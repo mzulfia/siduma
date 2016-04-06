@@ -22,7 +22,7 @@ if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
 
 <div class="support-update">
 	<div class="box box-info">
-	    <div class="box-header">
+	    <div class="box-header with-border">
 	      <h3 class="box-title">Update Profile</h3>
 	    </div>
 	    <div class="box-body">
@@ -48,7 +48,7 @@ if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
 	                     'options' => ['accept' => 'image/*'],
 	                 ]);
 	            ?>
-	        <p>Accepted File: jpg, png; Max Size: 200KB; Pixel Size: 200x200px</p>
+	        <p>Accepted File: jpg, png; Max File Size: 200KB; Pixel Size: 225x225 px</p>
 	        
 
 	        <?= $form->field($model, 'support_name')->textInput(['maxlength' => true]) ?>

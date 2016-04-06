@@ -1,8 +1,9 @@
 <?php
-
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 
+use app\models\SupportPosition;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\PicSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -25,9 +26,15 @@ $this->params['breadcrumbs'][] = 'Supports';
                 'value' => 'user.username'
             ],
             'support_name',
-            'company',
-            'no_hp',
             'email',
+            'no_hp',
+            [
+                'label' => 'Position',
+                'filter' => Html::activeDropDownList($searchModel, 'support_position_id', ArrayHelper::map(SupportPosition::find()->all(), 'support_position_id', 'position_name'),['class'=>'form-control','prompt' => '-']),
+                'attribute' => 'support_position_id',
+                'value' => 'pos.position_name'
+            ],
+            'company',
             [
                 'header' => 'Action',
                 'class' => 'yii\grid\ActionColumn',

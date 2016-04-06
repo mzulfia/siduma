@@ -26,7 +26,7 @@ if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR || Use
 }
 ?>
 <div class="box box-info">
-    <div class="box-header">
+    <div class="box-header with-border">
       <h3 class="box-title">Update Schedule</h3>
     </div>
     <div class="box-body">

@@ -65,22 +65,7 @@ class ScheduleSearch extends Schedule
               'desc' => ['support.support_name' => SORT_DESC],
         ];
 
-        $dataProvider->sort->attributes['support_id'] = [
-              'asc' => ['support.email' => SORT_ASC],
-              'desc' => ['support.email' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['support_id'] = [
-              'asc' => ['support.no_hp' => SORT_ASC],
-              'desc' => ['support.no_hp' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['support_id'] = [
-              'asc' => ['support.company' => SORT_ASC],
-              'desc' => ['support.company' => SORT_DESC],
-        ];
-
-
+  
         if (isset($_GET['ScheduleSearch']) && !($this->load($params) && $this->validate())) {
             return $dataProvider; 
         }
@@ -176,8 +161,7 @@ class ScheduleSearch extends Schedule
               'desc' => ['shift.shift_name' => SORT_DESC],
         ];
 
-
-         $dataProvider->sort->attributes['position_name'] = [
+        $dataProvider->sort->attributes['position_name'] = [
               'asc' => ['support_position.position_name' => SORT_ASC],
               'desc' => ['support_position.position_name' => SORT_DESC],
         ];

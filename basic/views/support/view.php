@@ -10,8 +10,14 @@ use app\models\SupportArea;
 /* @var $this yii\web\View */
 /* @var $model app\models\Pic */
 
-$this->title = "Supports | View Profile";
-$this->params['breadcrumbs'][] = 'View Profile';
+if(User::getRoleId(\Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){
+    $this->title = 'Supports | Profile';
+    $this->params['breadcrumbs'][] = ['label' => 'Supports', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = 'Profile';
+} else{
+   $this->title = "Supports | Profile";
+    $this->params['breadcrumbs'][] = 'Profile';
+}
 ?>
 <div class="support-view">
 

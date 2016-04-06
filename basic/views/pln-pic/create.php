@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = 'Create PLN PIC';
 
 <div class="pln-pic-create">
 	<div class="box box-info">
-	    <div class="box-header">
+	    <div class="box-header with-border">
 	      <h3 class="box-title">Create PLN PIC</h3>
 	    </div>
 	    <div class="box-body">
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = 'Create PLN PIC';
 	                     'options' => ['accept' => 'image/*'],
 	                 ]);
 	            ?>
-	        <p>Accepted File: jpg, png; Max Size: 200KB; Pixel Size: 200x200px</p>
+	        <p>Accepted File: jpg, png; Max File Size: 200KB; Pixel Size: 225x225 px</p>
 	        
 
 	        <?= $form->field($model, 'pic_name')->textInput(['maxlength' => true]) ?>

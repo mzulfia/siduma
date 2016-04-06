@@ -1,4 +1,5 @@
 <?php
+use kartik\mpdf\Pdf;
 
 $params = require(__DIR__ . '/params.php');
 
@@ -18,25 +19,33 @@ $config = [
         ],
         'user' => [
             'identityClass' => 'app\models\User',
+            'loginUrl' => ['site/login'],
             'enableAutoLogin' => true,
-            'loginUrl' => 'site/login'
+            'autoRenewCookie' => true
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-            'viewPath' => '@app/mailer',
-            'useFileTransport' => false,
-            'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                'host' => 'your-host-domain e.g. smtp.gmail.com',
-                'username' => 'your-email-or-username',
-                'password' => 'your-password',
-                'port' => '587',
-                'encryption' => 'tls',
-            ],
+        'pdf' => [
+            'class' => Pdf::classname(),
+            'format' => Pdf::FORMAT_A4,
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            'destination' => Pdf::DEST_BROWSER,
+            // refer settings section for all configuration options
         ],
+        // 'mailer' => [
+        //     'class' => 'yii\swiftmailer\Mailer',
+        //     'viewPath' => '@app/mailer',
+        //     'useFileTransport' => false,
+        //     'transport' => [
+        //         'class' => 'Swift_SmtpTransport',
+        //         'host' => 'your-host-domain e.g. smtp.gmail.com',
+        //         'username' => 'your-email-or-username',
+        //         'password' => 'your-password',
+        //         'port' => '587',
+        //         'encryption' => 'tls',
+        //     ],
+        // ],
         'urlManager' => [
             'class' => 'yii\web\UrlManager',
             'showScriptName' => false,
@@ -63,6 +72,22 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
+    ],
+    'as beforeRequest' => [
+        'class' => 'yii\filters\AccessControl',
+        'rules' => [
+            [
+                'actions' => ['login', 'error'],
+                'allow' => true,
+            ],
+            [
+                'allow' => true,
+                'roles' => ['@'],
+            ],    
+        ],
+        'denyCallback' => function(){
+            return Yii::$app->response->redirect(['site/login']);
+        }
     ],
     'params' => $params,
 ];
