@@ -1,8 +1,3 @@
-<!-- Favicon and touch icons -->
-<link rel="icon" type="image/x-icon"
-    href="<?php echo \Yii::$app->homeUrl;?>images/ico/favicon.png"  />
-<link rel="shortcut icon" type="image/x-icon"
-    href="<?php echo \Yii::$app->homeUrl;?>images/ico/favicon-32.png"  />
 <?php
 	use app\models\Shift;
 	use app\models\Schedule;
@@ -19,19 +14,22 @@
 <table border="0">
 	<tr>
 		<td>Tanggal</td>
-		<td><?php echo ": ". date("d-m-Y"); ?></td>
+		<td><?php 
+			if(!empty(DmReport::getLastUpdated()))
+				echo ": ". date("d-F-Y", strtotime(explode(" ", DmReport::getLastUpdated()->created_at)[0])); ?></td>
 	</tr>
 	<tr>
 		<td>Shift</td>
-		<td><?php echo ": ". Shift::getShift(date("H:i:s"))->shift_name; ?>
+		<td><?php 
+			if(!empty(DmReport::getLastUpdated()))
+				echo ": ". Shift::getShift(explode(" ", DmReport::getLastUpdated()->created_at)[1])->shift_name; ?></td>
 	</tr>
 	<tr>
 		<td>Duty Manager</td>
 		<td>
 			<?php 
-				$dm_now = Schedule::getDmNow(); 
-				if(isset($dm_now))
-					echo ": ". Support::getName($dm_now->support_id);
+				if(!empty(DmReport::getLastUpdated()))
+					echo ": ". Support::getName(DmReport::getLastUpdated()->support_id);
 				else
 					echo ": "; 
 			?>
@@ -79,24 +77,27 @@
 		<td style="text-align:center;">Yang Membuat Laporan,</td>
 	</tr>
 	<tr>
-		<td style="text-align:center;"><br><br><br><br>
+		<td style="text-align:center;"><br><br><br><br><br>
 			<?php 
-	    		$dm_next = Schedule::getDmNext(); 
-	    		if(isset($dm_next))
-					echo "(" . Support::getName($dm_next->support_id) . ")"; 
-				else
-					echo "(.......................)";
+				if(!empty(DmReport::getLastUpdated())){
+					if(!empty(Schedule::getDmNext(explode(" ", DmReport::getLastUpdated()->created_at)[0], explode(" ", DmReport::getLastUpdated()->created_at)[1]))){
+						$dm_next = Schedule::getDmNext(explode(" ", DmReport::getLastUpdated()->created_at)[0], explode(" ", DmReport::getLastUpdated()->created_at)[1]);
+						echo "(". Support::getName($dm_next->support_id) . ")";
+					} else{
+						echo "(..............................)";
+					}
+				} else{
+					echo "(..............................)";
+				}
 			?> 
 		</td>
-		<td style="text-align:center;"><br><br><br><br>
+		<td style="text-align:center;"><br><br><br><br><br>
 			<?php 
-	    		$dm_now = Schedule::getDmNow(); 
-				if(isset($dm_now))
-					echo "(". Support::getName($dm_now->support_id) . ")";
+				if(!empty(DmReport::getLastUpdated()))
+					echo "(". Support::getName(DmReport::getLastUpdated()->support_id) .")";
 				else
-					echo "(.......................)";
+					echo "(..............................)";
 			?> 
 		</td>
 	</tr>
-	
 </table>

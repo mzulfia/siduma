@@ -3,9 +3,11 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 
 use kartik\form\ActiveForm;
+use kartik\checkbox\CheckboxX;
 use kartik\widgets\FileInput;
 use app\models\SupportPosition;
 use app\models\ServiceFamily;
+use app\models\User;
 
 $this->title = 'Supports | Create Support';
 $this->params['breadcrumbs'][] = ['label' => 'Supports', 'url' => ['index']];
@@ -53,7 +55,11 @@ $this->params['breadcrumbs'][] = 'Create Support';
 
 	        <?= $form->field($model, 'support_position_id')->dropDownList(ArrayHelper::map(SupportPosition::find()->all(), 'support_position_id', 'position_name'), ['prompt'=>'-Select Position-']) ?>
 
-	        <?= $form->field($model, 'support_area')->checkboxList(ArrayHelper::map(ServiceFamily::find()->all(), 'service_family_id', 'service_name'), ['inline'=>true]) ?>
+	        <?php 
+	        	if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_ADMINISTRATOR){ 
+	        		echo $form->field($model, 'support_area')->checkboxList(ArrayHelper::map(ServiceFamily::find()->all(), 'service_family_id', 'service_name'), ['inline'=>true]);
+	        	}
+	        ?>
 	        
 	        <div class="form-group">
 	            <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

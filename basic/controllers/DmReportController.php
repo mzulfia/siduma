@@ -10,14 +10,16 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
-use app\models\User;
-use app\models\Shift;
-use app\models\Schedule;
-use app\models\ServiceFamily;
 use app\components\AccessRules;
 use yii\filters\AccessControl;
 
 use kartik\mpdf\Pdf;
+
+use app\models\User;
+use app\models\Shift;
+use app\models\Schedule;
+use app\models\Support;
+use app\models\ServiceFamily;
 
 
 /**
@@ -602,9 +604,25 @@ class DmReportController extends Controller
       if(User::getRoleId(Yii::$app->user->getId()) == User::ROLE_SUPPORT)
         {
             if(Schedule::getIsDmNow(date('Y-m-d'), Shift::getShift(date("H:i:s"))->shift_id, User::getSupportId(Yii::$app->user->getId()))) {
-                $content = $this->renderPartial('exportReport');
-                $pdf = Yii::$app->pdf;
-                $pdf->content = $content;
+                $date = "";
+                $shift_name = "";
+
+                if(!empty(DmReport::getLastUpdated()) && !empty(DmReport::getLastUpdated())){
+                  $date = date("d-F-Y", strtotime(explode(" ", DmReport::getLastUpdated()->created_at)[0]));
+                  $shift_name = Shift::getShift(explode(" ", DmReport::getLastUpdated()->created_at)[1])->shift_name;
+                }
+
+                $pdf = new Pdf([
+                    'content' => $this->renderPartial('exportReport'),
+                    'options' => [
+                        'title' => 'Duty Manager Report on '. $date . " " . $shift_name,
+                        'subject' => 'Generating PDF files via yii2-mpdf extension has never been easy'
+                    ],
+                    'methods' => [
+                        'SetHeader' => ['Generated On: ' . date("r")],
+                    ]
+                ]);
+                $pdf->filename = "DUMA Report_" . $date . "_" . $shift_name .".pdf";
                 return $pdf->render();
             } else {
                 Yii::$app->getSession()->setFlash('danger', [
@@ -619,10 +637,28 @@ class DmReportController extends Controller
                 return $this->goBack();
             }  
         } else{
-            $content = $this->renderPartial('exportReport');
-            $pdf = Yii::$app->pdf;
-            $pdf->content = $content;
-            return $pdf->render();
+          $date = "";
+          $shift_name = "";
+
+          if(!empty(DmReport::getLastUpdated()) && !empty(DmReport::getLastUpdated())){
+            $date = date("d-F-Y", strtotime(explode(" ", DmReport::getLastUpdated()->created_at)[0]));
+            $shift_name = Shift::getShift(explode(" ", DmReport::getLastUpdated()->created_at)[1])->shift_name;
+          }
+
+          $pdf = new Pdf([
+              'content' => $this->renderPartial('exportReport'),
+              'options' => [
+                  'title' => 'Duty Manager Report on '. $date . " " . $shift_name,
+                  'subject' => 'Generating PDF files via yii2-mpdf extension has never been easy'
+              ],
+              'methods' => [
+                  'SetHeader' => ['Generated On: ' . date("r")],
+              ]
+          ]);
+
+          
+          $pdf->filename = "DUMA Report_" . $date . "_" . $shift_name .".pdf";
+          return $pdf->render();
         }
     } 
 

@@ -34,7 +34,7 @@ class Management extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['mgt_name', 'position', 'no_hp', 'email', 'file'], 'required'],
+            [['mgt_name', 'position', 'no_hp', 'email'], 'required'],
             [['user_id'], 'integer'],
             [['mgt_name', 'position', 'no_hp', 'email'], 'string', 'max' => 50],
             [['image_path'], 'string', 'max' => 255],

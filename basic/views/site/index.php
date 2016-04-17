@@ -101,7 +101,7 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
               if($array->status == 2){
                  echo '
                  <a class="modalPopup" href="'. Url::to(['dm-report/view/', 'id'=>$array->dm_report_id]) . '">
-                  <div class="col-lg-1 col-xs-2" >
+                  <div class="col-lg-1 col-xs-3" style="width: '. $size.'%">
                       <div class="small-box bg-green">
                           <div class="inner">
                             <p><b>' .  explode(" ", $array->service->service_name)[0]  . '</b></p>
@@ -113,7 +113,7 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
                } elseif($array->status == 1){
                  echo '
                    <a class="modalPopup" href="'. Url::to(['dm-report/view/', 'id'=>$array->dm_report_id]) . '">
-                     <div class="col-lg-3 col-xs-6" style="width: '. $size .'%">
+                     <div class="col-lg-1 col-xs-3" style="width: '. $size.'%">
                         <div class="small-box bg-yellow">
                           <div class="inner">
                             <p><b>' .  explode(" ", $array->service->service_name)[0]  . '</b></p>
@@ -124,7 +124,7 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
                } else{
                 echo '
                   <a class="modalPopup" href="'. Url::to(['dm-report/view/', 'id'=>$array->dm_report_id]) . '">
-                   <div class="col-lg-3 col-xs-6" style="width: '. $size .'%">
+                   <div class="col-lg-1 col-xs-3" style="width: '. $size.'%">
                       <div class="small-box bg-red">
                         <div class="inner">
                           <p><b>' .  explode(" ", $array->service->service_name)[0]  . '</b></p>
@@ -140,8 +140,10 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
 
     <div class="col-md-12">
         <?php 
-            $last_updated = DmReport::getLastUpdated()->created_at;
-            echo '<p style="text-align: right; padding-right: 15px;margin-right: -30px !important;"><i> last updated: '. $last_updated . '</i></p>';  
+            if(!empty(DmReport::getLastUpdated())){
+                $last_updated = DmReport::getLastUpdated()->created_at;
+                echo '<p style="text-align: right; padding-right: 15px;margin-right: -30px !important;"><i> last updated: '. $last_updated . '</i></p>';  
+            }
         ?>
     </div>
 
@@ -230,9 +232,6 @@ header("Refresh:60; url=". Url::to(['site/index']) ."");
 
             <?php
                 $arrays_team = SupportArea::getTeamOthersNow();
-                //$size_othersbox = 0;
-                // if(sizeof($arrays_team) > 0)
-                //   $size_othersbox = 100/sizeof($arrays_team);
                 if(!empty($arrays_team)){
                   foreach ($arrays_team as $array_team) {
                     echo'

@@ -134,7 +134,7 @@ $this->params['breadcrumbs'][] = 'Duty Manager Reports';
 
     <div class="row">
         <div class="col-md-12" style = 'text-align: center;'> 
-            <?= Html::a('Export Report', ['/dm-report/exportreport'], ['class'=>'btn btn-primary']) ?>
+            <?= Html::a('Export Last Report', ['/dm-report/exportreport'], ['class'=>'btn btn-primary']) ?>
         </div>    
     </div>    
 

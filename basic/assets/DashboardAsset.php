@@ -19,8 +19,10 @@ class DashboardAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/bootstrap.min.css',
-        '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css',
-        '//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css',
+        'css/font-awesome/css/font-awesome.min.css',
+        'css/ionicons/css/ionicons.min.css',
+        // '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css',
+        // '//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css',
         'css/AdminLTE.min.css',
         'css/skins/_all-skins.min.css',
         'plugins/iCheck/flat/blue.css',

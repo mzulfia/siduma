@@ -122,9 +122,9 @@ class Schedule extends \yii\db\ActiveRecord
         }
     }
 
-    public function getDmNext(){
+    public function getDmNext($date, $time){
         date_default_timezone_set("Asia/Jakarta");
-        $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 1', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShiftNext(date('H:i:s'))])->one();
+        $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 1', [':date' => $date, ':shift_id' => Shift::getShiftNext($time)])->one();
         if(!empty($model)){
             return $model;
         } else{
@@ -135,11 +135,32 @@ class Schedule extends \yii\db\ActiveRecord
     public function getTeamNow(){
         date_default_timezone_set("Asia/Jakarta");
         $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 0', [':date' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id])->all();
-        // $model = Yii::$app->getDb()->createCommand('SELECT * FROM support LEFT JOIN schedule ON support.support_id = schedule.support_id LEFT JOIN support_area ON support.support_id = support_area.support_id WHERE `date` = :dt AND shift_id = :shift_id AND service_family_id = :id AND is_dm = 0 ORDER BY service_family_id', [':dt' => date('Y-m-d'), ':shift_id' => Shift::getShift(date('H:i:s'))->shift_id, ':id' => $service_family_id])->queryAll();
         if(!empty($model)){
             return $model;
         } else{
             return null;
+        }
+    }
+
+    public function getIsNotExist($date, $shift_id, $support_id){
+        $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND support_id = :support_id', [':date' => $date, ':shift_id' => $shift_id, ':support_id' => $support_id])->one();
+        if(empty($model)){
+            return true;
+        } else{
+            return true;
+        }
+    }
+
+    public function getIsNotExistDM($date, $shift_id){
+        $model = Schedule::find()->where('date = :date AND shift_id = :shift_id AND is_dm = 1', [':date' => $date, ':shift_id' => $shift_id])->all();
+        // return sizeof($model);
+        if(empty($model)){
+            return 0;
+        } else{
+            if(sizeof($model) > 1)
+                return 2;
+            else
+                return 1;
         }
     }
 

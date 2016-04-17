@@ -199,10 +199,6 @@ class ScheduleController extends Controller
                                 $col = $col + 2;
                             }
 
-                            // var_dump($date);
-                            // var_dump($shift);
-                            // var_dump($is_dm);
-
                             for($col = 0; $col < sizeof($date); $col++)
                             {   
                                 if(!empty($shift[$col])){
@@ -219,7 +215,102 @@ class ScheduleController extends Controller
                                             $model->shift_id = (int) $no[$i];
                                             $model->is_dm = $is_dm[$col];
                                             try{
-                                                $model->save(false);    
+                                                if(Schedule::getIsNotExist($model->date, $model->shift_id, $model->support_id)){
+                                                    if(Schedule::getIsNotExistDM($model->date, $model->shift_id) == 0){
+                                                        if($model->save(false))
+                                                        {
+                                                            Yii::$app->getSession()->setFlash('success', [
+                                                                 'type' => 'success',
+                                                                 'duration' => 3000,
+                                                                 'icon' => 'fa fa-upload',
+                                                                 'message' => 'Upload Success',
+                                                                 'title' => 'Notification',
+                                                                 'positonY' => 'top',
+                                                                 'positonX' => 'right'
+                                                             ]);    
+                                                            
+                                                        }
+                                                        else
+                                                        {
+                                                            Yii::$app->getSession()->setFlash('danger', [
+                                                                 'type' => 'danger',
+                                                                 'duration' => 3000,
+                                                                 'icon' => 'fa fa-upload',
+                                                                 'message' => 'Upload Failed',
+                                                                 'title' => 'Notification',
+                                                                 'positonY' => 'top',
+                                                                 'positonX' => 'right'
+                                                             ]);    
+                                                                                                                   }   
+                                                    }
+                                                    elseif(Schedule::getIsNotExistDM($model->date, $model->shift_id) == 1)
+                                                    {
+                                                        if($model->is_dm == 0)
+                                                        {
+                                                            if($model->save(false))
+                                                            {
+                                                                Yii::$app->getSession()->setFlash('success', [
+                                                                     'type' => 'success',
+                                                                     'duration' => 3000,
+                                                                     'icon' => 'fa fa-upload',
+                                                                     'message' => 'Upload Success',
+                                                                     'title' => 'Notification',
+                                                                     'positonY' => 'top',
+                                                                     'positonX' => 'right'
+                                                                 ]);    
+                                                                
+                                                            }
+                                                            else
+                                                            {
+                                                                Yii::$app->getSession()->setFlash('danger', [
+                                                                     'type' => 'danger',
+                                                                     'duration' => 3000,
+                                                                     'icon' => 'fa fa-upload',
+                                                                     'message' => 'Upload Failed',
+                                                                     'title' => 'Notification',
+                                                                     'positonY' => 'top',
+                                                                     'positonX' => 'right'
+                                                                 ]);    
+
+                                                            }   
+                                                        }
+                                                        else
+                                                        {
+                                                            Yii::$app->getSession()->setFlash('danger', [
+                                                                 'type' => 'danger',
+                                                                 'duration' => 3000,
+                                                                 'icon' => 'fa fa-calendar',
+                                                                 'message' => 'Duplicate Duty Manager in one shift',
+                                                                 'title' => 'Notification',
+                                                                 'positonY' => 'top',
+                                                                 'positonX' => 'right'
+                                                            ]);
+
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        Yii::$app->getSession()->setFlash('danger', [
+                                                             'type' => 'danger',
+                                                             'duration' => 3000,
+                                                             'icon' => 'fa fa-calendar',
+                                                             'message' => 'Duplicate Duty Manager in one shift',
+                                                             'title' => 'Notification',
+                                                             'positonY' => 'top',
+                                                             'positonX' => 'right'
+                                                        ]);
+                                                    }    
+                                                } else {
+                                                    Yii::$app->getSession()->setFlash('danger', [
+                                                         'type' => 'danger',
+                                                         'duration' => 3000,
+                                                         'icon' => 'fa fa-calendar',
+                                                         'message' => 'Duplicate Support in one time',
+                                                         'title' => 'Notification',
+                                                         'positonY' => 'top',
+                                                         'positonX' => 'right'
+                                                    ]);
+                                                }
                                             } catch(\yii\base\Exception $e){
                                                 Yii::$app->getSession()->setFlash('danger', [
                                                      'type' => 'danger',
@@ -245,7 +336,98 @@ class ScheduleController extends Controller
                                         $model->shift_id = (int) $shift[$col];
                                         $model->is_dm = $is_dm[$col];
                                         try{
-                                            $model->save(false);    
+                                            if(Schedule::getIsNotExist($model->date, $model->shift_id, $model->support_id)){
+                                                 if(Schedule::getIsNotExistDM($model->date, $model->shift_id) == 0){
+                                                    if($model->save(false))
+                                                    {
+                                                        Yii::$app->getSession()->setFlash('success', [
+                                                             'type' => 'success',
+                                                             'duration' => 3000,
+                                                             'icon' => 'fa fa-upload',
+                                                             'message' => 'Upload Success',
+                                                             'title' => 'Notification',
+                                                             'positonY' => 'top',
+                                                             'positonX' => 'right'
+                                                         ]);    
+                                                    }
+                                                    else
+                                                    {
+                                                        Yii::$app->getSession()->setFlash('danger', [
+                                                             'type' => 'danger',
+                                                             'duration' => 3000,
+                                                             'icon' => 'fa fa-upload',
+                                                             'message' => 'Upload Failed',
+                                                             'title' => 'Notification',
+                                                             'positonY' => 'top',
+                                                             'positonX' => 'right'
+                                                         ]);
+                                                    }   
+                                                }
+                                                elseif(Schedule::getIsNotExistDM($model->date, $model->shift_id) == 1)
+                                                {
+                                                    if($model->is_dm == 0)
+                                                    {
+                                                        if($model->save(false))
+                                                        {
+                                                            Yii::$app->getSession()->setFlash('success', [
+                                                                 'type' => 'success',
+                                                                 'duration' => 3000,
+                                                                 'icon' => 'fa fa-upload',
+                                                                 'message' => 'Upload Success',
+                                                                 'title' => 'Notification',
+                                                                 'positonY' => 'top',
+                                                                 'positonX' => 'right'
+                                                             ]);
+                                                        }
+                                                        else
+                                                        {
+                                                            Yii::$app->getSession()->setFlash('danger', [
+                                                                 'type' => 'danger',
+                                                                 'duration' => 3000,
+                                                                 'icon' => 'fa fa-upload',
+                                                                 'message' => 'Upload Failed',
+                                                                 'title' => 'Notification',
+                                                                 'positonY' => 'top',
+                                                                 'positonX' => 'right'
+                                                             ]); 
+                                                        }   
+                                                    }
+                                                    else
+                                                    {
+                                                        Yii::$app->getSession()->setFlash('danger', [
+                                                             'type' => 'danger',
+                                                             'duration' => 3000,
+                                                             'icon' => 'fa fa-calendar',
+                                                             'message' => 'Duplicate Duty Manager in one shift',
+                                                             'title' => 'Notification',
+                                                             'positonY' => 'top',
+                                                             'positonX' => 'right'
+                                                        ]);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Yii::$app->getSession()->setFlash('danger', [
+                                                         'type' => 'danger',
+                                                         'duration' => 3000,
+                                                         'icon' => 'fa fa-calendar',
+                                                         'message' => 'Duplicate Duty Manager in one shift',
+                                                         'title' => 'Notification',
+                                                         'positonY' => 'top',
+                                                         'positonX' => 'right'
+                                                    ]);
+                                                }    
+                                            } else {
+                                                Yii::$app->getSession()->setFlash('danger', [
+                                                     'type' => 'danger',
+                                                     'duration' => 3000,
+                                                     'icon' => 'fa fa-calendar',
+                                                     'message' => 'Duplicate Support in one time',
+                                                     'title' => 'Notification',
+                                                     'positonY' => 'top',
+                                                     'positonX' => 'right'
+                                                ]);
+                                            }   
                                         } catch(\yii\base\Exception $e){
                                            Yii::$app->getSession()->setFlash('danger', [
                                                  'type' => 'danger',
@@ -256,8 +438,6 @@ class ScheduleController extends Controller
                                                  'positonY' => 'top',
                                                  'positonX' => 'right'
                                             ]);
-
-                                            return $this->redirect(['create']);
                                         }
                                     }
                                 }
@@ -300,30 +480,114 @@ class ScheduleController extends Controller
         elseif(isset($_POST['manual-button']))
         {
             $model->load(Yii::$app->request->post());
-            if($model->save(false))
-            {
-                Yii::$app->getSession()->setFlash('success', [
-                     'type' => 'success',
-                     'duration' => 3000,
-                     'icon' => 'fa fa-calendar',
-                     'message' => 'Create Success',
-                     'title' => 'Notification',
-                     'positonY' => 'top',
-                     'positonX' => 'right'
-                 ]);    
-                return $this->redirect(['index']);
-            }
-            else
-            {
+            if(Schedule::getIsNotExist($model->date, $model->shift_id, $model->support_id)){
+                if(Schedule::getIsNotExistDM($model->date, $model->shift_id) == 0){
+                    if($model->save(false))
+                    {
+                        Yii::$app->getSession()->setFlash('success', [
+                             'type' => 'success',
+                             'duration' => 3000,
+                             'icon' => 'fa fa-calendar',
+                             'message' => 'Create Success',
+                             'title' => 'Notification',
+                             'positonY' => 'top',
+                             'positonX' => 'right'
+                         ]);    
+                        return $this->redirect(['index']);
+                    }
+                    else
+                    {
+                        Yii::$app->getSession()->setFlash('danger', [
+                             'type' => 'danger',
+                             'duration' => 3000,
+                             'icon' => 'fa fa-calendar',
+                             'message' => 'Create Failed',
+                             'title' => 'Notification',
+                             'positonY' => 'top',
+                             'positonX' => 'right'
+                         ]);    
+                        return $this->render('update', [
+                            'model' => $model,
+                        ]);
+                    }   
+                }
+                elseif(Schedule::getIsNotExistDM($model->date, $model->shift_id) == 1)
+                {
+                    if($model->is_dm == 0)
+                    {
+                        if($model->save(false))
+                        {
+                            Yii::$app->getSession()->setFlash('success', [
+                                 'type' => 'success',
+                                 'duration' => 3000,
+                                 'icon' => 'fa fa-calendar',
+                                 'message' => 'Create Success',
+                                 'title' => 'Notification',
+                                 'positonY' => 'top',
+                                 'positonX' => 'right'
+                             ]);    
+                            return $this->redirect(['index']);
+                        }
+                        else
+                        {
+                            Yii::$app->getSession()->setFlash('danger', [
+                                 'type' => 'danger',
+                                 'duration' => 3000,
+                                 'icon' => 'fa fa-calendar',
+                                 'message' => 'Create Failed',
+                                 'title' => 'Notification',
+                                 'positonY' => 'top',
+                                 'positonX' => 'right'
+                             ]);    
+                            return $this->render('update', [
+                                'model' => $model,
+                            ]);
+                        }   
+                    }
+                    else
+                    {
+                        Yii::$app->getSession()->setFlash('danger', [
+                             'type' => 'danger',
+                             'duration' => 3000,
+                             'icon' => 'fa fa-calendar',
+                             'message' => 'Duplicate Duty Manager in one shift',
+                             'title' => 'Notification',
+                             'positonY' => 'top',
+                             'positonX' => 'right'
+                        ]);
+
+                        return $this->render('update', [
+                            'model' => $model,
+                        ]);
+                    }
+                }
+                else
+                {
+                    Yii::$app->getSession()->setFlash('danger', [
+                         'type' => 'danger',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-calendar',
+                         'message' => 'Duplicate Duty Manager in one shift',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                    ]);
+
+                    return $this->render('update', [
+                        'model' => $model,
+                    ]);
+                }    
+            } else {
                 Yii::$app->getSession()->setFlash('danger', [
                      'type' => 'danger',
                      'duration' => 3000,
                      'icon' => 'fa fa-calendar',
-                     'message' => 'Create Failed',
+                     'message' => 'Duplicate Support in one time',
                      'title' => 'Notification',
                      'positonY' => 'top',
                      'positonX' => 'right'
-                 ]);    
+                ]);
+
                 return $this->render('create', [
                     'model' => $model,
                 ]);
@@ -346,37 +610,104 @@ class ScheduleController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $is_dm = $model->is_dm;
         if ($model->load(Yii::$app->request->post())) {
-            if($model->save(false))
+            if(Schedule::getIsNotExistDM($model->date, $model->shift_id) == 0){
+                if($model->save(false))
+                {
+                    Yii::$app->getSession()->setFlash('success', [
+                         'type' => 'success',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-calendar',
+                         'message' => 'Update Success',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                     ]);    
+                    return $this->redirect(['index']);
+                }
+                else
+                {
+                    Yii::$app->getSession()->setFlash('danger', [
+                         'type' => 'danger',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-calendar',
+                         'message' => 'Update Failed',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                     ]);    
+                    return $this->render('update', [
+                        'model' => $model,
+                    ]);
+                }   
+            }
+            elseif(Schedule::getIsNotExistDM($model->date, $model->shift_id) == 1)
             {
-                Yii::$app->getSession()->setFlash('success', [
-                     'type' => 'success',
-                     'duration' => 3000,
-                     'icon' => 'fa fa-upload',
-                     'message' => 'Update Success',
-                     'title' => 'Notification',
-                     'positonY' => 'top',
-                     'positonX' => 'right'
-                ]);
+                if($model->is_dm == 0 || $is_dm == 1)
+                {
+                    if($model->save(false))
+                    {
+                        Yii::$app->getSession()->setFlash('success', [
+                             'type' => 'success',
+                             'duration' => 3000,
+                             'icon' => 'fa fa-calendar',
+                             'message' => 'Update Success',
+                             'title' => 'Notification',
+                             'positonY' => 'top',
+                             'positonX' => 'right'
+                         ]);    
+                        return $this->redirect(['index']);
+                    }
+                    else
+                    {
+                        Yii::$app->getSession()->setFlash('danger', [
+                             'type' => 'danger',
+                             'duration' => 3000,
+                             'icon' => 'fa fa-calendar',
+                             'message' => 'Update Failed',
+                             'title' => 'Notification',
+                             'positonY' => 'top',
+                             'positonX' => 'right'
+                         ]);    
+                        return $this->render('update', [
+                            'model' => $model,
+                        ]);
+                    }   
+                }
+                else
+                {
+                    Yii::$app->getSession()->setFlash('danger', [
+                         'type' => 'danger',
+                         'duration' => 3000,
+                         'icon' => 'fa fa-calendar',
+                         'message' => 'Duplicate Duty Manager in one shift',
+                         'title' => 'Notification',
+                         'positonY' => 'top',
+                         'positonX' => 'right'
+                    ]);
 
-                $this->redirect(['index']);   
+                    return $this->render('update', [
+                        'model' => $model,
+                    ]);
+                }   
             }
             else
             {
                 Yii::$app->getSession()->setFlash('danger', [
                      'type' => 'danger',
                      'duration' => 3000,
-                     'icon' => 'fa fa-upload',
-                     'message' => 'Update Failed',
+                     'icon' => 'fa fa-calendar',
+                     'message' => 'Duplicate Duty Manager in one shift',
                      'title' => 'Notification',
                      'positonY' => 'top',
                      'positonX' => 'right'
                 ]);
 
-                $this->redirect(['index']);   
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
             }
-             
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -483,30 +814,12 @@ class ScheduleController extends Controller
                 $model = $this->findModel($id);
                 if($model->deleteFile()){
                   $model->delete();
-                } else {
-                    Yii::$app->getSession()->setFlash('danger', [
-                         'type' => 'danger',
-                         'duration' => 3000,
-                         'message' => 'Delete Failed',
-                         'title' => 'Notification',
-                         'positonY' => 'top',
-                         'positonX' => 'right'
-                    ]); 
-                }
+                } 
             }
 
             $size = Yii::$app->getDb()->createCommand('SELECT COUNT(*) AS total FROM schedule')->queryAll();
             $next_id = ((int) $size[0]['total']) + 1;
             Yii::$app->getDb()->createCommand('ALTER TABLE schedule ALGORITHM=COPY, AUTO_INCREMENT = :id', [':id' => $next_id])->execute();
-
-            Yii::$app->getSession()->setFlash('success', [
-               'type' => 'success',
-               'duration' => 3000,
-               'message' => 'Delete Success',
-               'title' => 'Notification',
-               'positonY' => 'top',
-               'positonX' => 'right'
-            ]);    
         }
     }
 

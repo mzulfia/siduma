@@ -4,6 +4,8 @@
     use Yii;
     use yii\base\Model;
     use app\models\User;
+
+    use kartik\password\StrengthValidator;
     
     class PasswordForm extends Model{
         public $oldpass;
@@ -13,6 +15,7 @@
         public function rules(){
             return [
                 [['oldpass','newpass','repeatnewpass'],'required'],
+                [['newpass'], 'string', 'min' => 8, 'max' => 50],
                 ['oldpass','findPasswords'],
                 ['repeatnewpass','compare','compareAttribute'=>'newpass'],
             ];

@@ -108,12 +108,18 @@ class DmReport extends \yii\db\ActiveRecord
 
     public function getServiceDmReport($id){
         $model = DmReport::find()->where('service_family_id = :id', [':id' => $id])->orderBy('created_at desc')->limit(1)->one();
-        return $model;
+         if(!empty($model))
+            return $model;
+        else 
+            return null;
     }  
 
     public function getLastUpdated(){
         $model = DmReport::find()->orderBy('created_at desc')->limit(1)->one();
-        return $model;
+        if(!empty($model))
+            return $model;
+        else 
+            return null;
     }   
 
     /*

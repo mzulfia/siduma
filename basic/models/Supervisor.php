@@ -35,7 +35,7 @@ class Supervisor extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['spv_name', 'position', 'no_hp', 'email', 'file'], 'required'],
+            [['spv_name', 'position', 'no_hp', 'email'], 'required'],
             [['user_id'], 'integer'],
             [['spv_name', 'position', 'no_hp', 'email'], 'string', 'max' => 50],
             [['image_path'], 'string', 'max' => 255],
